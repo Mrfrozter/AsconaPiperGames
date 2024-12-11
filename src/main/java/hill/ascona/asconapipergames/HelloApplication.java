@@ -4,8 +4,8 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import org.example.elhamasconapipergames.DAO.PersonDAO;
-import org.example.elhamasconapipergames.entities.Person;
+import hill.ascona.asconapipergames.DAO.PersonDAO;
+import hill.ascona.asconapipergames.entities.Person;
 
 import java.io.IOException;
 

@@ -1,11 +1,10 @@
 package hill.ascona.asconapipergames;
-
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import org.example.asconapipergames.DAO.MatchDAO;
-import org.example.asconapipergames.entities.Match;
+import hill.ascona.asconapipergames.DAO.MatchDAO;
+import hill.ascona.asconapipergames.entities.Match;
 
 import java.io.IOException;
 
@@ -15,14 +14,14 @@ public class HelloApplication extends Application {
     public void start(Stage stage) throws IOException {
 
 
-        MatchDAO matchDAO = new MatchDAO();
+ /*       MatchDAO matchDAO = new MatchDAO();
         Match testMatch = new Match("t7u9p");
 
         if(matchDAO.saveMatch(testMatch)){
             System.out.println("Match Saved");
         } else {
             System.out.println("Match Not Saved");
-        }
+        } */
 
 
 

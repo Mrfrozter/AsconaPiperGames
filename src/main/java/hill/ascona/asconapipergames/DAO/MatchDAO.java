@@ -1,7 +1,7 @@
 package hill.ascona.asconapipergames.DAO;
 
 import jakarta.persistence.*;
-import org.example.annatestarmaven.entities.Match;
+import hill.ascona.asconapipergames.entities.Match;
 
 import java.util.ArrayList;
 import java.util.List;

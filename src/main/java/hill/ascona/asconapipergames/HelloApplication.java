@@ -7,7 +7,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import hill.ascona.asconapipergames.DAO.PersonDAO;
 import hill.ascona.asconapipergames.entities.Person;
@@ -122,17 +121,6 @@ public class HelloApplication extends Application {
 
         AnchorPane mainAnchorPane = new AnchorPane(tabPane);
         return new Scene(mainAnchorPane, 600, 600);
-    public void start(Stage stage) throws IOException {
-
-
-
-
-
-        AnchorPane anchorPane = new AnchorPane();
-        Scene scene = new Scene(anchorPane, 320, 240);
-        stage.setTitle("Hello!");
-        stage.setScene(scene);
-        stage.show();
     }
 
     public static void main(String[] args) {

@@ -1,7 +1,7 @@
-package se.verran.javafxhibernatedemo.DAO;
+package hill.ascona.asconapipergames.DAO;
 
 import jakarta.persistence.*;
-import se.verran.javafxhibernatedemo.entities.Team;
+import hill.ascona.asconapipergames.entities.Team;
 
 import java.util.ArrayList;
 import java.util.List;

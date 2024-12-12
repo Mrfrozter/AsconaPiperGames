@@ -4,6 +4,7 @@ module hill.ascona.asconapipergames {
     requires jakarta.persistence;
     requires org.hibernate.orm.core;
 
+
     opens hill.ascona.asconapipergames to javafx.fxml;
     exports hill.ascona.asconapipergames;
 }

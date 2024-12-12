@@ -1,3 +1,4 @@
+/*
 package hill.ascona.asconapipergames.views;
 
 import hill.ascona.asconapipergames.DAO.TournamentDAO;
@@ -107,3 +108,4 @@ public class TournamentView {
 //        return mBox;
 //    }
 }
+*/

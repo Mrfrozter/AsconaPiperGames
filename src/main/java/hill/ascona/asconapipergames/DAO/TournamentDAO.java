@@ -1,24 +1,49 @@
 package hill.ascona.asconapipergames.DAO;
 
 import hill.ascona.asconapipergames.entities.Tournament;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
+import hill.ascona.asconapipergames.managers.DAOManager;
+import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TournamentDAO {
-    private static final EntityManagerFactory EMF = Persistence.createEntityManagerFactory("myconfig");
+    private EntityManager em;
+    private EntityTransaction transaction;
 
-    public void saveTM(Tournament tm){
-
+    public boolean saveTM(Tournament tm){
+        initializeEM();
+        try{
+            transaction = em.getTransaction();
+            transaction.begin();
+            em.persist(tm);
+            transaction.commit();
+            return true;
+        } catch (Exception e){
+            DAOManager.rollback(em, transaction);
+            return false;
+        } finally {
+            em.close();
+        }
     }
 
-    public Tournament getTmById(){
-        return new Tournament();
+    public Tournament getTmById(int id){
+        em = DAOManager.EMF.createEntityManager();
+        Tournament tmnt = em.find(Tournament.class, id);
+        em.close();
+        return tmnt;
     }
 
     public List<Tournament> getAllTournaments(){
-        return new ArrayList<>();
+        initializeEM();
+        List<Tournament> tmts = new ArrayList<>();
+        TypedQuery<Tournament> query = em.createQuery("FROM Tournament", Tournament.class);
+        tmts.addAll(query.getResultList());
+        return tmts;
+    }
+
+    private void initializeEM(){
+        em = DAOManager.EMF.createEntityManager();
+        transaction = null;
     }
 }

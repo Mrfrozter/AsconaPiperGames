@@ -1,5 +1,6 @@
 package hill.ascona.asconapipergames;
 
+import hill.ascona.asconapipergames.views.TournamentView;
 import javafx.application.Application;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
@@ -12,10 +13,13 @@ import hill.ascona.asconapipergames.DAO.PersonDAO;
 import hill.ascona.asconapipergames.entities.Person;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class HelloApplication extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
+        Logger.getLogger("org.hibernate").setLevel(Level.OFF);
 
         PersonDAO personDAO = new PersonDAO();
         Person user = new Person("Elham","Farhang"," ","Vallentuna",123,"Stockholm","Sverige","elham@mail","spelare",1);
@@ -73,7 +77,7 @@ public class HelloApplication extends Application {
         tabPane.setPrefSize(600,600);
 
         AnchorPane anchorPane1= new AnchorPane();
-        anchorPane1.setPrefSize(550,600);
+//        anchorPane1.setPrefSize(550,600);
         TextArea textArea= new TextArea();
         textArea.setEditable(false);
         textArea.setVisible(false);
@@ -111,7 +115,7 @@ public class HelloApplication extends Application {
         Tab tab2 = new Tab("Lag", new Label("Show teams"));
         Tab tab3 = new Tab("Spel", new Label("Show games"));
         Tab tab4 = new Tab("Matcher", new Label("Show matches"));
-        Tab tab5 = new Tab("Turnering", new Label("Show tournament"));
+        Tab tab5 = new Tab("Turnering", new TournamentView().start());
 
         tabPane.getTabs().add(tab1);
         tabPane.getTabs().add(tab2);
@@ -120,7 +124,7 @@ public class HelloApplication extends Application {
         tabPane.getTabs().add(tab5);
 
         AnchorPane mainAnchorPane = new AnchorPane(tabPane);
-        return new Scene(mainAnchorPane, 600, 600);
+        return new Scene(mainAnchorPane);
     }
 
     public static void main(String[] args) {

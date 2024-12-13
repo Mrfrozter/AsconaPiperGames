@@ -1,7 +1,5 @@
 package hill.ascona.asconapipergames;
 
-import hill.ascona.asconapipergames.DAO.MatchDAO;
-import hill.ascona.asconapipergames.entities.Match;
 import hill.ascona.asconapipergames.views.MatchView;
 import javafx.application.Application;
 import javafx.geometry.Orientation;
@@ -36,21 +34,6 @@ public class HelloApplication extends Application {
         System.out.println("Hämtad från db med namn: " + personFromDatabase.getName());
 
         System.out.println("Storlek på listan med personer är "+ personDAO.getAllPersonsInfo().size());
-
-
-
-
-
-        MatchDAO matchDAO = new MatchDAO();
-        Match testMatch = new Match("t7u9p");
-
-        if(matchDAO.saveMatch(testMatch)){
-            System.out.println("Match Saved");
-        } else {
-            System.out.println("Match Not Saved");
-        }
-
-
 
         AnchorPane loginAnchorPane=new AnchorPane();
         loginAnchorPane.setPrefSize(600,600);
@@ -95,7 +78,7 @@ public class HelloApplication extends Application {
         tabPane.setPrefSize(600,600);
 
         AnchorPane anchorPane1= new AnchorPane();
-        anchorPane1.setPrefSize(550,600);
+
         TextArea textArea= new TextArea();
         textArea.setEditable(false);
         textArea.setVisible(false);
@@ -127,30 +110,16 @@ public class HelloApplication extends Application {
         separator1.setLayoutY(100);
         separator1.setLayoutX(10);
 
-        AnchorPane paneMatch = new AnchorPane();
-        Label label = new Label("Match");
-/*
-        Button buttonAll = new Button("See all matches");
-        Button buttonUpcoming = new Button("See all upcoming matches");
-        Button buttonOld = new Button("See played matches");
-        Button buttonNew = new Button("Add a new match");
-*/
-
-//        paneMatch.getChildren().addAll(label, buttonNew, buttonAll, buttonUpcoming, buttonOld, buttonNew);
-        paneMatch.getChildren().add(label);
-        MatchView matchView = new MatchView();
-        AnchorPane anchorPaneMatch = new AnchorPane();
-        anchorPaneMatch = matchView.start();
-
         anchorPane1.getChildren().addAll(comboBoxShowTable,separator1,showButton,textArea);
+
+
+        MatchView matchView=new MatchView();
 
         Tab tab1 = new Tab("Spelare", anchorPane1);
         Tab tab2 = new Tab("Lag", new Label("Show teams"));
         Tab tab3 = new Tab("Spel", new Label("Show games"));
-        Tab tab4 = new Tab("Matcher", paneMatch);
+        Tab tab4 = new Tab("Matcher", matchView.start());
         Tab tab5 = new Tab("Turnering", new Label("Show tournament"));
-
-
 
         tabPane.getTabs().add(tab1);
         tabPane.getTabs().add(tab2);

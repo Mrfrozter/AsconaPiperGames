@@ -1,25 +1,25 @@
 package hill.ascona.asconapipergames.DAO;
 
 import jakarta.persistence.*;
-import hill.ascona.asconapipergames.entities.Match;
+import hill.ascona.asconapipergames.entities.Team;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MatchDAO {
-    // CRUD-operations
+public class TeamDAO {
+    //CRUD-operationer (create, read, update, delete)
 
     private static final EntityManagerFactory ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("myconfig");
 
     // Create
-    public boolean saveMatch(Match match) {
+    public boolean saveTeam(Team team){
 
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            entityManager.persist(match);
+            entityManager.persist(team);
             transaction.commit();
             return true;
         } catch (Exception e){
@@ -28,35 +28,37 @@ public class MatchDAO {
                 transaction.rollback();
             }
             return false;
-        }finally {
+        } finally {
             entityManager.close();
         }
 
     }
-    // Read One/All
-    public Match getMatchById(int id){
+
+    //Read
+    public Team getTeamById(int id){
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
-        Match matchToReturn = entityManager.find(Match.class, id);
+        Team teamToReturn = entityManager.find(Team.class, id);
         entityManager.close();
-        return matchToReturn;
+        return teamToReturn;
     }
 
-    public List<Match> getAllMatches(){
+    //Read (alla teams)
+    public List<Team> getAllTeams(){
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
-        List<Match> listToReturn = new ArrayList<>();
-        TypedQuery<Match> result = entityManager.createQuery("FROM Match", Match.class);
+        List<Team> listToReturn = new ArrayList<>();
+        TypedQuery<Team> result = entityManager.createQuery("FROM Team", Team.class);
         listToReturn.addAll(result.getResultList());
         return listToReturn;
     }
 
     // Update
-    public void updateMatch(Match matchToUpdate){
+    public void updateTeam(Team teamToUpdate){
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            entityManager.persist(entityManager.contains(matchToUpdate) ? matchToUpdate : entityManager.merge(matchToUpdate));
+            entityManager.persist(entityManager.contains(teamToUpdate) ? teamToUpdate : entityManager.merge(teamToUpdate));
             transaction.commit();
         } catch (Exception e){
             System.out.println(e.getMessage());
@@ -68,18 +70,22 @@ public class MatchDAO {
         }
     }
 
-
     // Delete
-    public void deleteMatch(Match match){
+
+    public void deleteTeam(Team team){
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            if(!entityManager.contains(match)){
-                match = entityManager.merge(match);
+            if(!entityManager.contains(team)){
+                team = entityManager.merge(team);
             }
-            entityManager.remove(match);
+            entityManager.remove(team);
+
+            // Ett annat sätt att skriva det på:
+//            entityManager.remove(entityManager.contains(team) ? car : entityManager.merge(team));
+
             transaction.commit();
         } catch (Exception e){
             System.out.println(e.getMessage());
@@ -91,15 +97,14 @@ public class MatchDAO {
             entityManager.close();
         }
     }
-
-    public boolean deleteMatchById(int id){
+    public boolean deleteTeamById(int id){
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            Match matchToDelete = entityManager.find(Match.class, id);
-            entityManager.remove(entityManager.contains(matchToDelete) ? matchToDelete : entityManager.merge(matchToDelete));
+            Team teamToDelete = entityManager.find(Team.class, id);
+            entityManager.remove(entityManager.contains(teamToDelete) ? teamToDelete : entityManager.merge(teamToDelete));
             transaction.commit();
             return true;
         }catch (Exception e){
@@ -114,4 +119,8 @@ public class MatchDAO {
         }
     }
 }
+
+
+
+
 

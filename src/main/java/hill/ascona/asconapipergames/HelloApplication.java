@@ -1,6 +1,7 @@
 package hill.ascona.asconapipergames;
 
 import hill.ascona.asconapipergames.views.MatchView;
+import hill.ascona.asconapipergames.views.TournamentView;
 import javafx.application.Application;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
@@ -20,8 +21,6 @@ public class HelloApplication extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
 
-        Logger.getLogger("org.hibernate").setLevel(Level.OFF);
-
         PersonDAO personDAO = new PersonDAO();
         Person user = new Person("Elham","Farhang"," ","Vallentuna",123,"Stockholm","Sverige","elham@mail","spelare",1);
         if (personDAO.addPerson(user)){
@@ -38,7 +37,11 @@ public class HelloApplication extends Application {
         AnchorPane loginAnchorPane=new AnchorPane();
         loginAnchorPane.setPrefSize(600,600);
 
-        Scene loginScene=new Scene(loginAnchorPane);
+        MatchView matchView=new MatchView();
+        TournamentView tournamentView=new TournamentView();
+        //Scene loginScene=new Scene(matchView.start());
+        Scene loginScene=new Scene(tournamentView.start());
+        //Scene loginScene=new Scene(loginAnchorPane);
         primaryStage.setScene(loginScene);
 
         Label label = new Label("Välkommen till Piper Game sida!");
@@ -78,7 +81,7 @@ public class HelloApplication extends Application {
         tabPane.setPrefSize(600,600);
 
         AnchorPane anchorPane1= new AnchorPane();
-
+        anchorPane1.setPrefSize(550,600);
         TextArea textArea= new TextArea();
         textArea.setEditable(false);
         textArea.setVisible(false);
@@ -111,7 +114,6 @@ public class HelloApplication extends Application {
         separator1.setLayoutX(10);
 
         anchorPane1.getChildren().addAll(comboBoxShowTable,separator1,showButton,textArea);
-
 
         MatchView matchView=new MatchView();
 

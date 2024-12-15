@@ -21,7 +21,9 @@ public class HelloApplication extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
 
-        PersonDAO personDAO = new PersonDAO();
+        Logger.getLogger("org.hibernate").setLevel(Level.OFF);
+
+        /*PersonDAO personDAO = new PersonDAO();
         Person user = new Person("Elham","Farhang"," ","Vallentuna",123,"Stockholm","Sverige","elham@mail","spelare",1);
         if (personDAO.addPerson(user)){
             System.out.println("User saved!");
@@ -33,14 +35,14 @@ public class HelloApplication extends Application {
         System.out.println("Hämtad från db med namn: " + personFromDatabase.getName());
 
         System.out.println("Storlek på listan med personer är "+ personDAO.getAllPersonsInfo().size());
-
+*/
         AnchorPane loginAnchorPane=new AnchorPane();
         loginAnchorPane.setPrefSize(600,600);
 
         MatchView matchView=new MatchView();
         TournamentView tournamentView=new TournamentView();
-        //Scene loginScene=new Scene(matchView.start());
-        Scene loginScene=new Scene(tournamentView.start());
+        Scene loginScene=new Scene(matchView.start());
+        //Scene loginScene=new Scene(tournamentView.start());
         //Scene loginScene=new Scene(loginAnchorPane);
         primaryStage.setScene(loginScene);
 

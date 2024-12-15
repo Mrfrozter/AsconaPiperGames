@@ -1,12 +1,17 @@
 package hill.ascona.asconapipergames.views;
 
+import hill.ascona.asconapipergames.entities.TestMatch;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 
 import java.time.LocalDate;
 
@@ -21,17 +26,9 @@ att lista samtliga matcher, endast avgjorda och endast kommande matcher.
 • Matchen avgörs (poängen sätts) genom att Pied Pipers personal loggar in och
 registrerar resultatet.
 • */
-//        tournaments = FXCollections.observableList(tDao.getAllTournaments());
-
-    /*      buttonNew.setOnAction(e -> {
-
-          })
-            btn.setOnMouseClicked((e) -> {
-                content.getChildren().add(newTour());
-            });*/
 
     public AnchorPane start() {
-        Boolean team = false;
+        AnchorPane paneShow = new AnchorPane(); /* Boolean team = false;
         Boolean upcoming = true;
         String pOrT = "Team";
 
@@ -39,7 +36,7 @@ registrerar resultatet.
         String date = "";
 
 
-        AnchorPane paneAdd = new AnchorPane();
+
         paneAdd.setPrefSize(550, 600);
         Button buttonShow = new Button("Show matches");
 //        buttonShow.setOnAction(e -> {
@@ -170,18 +167,115 @@ registrerar resultatet.
         AnchorPane paneShow = new AnchorPane();
         paneShow.setPrefSize(550, 600);
 
+        //----TableView----
 
-        HBox hbox = new HBox();
+
+        TableView<TestMatch> table = new TableView<TestMatch>();
+        ObservableList<TestMatch> data = FXCollections.observableArrayList(
+                new TestMatch("idag", "tetris", "blåa", "röda", true, "blåa"),
+                new TestMatch("igår", "WoW", "gröna", "röda", true, "röda"),
+                new TestMatch("imorgon", "CoD", "blåa", "gröna", false, null),
+                new TestMatch("idag", "halo", "röda", "lila", true, "lila")
+        );
+
+
+        table.setEditable(false);
+
+        TableColumn dateCol = new TableColumn("Date");
+        dateCol.setCellValueFactory(
+                new PropertyValueFactory<TestMatch,String>("date")
+        );
+        TableColumn gameCol = new TableColumn("Game");
+        gameCol.setCellValueFactory(
+                new PropertyValueFactory<TestMatch,String>("game")
+        );
+*//*   TableColumn pOrTCol = new TableColumn("Team/\n Singel");
+        pOrTCol.setCellValueFactory(
+                new PropertyValueFactory<TestMatch,String>("team1")
+        );*//*
+
+        TableColumn pOrTOneCol = new TableColumn("Participant 1");
+        pOrTOneCol.setCellValueFactory(
+                new PropertyValueFactory<TestMatch,String>("team1")
+        );
+        TableColumn pOrTTwoCol = new TableColumn("Participant 2");
+        pOrTTwoCol.setCellValueFactory(
+                new PropertyValueFactory<TestMatch,String>("team2")
+        );
+        TableColumn decidedCol = new TableColumn("Decided");
+        decidedCol.setCellValueFactory(
+                new PropertyValueFactory<TestMatch,String>("played")
+        );
+        TableColumn winnerCol = new TableColumn("Winner");
+        winnerCol.setCellValueFactory(
+                new PropertyValueFactory<TestMatch,String>("winner")
+        );
+
+        table.setItems(data);
+        table.getColumns().addAll(dateCol, gameCol, pOrTOneCol, pOrTTwoCol, decidedCol, winnerCol);
+
+
+
+
+        //----End TableView----
+
+
+
+        HBox hBox = new HBox();
+        VBox vbox = new VBox();
         Button buttonAll = new Button("See all matches");
         Button buttonUpcoming = new Button("See all upcoming matches");
         Button buttonOld = new Button("See played matches");
         Button buttonNew = new Button("Add a new match");
 
-        hbox.getChildren().addAll(buttonAll, buttonUpcoming, buttonOld, buttonNew);
-        paneShow.getChildren().add(hbox);
+        CheckBox checkUpp = new CheckBox("Show upcoming matches");
+        CheckBox checkDone = new CheckBox("Show finished matches");
+        CheckBox checkPlayers = new CheckBox("Show PvP matches");
+        CheckBox checkTeams = new CheckBox("Show team matches");
+
+        vbox.getChildren().addAll(buttonNew,checkUpp, checkDone, checkPlayers, checkTeams);
+        hBox.getChildren().addAll(table, vbox);*/
+        final Label label = new Label("Address Book");
+        label.setFont(new Font("Arial", 20));
+
+        TableView<TestMatch> table = new TableView<TestMatch>();
+        table.setEditable(false);
+        ObservableList<TestMatch> data =
+                FXCollections.observableArrayList(
+                        new TestMatch("idag", "tetris", "blåa", "röda", true, "blåa"),
+                        new TestMatch("igår", "WoW", "gröna", "röda", true, "röda"),
+                        new TestMatch("imorgon", "CoD", "blåa", "gröna", false, null),
+                        new TestMatch("idag", "halo", "röda", "lila", true, "lila")
+                );
+        TableColumn firstNameCol = new TableColumn("First Name");
+        firstNameCol.setMinWidth(100);
+        firstNameCol.setCellValueFactory(
+                new PropertyValueFactory<TestMatch, String>("date"));
+
+        TableColumn lastNameCol = new TableColumn("Last Name");
+        lastNameCol.setMinWidth(100);
+        lastNameCol.setCellValueFactory(
+                new PropertyValueFactory<TestMatch, String>("game"));
+
+        TableColumn emailCol = new TableColumn("t");
+        emailCol.setMinWidth(200);
+        emailCol.setCellValueFactory(
+                new PropertyValueFactory<TestMatch, String>("team1"));
+
+        table.setItems(data);
+        table.getColumns().addAll(firstNameCol, lastNameCol, emailCol);
+
+        VBox vbox = new VBox();
+        vbox.setSpacing(5);
+        vbox.setPadding(new Insets(10, 0, 0, 10));
+        vbox.getChildren().addAll(label, table);
 
 
-        return paneAdd;
+
+        paneShow.getChildren().add(vbox);
+
+
+        return paneShow;
     }
 
 }

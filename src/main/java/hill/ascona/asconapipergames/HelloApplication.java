@@ -43,7 +43,7 @@ public class HelloApplication extends Application {
         loginComboBox.setPromptText("Choose your name:");
         loginComboBox.setLayoutX(260);
         loginComboBox.setLayoutY(280);
-        loginComboBox.getItems().addAll("r Richard Hendricks","r Bertram Gilfoyle","r Dinesh Chugtai");
+        loginComboBox.getItems().addAll("Richard Hendricks","Bertram Gilfoyle","Dinesh Chugtai");
         loginComboBox.setOnAction(e ->{
             loginButton.setDisable(false);
         });

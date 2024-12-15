@@ -3,17 +3,12 @@ package hill.ascona.asconapipergames.views;
 import hill.ascona.asconapipergames.entities.TestMatch;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-
-import java.time.LocalDate;
 
 public class MatchView {
 

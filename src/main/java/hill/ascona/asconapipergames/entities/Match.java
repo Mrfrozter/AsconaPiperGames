@@ -2,6 +2,8 @@ package hill.ascona.asconapipergames.entities;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name ="matches")
 public class Match {
@@ -14,7 +16,7 @@ public class Match {
     private int turneringar_id;
 
     @Column(name = "match_date", nullable = false)
-    private String date;
+    private LocalDate date;
 
     @Column(name = "match_played", nullable = false)
     private boolean allreadyPlayed;
@@ -37,14 +39,17 @@ public class Match {
     public Match() {
     }
 
-    public Match(String date) {
+    public Match(boolean allreadyPlayed, int player1_id, int player2_id, int winner_id) {
         this.date = date;
+        this.allreadyPlayed = allreadyPlayed;
+        this.player1_id = player1_id;
+        this.player2_id = player2_id;
     }
 
     public Match(int turneringar_id, int winner_id, String date, boolean allreadyPlayed, int player1_id, int player2_id, int team1_id, int team2_id) {
         this.turneringar_id = turneringar_id;
         this.winner_id = winner_id;
-        this.date = date;
+        this.date = LocalDate.parse(date);
         this.allreadyPlayed = allreadyPlayed;
         this.player1_id = player1_id;
         this.player2_id = player2_id;
@@ -76,11 +81,11 @@ public class Match {
         this.turneringar_id = turneringar_id;
     }
 
-    public String getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 

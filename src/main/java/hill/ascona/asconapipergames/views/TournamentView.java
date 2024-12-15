@@ -1,4 +1,3 @@
-/*
 package hill.ascona.asconapipergames.views;
 
 import hill.ascona.asconapipergames.DAO.GameDAO;
@@ -42,16 +41,16 @@ public class TournamentView {
         GameDAO dao = new GameDAO();
         List<Game> games = dao.getAllGames();
         for (Game game : games) {
-            choiceBox.getItems().add(game.getName());
+            choiceBox.getItems().add(game.getTitle());
         }
-        add.setOnMouseClicked((e) -> {
-            Game game = dao.getByName(choiceBox.getValue().toString());
+/*        add.setOnMouseClicked((e) -> {
+            Game game = dao.getGameByI(choiceBox.getValue().toString());
             String date = dp.getValue().toString();
             new TournamentDAO().saveTM(new Tournament(game, date));
             tournaments.add(tDao.getTmById(tDao.getAllTournaments().size()));
-        });
+        });*/
 
-        choiceBox.setValue(games.get(0).getName());
+        choiceBox.setValue(games.get(0).getTitle());
         content.getChildren().addAll(title, dp, choiceBox, add);
 
         return content;
@@ -88,7 +87,7 @@ public class TournamentView {
 
     private HBox rowBox(Tournament tmnt){
         Label idLab = new Label(tmnt.getId() + "");
-        Label gmeLab = new Label(tmnt.getGame() != null ? tmnt.getGame().getName() : "null");
+        Label gmeLab = new Label(tmnt.getGame() != null ? tmnt.getGame().getTitle() : "null");
         Label datLab = new Label(tmnt.getDate());
         Label delete = new Label("x");
         idLab.getStyleClass().add("txt");
@@ -110,4 +109,3 @@ public class TournamentView {
         return mBox;
     }
 }
-*/

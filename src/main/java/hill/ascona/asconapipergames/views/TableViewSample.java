@@ -1,4 +1,5 @@
-package hill.ascona.asconapipergames;
+package hill.ascona.asconapipergames.views;
+import hill.ascona.asconapipergames.entities.TestMatch;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -12,7 +13,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import hill.ascona.asconapipergames.entities.TestMatch;
 
 public class TableViewSample extends Application {
 
@@ -27,6 +27,7 @@ public class TableViewSample extends Application {
         stage.setTitle("Table View Sample");
         stage.setWidth(450);
         stage.setHeight(500);
+
 
         final Label label = new Label("Address Book");
         label.setFont(new Font("Arial", 20));

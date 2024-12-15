@@ -54,5 +54,9 @@ public class Game {
         }
         this.numberOfTeams = numberOfTeams;
     }
+
+    public Game(int id) {
+        this.id = id;
+    }
 }
 

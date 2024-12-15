@@ -37,7 +37,7 @@ public class PersonDAO {
         entityManager.close();
         return personInfoToReturn;
     }
-    public List<Person> getAllPersonsInfo(){
+    public List<Person> getAllPlayersInfo(){
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         List<Person> listToReturn = new ArrayList<>();
         TypedQuery<Person> result = entityManager.createQuery("FROM Person p WHERE p.role = :variabel", Person.class);

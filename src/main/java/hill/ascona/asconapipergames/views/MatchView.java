@@ -1,14 +1,22 @@
 package hill.ascona.asconapipergames.views;
 
 import hill.ascona.asconapipergames.entities.TestMatch;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+
+import java.time.LocalDate;
 
 public class MatchView {
 
@@ -23,11 +31,14 @@ registrerar resultatet.
 • */
 
     public AnchorPane start() {
-        AnchorPane paneShow = new AnchorPane(); /* Boolean team = false;
+
+        //----Add Matches-----
+        Boolean team = false;
         Boolean upcoming = true;
         String pOrT = "Team";
 
-        //----Add Matches-----
+        AnchorPane paneAdd = new AnchorPane();
+
         String date = "";
 
 
@@ -41,6 +52,12 @@ registrerar resultatet.
 
         Button addSingel = new Button("Add a player match");
         Button addTeams = new Button("Add a team match");
+        Button cancel = new Button("Cancel");
+        Button saveMatch = new Button("Save match");
+        saveMatch.setOnAction(event -> {
+           saveButtonClicked();
+        });
+
 
         Label labelGame = new Label("Game: ");
         Label labelPOrTOne = new Label(pOrT + " one: ");
@@ -90,12 +107,15 @@ registrerar resultatet.
         });
 
         DatePicker datePicker = new DatePicker();                                   // ??? ----------------------
+        datePicker.setPromptText("Date is required");
         datePicker.setOnAction(new EventHandler() {
             public void handle(Event t) {
                 LocalDate date = datePicker.getValue();
                 System.err.println("Selected date: " + date);
             }
         });
+
+
 
 
 
@@ -148,6 +168,10 @@ registrerar resultatet.
         comboBoxWinner.setLayoutY(300);
         comboBoxMvp.setLayoutX(400);
         comboBoxMvp.setLayoutY(300);
+        cancel.setLayoutX(300);
+        cancel.setLayoutY(420);
+        saveMatch.setLayoutX(380);
+        saveMatch.setLayoutY(420);
 
 
 
@@ -156,58 +180,66 @@ registrerar resultatet.
                 labelDate, labelTime, labelUpcoming, labelWinner, labelMvp,
                 labelPOrTOne,labelPOrTwo,labelPOrTOneName,labelPOrTTwoName, labelGame,
                 comboBoxGame,comboBoxPOrT1,comboBoxPOrT2,comboBoxWinner,comboBoxMvp,
-                datePicker);
+                datePicker,cancel, saveMatch);
 
         //----Show Matches----
+
         AnchorPane paneShow = new AnchorPane();
         paneShow.setPrefSize(550, 600);
 
-        //----TableView----
+                //----TableView----
 
 
-        TableView<TestMatch> table = new TableView<TestMatch>();
+        TableView<TestMatch> table = new TableView<>();
         ObservableList<TestMatch> data = FXCollections.observableArrayList(
-                new TestMatch("idag", "tetris", "blåa", "röda", true, "blåa"),
-                new TestMatch("igår", "WoW", "gröna", "röda", true, "röda"),
-                new TestMatch("imorgon", "CoD", "blåa", "gröna", false, null),
+                new TestMatch("2024-11-12", "tetris", "Team", "röda", true, "blåa"),
+                new TestMatch("igår", "WoW", "Single", "röda", true, "röda"),
+                 new TestMatch("imorgon", "CoD", "blåa", "gröna", false, null),
                 new TestMatch("idag", "halo", "röda", "lila", true, "lila")
         );
 
 
         table.setEditable(false);
+        table.setPrefWidth(530);
 
-        TableColumn dateCol = new TableColumn("Date");
+        TableColumn<TestMatch,String> dateCol = new TableColumn<>("Date");
+        dateCol.setPrefWidth(70);
         dateCol.setCellValueFactory(
-                new PropertyValueFactory<TestMatch,String>("date")
+                new PropertyValueFactory<>("date")
         );
-        TableColumn gameCol = new TableColumn("Game");
+        TableColumn<TestMatch,String> gameCol = new TableColumn<>("Game");
+        gameCol.setPrefWidth(90);
         gameCol.setCellValueFactory(
-                new PropertyValueFactory<TestMatch,String>("game")
+                new PropertyValueFactory<>("game")
         );
-*//*   TableColumn pOrTCol = new TableColumn("Team/\n Singel");
+        TableColumn<TestMatch,String> pOrTCol = new TableColumn<>("Team/\n Singel");
+        pOrTCol.setPrefWidth(50);
         pOrTCol.setCellValueFactory(
-                new PropertyValueFactory<TestMatch,String>("team1")
-        );*//*
-
-        TableColumn pOrTOneCol = new TableColumn("Participant 1");
+                new PropertyValueFactory<>("team1")
+        );
+        TableColumn<TestMatch,String> pOrTOneCol = new TableColumn<>("Participant 1");
+        pOrTOneCol.setPrefWidth(80);
         pOrTOneCol.setCellValueFactory(
-                new PropertyValueFactory<TestMatch,String>("team1")
+                new PropertyValueFactory<>("team1")
         );
-        TableColumn pOrTTwoCol = new TableColumn("Participant 2");
+        TableColumn<TestMatch,String> pOrTTwoCol = new TableColumn<>("Participant 2");
+        pOrTTwoCol.setPrefWidth(80);
         pOrTTwoCol.setCellValueFactory(
-                new PropertyValueFactory<TestMatch,String>("team2")
+                new PropertyValueFactory<>("team2")
         );
-        TableColumn decidedCol = new TableColumn("Decided");
+        TableColumn<TestMatch,String> decidedCol = new TableColumn<>("Decided");
+        decidedCol.setPrefWidth(80);
         decidedCol.setCellValueFactory(
-                new PropertyValueFactory<TestMatch,String>("played")
+                new PropertyValueFactory<>("played")
         );
-        TableColumn winnerCol = new TableColumn("Winner");
+        TableColumn<TestMatch,String> winnerCol = new TableColumn<>("Winner");
+        winnerCol.setPrefWidth(80);
         winnerCol.setCellValueFactory(
-                new PropertyValueFactory<TestMatch,String>("winner")
+                new PropertyValueFactory<>("winner")
         );
 
         table.setItems(data);
-        table.getColumns().addAll(dateCol, gameCol, pOrTOneCol, pOrTTwoCol, decidedCol, winnerCol);
+        table.getColumns().addAll(dateCol, gameCol, pOrTCol, pOrTOneCol, pOrTTwoCol, decidedCol, winnerCol);
 
 
 
@@ -218,52 +250,65 @@ registrerar resultatet.
 
         HBox hBox = new HBox();
         VBox vbox = new VBox();
-        Button buttonAll = new Button("See all matches");
-        Button buttonUpcoming = new Button("See all upcoming matches");
-        Button buttonOld = new Button("See played matches");
         Button buttonNew = new Button("Add a new match");
+        buttonNew.setOnAction(event -> {
+            deleteButtonClicked();
+            table.getSelectionModel().clearSelection();
+            table.getSelectionModel().getSelectedItems();
+            table.getSelectionModel().getSelectedCells().clear();
 
-        CheckBox checkUpp = new CheckBox("Show upcoming matches");
-        CheckBox checkDone = new CheckBox("Show finished matches");
-        CheckBox checkPlayers = new CheckBox("Show PvP matches");
-        CheckBox checkTeams = new CheckBox("Show team matches");
+        });
 
-        vbox.getChildren().addAll(buttonNew,checkUpp, checkDone, checkPlayers, checkTeams);
-        hBox.getChildren().addAll(table, vbox);*/
-        final Label label = new Label("Address Book");
-        label.setFont(new Font("Arial", 20));
+        Button buttonDelete = new Button("Delete match");
+        Button buttonEdit = new Button("Edit/see details of match");
+        buttonEdit.setDisable(true);
+        //buttonDelete.setDisable(true);
 
-        TableView<TestMatch> table = new TableView<TestMatch>();
-        table.setEditable(false);
-        ObservableList<TestMatch> data =
-                FXCollections.observableArrayList(
-                        new TestMatch("idag", "tetris", "blåa", "röda", true, "blåa"),
-                        new TestMatch("igår", "WoW", "gröna", "röda", true, "röda"),
-                        new TestMatch("imorgon", "CoD", "blåa", "gröna", false, null),
-                        new TestMatch("idag", "halo", "röda", "lila", true, "lila")
-                );
-        TableColumn firstNameCol = new TableColumn("First Name");
-        firstNameCol.setMinWidth(100);
-        firstNameCol.setCellValueFactory(
-                new PropertyValueFactory<TestMatch, String>("date"));
 
-        TableColumn lastNameCol = new TableColumn("Last Name");
-        lastNameCol.setMinWidth(100);
-        lastNameCol.setCellValueFactory(
-                new PropertyValueFactory<TestMatch, String>("game"));
 
-        TableColumn emailCol = new TableColumn("t");
-        emailCol.setMinWidth(200);
-        emailCol.setCellValueFactory(
-                new PropertyValueFactory<TestMatch, String>("team1"));
 
-        table.setItems(data);
-        table.getColumns().addAll(firstNameCol, lastNameCol, emailCol);
+        ToggleGroup togglePorT = new ToggleGroup();
 
-        VBox vbox = new VBox();
-        vbox.setSpacing(5);
-        vbox.setPadding(new Insets(10, 0, 0, 10));
-        vbox.getChildren().addAll(label, table);
+        RadioButton r1 = new RadioButton("Show both upcoming and finished matches");
+        RadioButton r2 = new RadioButton("Show only upcoming matches");
+        RadioButton r3 = new RadioButton("Show only finished matches");
+
+        r1.setToggleGroup(togglePorT);
+        r2.setToggleGroup(togglePorT);
+        r3.setToggleGroup(togglePorT);
+        togglePorT.selectToggle(r1);
+
+        VBox r = new VBox();
+        r.setSpacing(10);
+        r.getChildren().add(r1);
+        r.getChildren().add(r2);
+        r.getChildren().add(r3);
+
+        VBox buttons = new VBox();
+        buttons.setSpacing(10);
+        buttons.getChildren().addAll(buttonNew, buttonEdit, buttonDelete);
+        hBox.setSpacing(20);
+        vbox.setSpacing(10);
+        hBox.getChildren().addAll(r,buttons);
+        vbox.getChildren().addAll(table, hBox);
+        vbox.setPadding(new Insets(10, 10, 10, 10));
+
+    /*    togglePorT.selectedToggleProperty().addListener(new ChangeListener<Toggle>()
+        {
+            public void changed(ObservableValue<? extends Toggle> ob,
+                                Toggle o, Toggle n)
+            {
+
+                RadioButton rb = (RadioButton)togglePorT.getSelectedToggle();
+
+                if (rb != null) {
+                    String s = rb.getText();
+
+                    // change the label
+                    //l2.setText(s + " selected");
+                }
+            }
+        });*/
 
 
 
@@ -271,6 +316,25 @@ registrerar resultatet.
 
 
         return paneShow;
+
+    }
+
+
+    public void saveButtonClicked(){
+        TestMatch testMatch = new TestMatch();
+        testMatch.setDate("new Date");
+        testMatch.setGame("Single");
+        testMatch.setTeam1("ettan");
+        testMatch.setTeam2("tvåan");
+        testMatch.setPlayed(true);
+        testMatch.setWinner("ettan");
+        //datepicker.clear();
+
+    }
+
+    public void deleteButtonClicked(){
+
+
     }
 
 }

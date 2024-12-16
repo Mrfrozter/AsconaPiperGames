@@ -8,6 +8,9 @@ public class TestMatch {
     private boolean played;
     private String winner;
 
+    public TestMatch() {
+    }
+
     public TestMatch(String date, String game, String team1, String team2, boolean played, String winner) {
         this.date = date;
         this.game = game;

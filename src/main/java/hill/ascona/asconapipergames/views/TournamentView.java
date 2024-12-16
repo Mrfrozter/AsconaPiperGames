@@ -9,6 +9,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -17,18 +18,27 @@ import java.util.List;
 
 public class TournamentView {
     private ObservableList<Tournament> tournaments = FXCollections.observableList(new ArrayList<>());
-        TournamentDAO tDao = new TournamentDAO();
+    TournamentDAO tDao = new TournamentDAO();
+    VBox baseContent;
 
     public VBox start() {
-        VBox content = new VBox();
+        baseContent = new VBox();
+        baseContent.setSpacing(5);
+        baseContent.getStylesheets().add("tmnt.css");
         Label btn = new Label("New tournament");
+        btn.getStyleClass().add("btn");
+        btn.setId("addBtn");
+//        tDao.saveTM(new Tournament(new GameDAO().getByName("Halo 3"), "2009-02-15"));
         tournaments = FXCollections.observableList(tDao.getAllTournaments());
-        content.getChildren().addAll(logView(200), btn);
-//        content.getChildren().add(btn);
+        baseContent.getChildren().addAll(btn, tabView());
+//        baseContent.getChildren().addAll(btn, logView());
+
         btn.setOnMouseClicked((e) -> {
-            content.getChildren().add(newTour());
+            VBox nT = newTour();
+            baseContent.getChildren().add(1, nT);
         });
-        return content;
+        baseContent.setId("basePane");
+        return baseContent;
     }
 
     public VBox newTour() {
@@ -46,8 +56,10 @@ public class TournamentView {
         add.setOnMouseClicked((e) -> {
             Game game = dao.getByName(choiceBox.getValue().toString());
             String date = dp.getValue().toString();
-            new TournamentDAO().saveTM(new Tournament(game, date));
-            tournaments.add(tDao.getTmById(tDao.getAllTournaments().size()));
+            tDao.saveTM(new Tournament(game, date));
+            tournaments.clear();
+            tournaments.addAll(tDao.getAllTournaments());
+            baseContent.getChildren().remove(1);
         });
 
         choiceBox.setValue(games.get(0).getName());
@@ -56,13 +68,45 @@ public class TournamentView {
         return content;
     }
 
-    public VBox logView(int height) {
+    private TableView tabView() {
+        TableView table = new TableView();
+
+        TableColumn<Tournament, Integer> id = new TableColumn<>("id");
+        id.setCellValueFactory(new PropertyValueFactory<>("id"));
+        TableColumn<Tournament, Game> game = new TableColumn<>("game");
+        game.setCellValueFactory(new PropertyValueFactory<>("game"));
+        TableColumn<Tournament, String> date = new TableColumn<>("date");
+        date.setCellValueFactory(new PropertyValueFactory<>("date"));
+
+        table.getColumns().addAll(id, date, game);
+
+        table.setItems(tournaments);
+//        table.setId("tableView");
+        table.setRowFactory(e -> {
+            TableRow<Tournament> row = new TableRow<>();
+            row.setOnMouseClicked((m) -> {
+                if(!row.isEmpty())
+                    tournaments.remove(row.getItem());
+//                    System.out.println(row.getItem().getGame().getName());
+            });
+            return row;
+        });
+        tournaments.addListener(new ListChangeListener<Tournament>() {
+            @Override
+            public void onChanged(Change<? extends Tournament> change) {
+                table.setItems(change.getList());
+            }
+        });
+        return table;
+    }
+
+    public VBox logView() {
 
         VBox content = new VBox();
         ScrollPane scrollPane = new ScrollPane();
         VBox logBox = new VBox();
-        logBox.setPrefHeight(height);
-        logBox.setPrefWidth(300);
+//        logBox.setPrefHeight(height);
+//        logBox.setPrefWidth(300);
         content.setId("listBox");
         content.setPadding(new Insets(15));
         int i = 0;
@@ -85,7 +129,7 @@ public class TournamentView {
         return content;
     }
 
-    private HBox rowBox(Tournament tmnt){
+    private HBox rowBox(Tournament tmnt) {
         Label idLab = new Label(tmnt.getId() + "");
         Label gmeLab = new Label(tmnt.getGame() != null ? tmnt.getGame().getName() : "null");
         Label datLab = new Label(tmnt.getDate());

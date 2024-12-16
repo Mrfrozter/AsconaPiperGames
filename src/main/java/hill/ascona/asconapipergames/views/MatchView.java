@@ -1,6 +1,8 @@
 package hill.ascona.asconapipergames.views;
 
+import hill.ascona.asconapipergames.entities.Match;
 import hill.ascona.asconapipergames.entities.TestMatch;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -8,6 +10,7 @@ import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
@@ -15,6 +18,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.stage.Stage;
 
 import java.time.LocalDate;
 
@@ -30,32 +34,27 @@ att lista samtliga matcher, endast avgjorda och endast kommande matcher.
 registrerar resultatet.
 • */
 
-    public AnchorPane start() {
-
+    public void addMatch(){
         //----Add Matches-----
         Boolean team = false;
         Boolean upcoming = true;
-        String pOrT = "Team";
+        String pOrT = "Player";
 
         AnchorPane paneAdd = new AnchorPane();
 
         String date = "";
+        paneAdd.setPrefSize(280, 450);
 
-
-
-        paneAdd.setPrefSize(550, 600);
-        Button buttonShow = new Button("Show matches");
-//        buttonShow.setOnAction(e -> {
-//
-//        })
-
+        Label nowShowing = new Label("ADD A TEAM MATCH");
+        nowShowing.setFont(new Font("Arial bold", 12));
 
         Button addSingel = new Button("Add a player match");
         Button addTeams = new Button("Add a team match");
         Button cancel = new Button("Cancel");
+
         Button saveMatch = new Button("Save match");
         saveMatch.setOnAction(event -> {
-           saveButtonClicked();
+            saveButtonClicked();
         });
 
 
@@ -71,39 +70,42 @@ registrerar resultatet.
         Label labelPOrTOneName = new Label("Show p1 name: ");
         Label labelPOrTTwoName = new Label("Show p2 name: ");
 
+        CheckBox checkBox = new CheckBox();
+        checkBox.setSelected(true);
+
         ComboBox<String> comboBoxGame =new ComboBox<>();
         comboBoxGame.setPromptText("Choose game");
         comboBoxGame.getItems().addAll("ADD GAMESLIST HERE", "Medium", "Hard"); // TODO ----------------------
         comboBoxGame.setOnAction(e ->{
-                                                                                     // TODO ----------------------
+            // TODO ----------------------
         });
 
         ComboBox<String> comboBoxPOrT1 =new ComboBox<>();
         comboBoxPOrT1.setPromptText("Choose first player/team");                       // TODO ----------------------
         comboBoxPOrT1.getItems().addAll("ADD Players/teams HERE", "Medium");    // TODO ----------------------
         comboBoxPOrT1.setOnAction(e ->{
-                                                                                    // TODO ----------------------
+            // TODO ----------------------
         });
 
         ComboBox<String> comboBoxPOrT2 =new ComboBox<>();
         comboBoxPOrT2.setPromptText("Choose second player/team");                   // TODO ----------------------
         comboBoxPOrT2.getItems().addAll("ADD Players/teams HERE", "Medium"); // TODO ----------------------
         comboBoxPOrT2.setOnAction(e ->{
-                                                                                    // TODO ----------------------
+            // TODO ----------------------
         });
 
         ComboBox<String> comboBoxWinner =new ComboBox<>();
         comboBoxWinner.setPromptText("Enter winner");                              // TODO ----------------------
         comboBoxWinner.getItems().addAll("ADD Players/teams HERE", "Medium"); // TODO ----------------------
         comboBoxWinner.setOnAction(e ->{
-                                                                                     // TODO ----------------------
+            // TODO ----------------------
         });
 
         ComboBox<String> comboBoxMvp =new ComboBox<>();
         comboBoxMvp.setPromptText("Choose MVP");                                      // TODO ----------------------
         comboBoxMvp.getItems().addAll("ADD Players HERE", "Medium");             // TODO ----------------------
         comboBoxMvp.setOnAction(e ->{
-                                                                                   // TODO ----------------------
+            // TODO ----------------------
         });
 
         DatePicker datePicker = new DatePicker();                                   // ??? ----------------------
@@ -115,72 +117,78 @@ registrerar resultatet.
             }
         });
 
-
-
-
-
         //---- Layout
 
-        buttonShow.setLayoutX(10);
-        buttonShow.setLayoutY(10);
+        nowShowing.setLayoutX(20);
+        nowShowing.setLayoutY(20);
 
-        addTeams.setLayoutX(40);
-        addTeams.setLayoutY(50);
+        addSingel.setLayoutX(380);
+        addSingel.setLayoutY(15);
 
-        addSingel.setLayoutX(300);
-        addSingel.setLayoutY(50);
+        labelGame.setLayoutX(20);
+        labelGame.setLayoutY(45);
+        labelPOrTOne.setLayoutX(20);
+        labelPOrTOne.setLayoutY(85);
+        labelDate.setLayoutX(20);
+        labelDate.setLayoutY(125);
+        labelWinner.setLayoutX(20);
+        labelWinner.setLayoutY(185);
+        labelScore.setLayoutX(20);
+        labelScore.setLayoutY(225);
 
-        labelGame.setLayoutX(40);
-        labelGame.setLayoutY(100);
-        labelScore.setLayoutX(300);
-        labelScore.setLayoutY(50);
-        labelDate.setLayoutX(40);
-        labelDate.setLayoutY(200);
-        labelTime.setLayoutX(300);
-        labelTime.setLayoutY(200);
-        labelUpcoming.setLayoutX(40);
-        labelUpcoming.setLayoutY(250);
-        labelWinner.setLayoutX(40);
-        labelWinner.setLayoutY(300);
-        labelMvp.setLayoutX(300);
-        labelMvp.setLayoutY(300);
-        labelScore.setLayoutX(40);
-        labelScore.setLayoutY(350);
-        labelPOrTOne.setLayoutX(40);
-        labelPOrTOne.setLayoutY(150);
-        labelPOrTwo.setLayoutX(300);
-        labelPOrTwo.setLayoutY(150);
-        labelPOrTOneName.setLayoutX(40);
-        labelPOrTOneName.setLayoutY(380);
-        labelPOrTTwoName.setLayoutX(300);
-        labelPOrTTwoName.setLayoutY(380);
+        comboBoxGame.setLayoutX(80);
+        comboBoxGame.setLayoutY(45);
+        comboBoxPOrT1.setLayoutX(80);
+        comboBoxPOrT1.setLayoutY(85);
+        datePicker.setLayoutX(80);
+        datePicker.setLayoutY(125);
+        comboBoxWinner.setLayoutX(80);
+        comboBoxWinner.setLayoutY(185);
+        labelPOrTOneName.setLayoutX(80);
+        labelPOrTOneName.setLayoutY(225);
 
-        datePicker.setLayoutX(140);
-        datePicker.setLayoutY(200);
+        labelUpcoming.setLayoutX(270);
+        labelUpcoming.setLayoutY(45);
+        labelPOrTwo.setLayoutX(270);
+        labelPOrTwo.setLayoutY(85);
+        labelTime.setLayoutX(270);
+        labelTime.setLayoutY(125);
+        labelMvp.setLayoutX(270);
+        labelMvp.setLayoutY(185);
+        labelPOrTTwoName.setLayoutX(270);
+        labelPOrTTwoName.setLayoutY(225);
+        cancel.setLayoutX(270);
+        cancel.setLayoutY(255);
 
-        comboBoxGame.setLayoutX(140);
-        comboBoxGame.setLayoutY(100);
-        comboBoxPOrT1.setLayoutX(140);
-        comboBoxPOrT1.setLayoutY(150);
-        comboBoxPOrT2.setLayoutX(400);
-        comboBoxPOrT2.setLayoutY(150);
-        comboBoxWinner.setLayoutX(140);
-        comboBoxWinner.setLayoutY(300);
-        comboBoxMvp.setLayoutX(400);
-        comboBoxMvp.setLayoutY(300);
-        cancel.setLayoutX(300);
-        cancel.setLayoutY(420);
-        saveMatch.setLayoutX(380);
-        saveMatch.setLayoutY(420);
+        checkBox.setLayoutX(340);
+        checkBox.setLayoutY(45);
+        comboBoxPOrT2.setLayoutX(330);
+        comboBoxPOrT2.setLayoutY(85);
+        comboBoxMvp.setLayoutX(330);
+        comboBoxMvp.setLayoutY(185);
+        saveMatch.setLayoutX(340);
+        saveMatch.setLayoutY(255);
 
 
-
-
-        paneAdd.getChildren().addAll(buttonShow, addSingel, addTeams, labelScore,
-                labelDate, labelTime, labelUpcoming, labelWinner, labelMvp,
-                labelPOrTOne,labelPOrTwo,labelPOrTOneName,labelPOrTTwoName, labelGame,
+        paneAdd.getChildren().addAll(checkBox, labelGame, labelPOrTOne,labelDate, labelWinner,addSingel, nowShowing, labelScore,
+                labelTime, labelUpcoming,  labelMvp,
+                labelPOrTwo,labelPOrTOneName,labelPOrTTwoName,
                 comboBoxGame,comboBoxPOrT1,comboBoxPOrT2,comboBoxWinner,comboBoxMvp,
                 datePicker,cancel, saveMatch);
+
+        Scene scene2 = new Scene(paneAdd);
+        Stage stage2 = new Stage();
+        stage2.setScene(scene2);
+        stage2.show();
+        cancel.setOnAction( event ->{
+                stage2.close();
+                }
+        );
+
+    }
+
+
+    public AnchorPane start() {
 
         //----Show Matches----
 
@@ -190,58 +198,64 @@ registrerar resultatet.
                 //----TableView----
 
 
-        TableView<TestMatch> table = new TableView<>();
-        ObservableList<TestMatch> data = FXCollections.observableArrayList(
+   /*     TableView<TestMatch> tableTest = new TableView<>();
+        ObservableList<TestMatch> data2 = FXCollections.observableArrayList(
                 new TestMatch("2024-11-12", "tetris", "Team", "röda", true, "blåa"),
                 new TestMatch("igår", "WoW", "Single", "röda", true, "röda"),
                  new TestMatch("imorgon", "CoD", "blåa", "gröna", false, null),
                 new TestMatch("idag", "halo", "röda", "lila", true, "lila")
+        );*/
+
+        TableView<Match> table = new TableView<>();
+        ObservableList<Match> data = FXCollections.observableArrayList(
+                new Match(true, true, 5, 3, "test", "green"),
+                new Match(true, true, 7, 3, "yeyn", "red"),
+                new Match(true, false, 9, 3, "tb twest", "lila"),
+                new Match(true, false, 2, 3, "tesssett", "blue")
         );
 
 
         table.setEditable(false);
         table.setPrefWidth(530);
 
-        TableColumn<TestMatch,String> dateCol = new TableColumn<>("Date");
+        TableColumn<Match,String> dateCol = new TableColumn<>("Date");
         dateCol.setPrefWidth(70);
         dateCol.setCellValueFactory(
                 new PropertyValueFactory<>("date")
         );
-        TableColumn<TestMatch,String> gameCol = new TableColumn<>("Game");
+        TableColumn<Match,String> gameCol = new TableColumn<>("Game");
         gameCol.setPrefWidth(90);
         gameCol.setCellValueFactory(
-                new PropertyValueFactory<>("game")
+                new PropertyValueFactory<>("game_id")
         );
-        TableColumn<TestMatch,String> pOrTCol = new TableColumn<>("Team/\n Singel");
+        TableColumn<Match,String> pOrTCol = new TableColumn<>("Team/\n Singel");
         pOrTCol.setPrefWidth(50);
         pOrTCol.setCellValueFactory(
-                new PropertyValueFactory<>("team1")
+                new PropertyValueFactory<>("singelNotTeam")
         );
-        TableColumn<TestMatch,String> pOrTOneCol = new TableColumn<>("Participant 1");
+        TableColumn<Match,String> pOrTOneCol = new TableColumn<>("Participant 1");
         pOrTOneCol.setPrefWidth(80);
         pOrTOneCol.setCellValueFactory(
-                new PropertyValueFactory<>("team1")
+                new PropertyValueFactory<>("p_name_one")
         );
-        TableColumn<TestMatch,String> pOrTTwoCol = new TableColumn<>("Participant 2");
+        TableColumn<Match,String> pOrTTwoCol = new TableColumn<>("Participant 2");
         pOrTTwoCol.setPrefWidth(80);
         pOrTTwoCol.setCellValueFactory(
-                new PropertyValueFactory<>("team2")
+                new PropertyValueFactory<>("p_name_two")
         );
-        TableColumn<TestMatch,String> decidedCol = new TableColumn<>("Decided");
+        TableColumn<Match,String> decidedCol = new TableColumn<>("Played?");
         decidedCol.setPrefWidth(80);
         decidedCol.setCellValueFactory(
-                new PropertyValueFactory<>("played")
+                new PropertyValueFactory<>("allreadyPlayed")
         );
-        TableColumn<TestMatch,String> winnerCol = new TableColumn<>("Winner");
+        TableColumn<Match,String> winnerCol = new TableColumn<>("Winner");
         winnerCol.setPrefWidth(80);
         winnerCol.setCellValueFactory(
-                new PropertyValueFactory<>("winner")
+                new PropertyValueFactory<>("winner_id")
         );
 
         table.setItems(data);
         table.getColumns().addAll(dateCol, gameCol, pOrTCol, pOrTOneCol, pOrTTwoCol, decidedCol, winnerCol);
-
-
 
 
         //----End TableView----
@@ -252,20 +266,23 @@ registrerar resultatet.
         VBox vbox = new VBox();
         Button buttonNew = new Button("Add a new match");
         buttonNew.setOnAction(event -> {
-            deleteButtonClicked();
-            table.getSelectionModel().clearSelection();
+                addMatch();
+    /*        table.getSelectionModel().clearSelection();
             table.getSelectionModel().getSelectedItems();
-            table.getSelectionModel().getSelectedCells().clear();
-
+            table.getSelectionModel().getSelectedCells().clear();*/
         });
 
         Button buttonDelete = new Button("Delete match");
+        //buttonDelete.setDisable(true);
+        buttonDelete.setOnAction(event -> {
+            data.remove(table.getSelectionModel().getSelectedItem());
+        });
+
         Button buttonEdit = new Button("Edit/see details of match");
         buttonEdit.setDisable(true);
-        //buttonDelete.setDisable(true);
+        buttonEdit.setOnAction(event -> {
 
-
-
+        });
 
         ToggleGroup togglePorT = new ToggleGroup();
 
@@ -293,6 +310,8 @@ registrerar resultatet.
         vbox.getChildren().addAll(table, hBox);
         vbox.setPadding(new Insets(10, 10, 10, 10));
 
+        //table.getSelectionModel().getSelectedCells().addListener((v, oldValue, newValue)->buttonDelete.setDisable(false); );
+
     /*    togglePorT.selectedToggleProperty().addListener(new ChangeListener<Toggle>()
         {
             public void changed(ObservableValue<? extends Toggle> ob,
@@ -310,12 +329,10 @@ registrerar resultatet.
             }
         });*/
 
-
-
         paneShow.getChildren().add(vbox);
 
 
-        return paneAdd;
+        return paneShow;
 
     }
 
@@ -336,5 +353,7 @@ registrerar resultatet.
 
 
     }
+
+
 
 }

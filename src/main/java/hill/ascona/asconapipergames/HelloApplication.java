@@ -1,5 +1,7 @@
 package hill.ascona.asconapipergames;
 
+import hill.ascona.asconapipergames.DAO.MatchDAO;
+import hill.ascona.asconapipergames.entities.Match;
 import hill.ascona.asconapipergames.views.MatchView;
 import hill.ascona.asconapipergames.views.TournamentView;
 import javafx.application.Application;
@@ -23,7 +25,7 @@ public class HelloApplication extends Application {
 
         Logger.getLogger("org.hibernate").setLevel(Level.OFF);
 
-        /*PersonDAO personDAO = new PersonDAO();
+        PersonDAO personDAO = new PersonDAO();
         Person user = new Person("Elham","Farhang"," ","Vallentuna",123,"Stockholm","Sverige","elham@mail","spelare",1);
         if (personDAO.addPerson(user)){
             System.out.println("User saved!");
@@ -35,14 +37,15 @@ public class HelloApplication extends Application {
         System.out.println("Hämtad från db med namn: " + personFromDatabase.getName());
 
         System.out.println("Storlek på listan med personer är "+ personDAO.getAllPersonsInfo().size());
-*/
+
         AnchorPane loginAnchorPane=new AnchorPane();
         loginAnchorPane.setPrefSize(600,600);
 
-        MatchView matchView=new MatchView();
-        TournamentView tournamentView=new TournamentView();
-        Scene loginScene=new Scene(matchView.start());
-        //Scene loginScene=new Scene(tournamentView.start());
+        MatchDAO matchDAO = new MatchDAO();
+        Match match = new Match();
+
+
+        Scene loginScene=new Scene(new MatchView().start());
         //Scene loginScene=new Scene(loginAnchorPane);
         primaryStage.setScene(loginScene);
 
@@ -117,12 +120,12 @@ public class HelloApplication extends Application {
 
         anchorPane1.getChildren().addAll(comboBoxShowTable,separator1,showButton,textArea);
 
-        MatchView matchView=new MatchView();
+
 
         Tab tab1 = new Tab("Spelare", anchorPane1);
         Tab tab2 = new Tab("Lag", new Label("Show teams"));
         Tab tab3 = new Tab("Spel", new Label("Show games"));
-        Tab tab4 = new Tab("Matcher", matchView.start());
+        Tab tab4 = new Tab("Matcher", new MatchView().start());
         Tab tab5 = new Tab("Turnering", new Label("Show tournament"));
 
         tabPane.getTabs().add(tab1);

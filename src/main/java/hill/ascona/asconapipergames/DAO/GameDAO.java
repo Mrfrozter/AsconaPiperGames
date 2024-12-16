@@ -1,20 +1,16 @@
 package hill.ascona.asconapipergames.DAO;
 
-import jakarta.persistence.*;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
 import hill.ascona.asconapipergames.entities.Game;
+import jakarta.persistence.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 public class GameDAO {
-    // EntityManagerFactory för att hantera databasen
+    // Skapa en EntityManagerFactory för att hantera databasanslutningar
     private static final EntityManagerFactory ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("myconfig");
 
-    // Create
+    // Skapa (Create)
     public boolean saveGame(Game game) {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
@@ -26,7 +22,7 @@ public class GameDAO {
             return true;
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            if (entityManager != null && transaction != null && transaction.isActive()) {
+            if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }
             return false;
@@ -35,36 +31,55 @@ public class GameDAO {
         }
     }
 
-    // Read One
+    // Läs (Read) ett spel baserat på ID
     public Game getGameById(int id) {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
-        Game game = entityManager.find(Game.class, id);
-        entityManager.close();
-        return game;
+        try {
+            return entityManager.find(Game.class, id);
+        } finally {
+            entityManager.close();
+        }
     }
 
-    // Read All
+    // Läs (Read) alla spel
     public List<Game> getAllGames() {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
-        List<Game> games = new ArrayList<>();
-        TypedQuery<Game> query = entityManager.createQuery("FROM Game", Game.class);
-        games.addAll(query.getResultList());
-        entityManager.close();
-        return games;
+        try {
+            TypedQuery<Game> query = entityManager.createQuery("FROM Game", Game.class);
+            return query.getResultList();
+        } finally {
+            entityManager.close();
+        }
     }
 
-    // Update
+    // Läs (Read) ett spel baserat på titel
+    public Game getByName(String title) {
+        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+        try {
+            // JPQL-fråga för att hämta spelet baserat på titeln
+            TypedQuery<Game> query = entityManager.createQuery("SELECT g FROM Game g WHERE g.title = :title", Game.class);
+            query.setParameter("title", title);
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            // Returnera null om inget spel hittas
+            return null;
+        } finally {
+            entityManager.close();
+        }
+    }
+
+    // Uppdatera (Update) ett spel
     public void updateGame(Game gameToUpdate) {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            entityManager.persist(entityManager.contains(gameToUpdate) ? gameToUpdate : entityManager.merge(gameToUpdate));
+            entityManager.merge(gameToUpdate);
             transaction.commit();
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            if (entityManager != null && transaction != null && transaction.isActive()) {
+            if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }
         } finally {
@@ -72,7 +87,7 @@ public class GameDAO {
         }
     }
 
-    // Delete
+    // Ta bort (Delete) ett spel
     public void deleteGame(Game game) {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
@@ -86,7 +101,7 @@ public class GameDAO {
             transaction.commit();
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            if (entityManager != null && transaction != null && transaction.isActive()) {
+            if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }
         } finally {
@@ -94,7 +109,7 @@ public class GameDAO {
         }
     }
 
-    // Delete By ID
+    // Ta bort (Delete) ett spel baserat på ID
     public boolean deleteGameById(int id) {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
@@ -103,14 +118,14 @@ public class GameDAO {
             transaction.begin();
             Game gameToDelete = entityManager.find(Game.class, id);
             if (gameToDelete != null) {
-                entityManager.remove(entityManager.contains(gameToDelete) ? gameToDelete : entityManager.merge(gameToDelete));
+                entityManager.remove(gameToDelete);
                 transaction.commit();
                 return true;
             }
             return false;
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            if (entityManager != null && transaction != null && transaction.isActive()) {
+            if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }
             return false;

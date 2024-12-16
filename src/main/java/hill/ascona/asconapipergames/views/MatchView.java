@@ -1,10 +1,6 @@
 package hill.ascona.asconapipergames.views;
 
 import hill.ascona.asconapipergames.entities.Match;
-import hill.ascona.asconapipergames.entities.TestMatch;
-import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
@@ -15,7 +11,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -338,13 +333,13 @@ registrerar resultatet.
 
 
     public void saveButtonClicked(){
-        TestMatch testMatch = new TestMatch();
+/*        TestMatch testMatch = new TestMatch();
         testMatch.setDate("new Date");
         testMatch.setGame("Single");
         testMatch.setTeam1("ettan");
         testMatch.setTeam2("tvåan");
         testMatch.setPlayed(true);
-        testMatch.setWinner("ettan");
+        testMatch.setWinner("ettan");*/
         //datepicker.clear();
 
     }

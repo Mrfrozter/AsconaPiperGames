@@ -315,7 +315,7 @@ registrerar resultatet.
         paneShow.getChildren().add(vbox);
 
 
-        return paneShow;
+        return paneAdd;
 
     }
 

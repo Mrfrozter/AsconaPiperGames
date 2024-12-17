@@ -1,15 +1,19 @@
 package hill.ascona.asconapipergames;
 
+import hill.ascona.asconapipergames.DAO.PersonDAO;
+import hill.ascona.asconapipergames.entities.Person;
 import hill.ascona.asconapipergames.views.PersonView;
-import hill.ascona.asconapipergames.views.TournamentView;
+//import hill.ascona.asconapipergames.views.TournamentView;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -43,7 +47,12 @@ public class HelloApplication extends Application {
         loginComboBox.setPromptText("Choose your name:");
         loginComboBox.setLayoutX(260);
         loginComboBox.setLayoutY(280);
-        loginComboBox.getItems().addAll("Richard Hendricks","Bertram Gilfoyle","Dinesh Chugtai");
+
+        PersonDAO personDAO = new PersonDAO();
+        List<Person> allUsers= personDAO.getAllUsersInfo();
+        for (Person i: allUsers){
+            loginComboBox.getItems().add(i.getName()+' '+i.getLastname());
+        }
         loginComboBox.setOnAction(e ->{
             loginButton.setDisable(false);
         });
@@ -64,13 +73,13 @@ public class HelloApplication extends Application {
         Tab tab2 = new Tab("Teams", new Label("Show teams"));
         Tab tab3 = new Tab("Games", new Label("Show games"));
         Tab tab4 = new Tab("Matches", new Label("Show matches"));
-        Tab tab5 = new Tab("Tournament", new TournamentView().start());
+//        Tab tab5 = new Tab("Tournament", new TournamentView().start());
 
         tabPane.getTabs().add(tab1);
         tabPane.getTabs().add(tab2);
         tabPane.getTabs().add(tab3);
         tabPane.getTabs().add(tab4);
-        tabPane.getTabs().add(tab5);
+//        tabPane.getTabs().add(tab5);
 
         AnchorPane mainAnchorPane = new AnchorPane(tabPane);
         return new Scene(mainAnchorPane);

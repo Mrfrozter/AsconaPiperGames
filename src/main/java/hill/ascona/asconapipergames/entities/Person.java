@@ -143,4 +143,20 @@ public class Person {
     public void setTeamID(String teamID) {
         this.teamID = teamID;
     }
+
+    @Override
+    public String toString() {
+        return
+                "id: " + id +
+                " " + name +
+                " " + lastname +
+                ", nickname: " + nickname +
+                ", address: " + address +
+                ", postNumber: " + postNumber +
+                ", city: " + city +
+                ", country: " + country +
+                ", email: " + email +
+                ", role: " + role +
+                ", teamID: " + teamID;
+    }
 }

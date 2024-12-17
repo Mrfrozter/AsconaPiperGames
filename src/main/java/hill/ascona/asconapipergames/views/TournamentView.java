@@ -65,7 +65,7 @@ public class TournamentView {
         GameDAO dao = new GameDAO();
         List<Game> games = dao.getAllGames();
         for (Game game : games) {
-            choiceBox.getItems().add(game.getName());
+            choiceBox.getItems().add(game.getTitle());
         }
         add.setOnMouseClicked((e) -> {
             Game game = dao.getByName(choiceBox.getValue().toString());
@@ -76,7 +76,7 @@ public class TournamentView {
             baseContent.getChildren().remove(1);
         });
 
-        choiceBox.setValue(games.get(0).getName());
+        choiceBox.setValue(games.get(0).getTitle());
         content.getChildren().addAll(title, dp, choiceBox, add);
 
         return content;

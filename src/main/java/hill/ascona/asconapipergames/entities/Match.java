@@ -12,77 +12,52 @@ public class Match {
     @Column(name = "match_id")
     private int id;
 
-    @Column(name = "turneringar_id")
-    private int turneringar_id;
+    @Column(name = "turneringar_id", nullable = true)
+    private int turneringarId;
 
-    @Column(name = "match_date", nullable = true)
-    private LocalDate date;
+    @Column(name = "match_date", length =20, nullable = true)
+    private String date;
 
-    @Column(name = "match_played", nullable = false)
-    private boolean allreadyPlayed;
+    @Column(name = "match_played", columnDefinition = "boolean default true", nullable = false)
+    private boolean allreadyPlayed = false;
 
-    @Column(name = "match_singel_team", nullable = false)
-    private boolean singelNotTeam;
+    @Column(name = "match_singel_team", columnDefinition = "boolean default true", nullable = false)
+    private boolean singelNotTeam = false;
 
     @Column(name = "match_game_id", nullable = true)
-    private int game_id;
+    private int gameId;
 
     @Column(name = "match_player1", nullable = true)
-    private int player1_id;
+    private int player1Id;
 
     @Column(name = "match_player2", nullable = true)
-    private int player2_id;
+    private int player2Id;
 
     @Column(name = "match_team1", nullable = true)
-    private int team1_id;
+    private int team1Id;
 
     @Column(name = "match_team2", nullable = true)
-    private int team2_id;
+    private int team2Id;
 
     @Column(name = "match_winner", nullable = true)
-    private int winner_id;
+    private int winnerId;
 
-    @Column(name = "part_one_name", length = 50, nullable = false)
-    private String p_name_one;
+    @Column(name = "part_one_name", length = 50, nullable = true)
+    private String nameOne;
 
-    @Column(name = "part_two_name", length = 50, nullable = false)
-    private String p_name_two;
-
-    public boolean isSingelNotTeam() {
-        return singelNotTeam;
-    }
-
-    public void setSingelNotTeam(boolean singelNotTeam) {
-        this.singelNotTeam = singelNotTeam;
-    }
+    @Column(name = "part_two_name", length = 50, nullable = true)
+    private String nameTwo;
 
     public Match() {
     }
 
-
-    public Match(boolean allreadyPlayed, boolean singelNotTeam,  int game_id, int winner_id, String p_name_one, String p_name_two) {
+    public Match( boolean allreadyPlayed, boolean singelNotTeam, int gameId,int winnerId, String nameOne, String nameTwo) {
         this.allreadyPlayed = allreadyPlayed;
         this.singelNotTeam = singelNotTeam;
-        this.game_id = game_id;
-        this.winner_id = winner_id;
-        this.p_name_one = p_name_one;
-        this.p_name_two = p_name_two;
-    }
-
-    public Match(int id, int turneringar_id, LocalDate date, boolean allreadyPlayed, boolean singelNotTeam, int game_id, int player1_id, int player2_id, int team1_id, int team2_id, int winner_id, String p_name_one, String p_name_two) {
-        this.id = id;
-        this.turneringar_id = turneringar_id;
-        this.date = date;
-        this.allreadyPlayed = allreadyPlayed;
-        this.singelNotTeam = singelNotTeam;
-        this.game_id = game_id;
-        this.player1_id = player1_id;
-        this.player2_id = player2_id;
-        this.team1_id = team1_id;
-        this.team2_id = team2_id;
-        this.winner_id = winner_id;
-        this.p_name_one = p_name_one;
-        this.p_name_two = p_name_two;
+        this.gameId = gameId;
+        this.winnerId = winnerId;
+        this.nameOne = nameOne;
+        this.nameTwo = nameTwo;
     }
 
     public int getId() {
@@ -93,27 +68,19 @@ public class Match {
         this.id = id;
     }
 
-    public int getWinner_id() {
-        return winner_id;
+    public int getTurneringarId() {
+        return turneringarId;
     }
 
-    public void setWinner_id(int winner_id) {
-        this.winner_id = winner_id;
+    public void setTurneringarId(int turneringarId) {
+        this.turneringarId = turneringarId;
     }
 
-    public int getTurneringar_id() {
-        return turneringar_id;
-    }
-
-    public void setTurneringar_id(int turneringar_id) {
-        this.turneringar_id = turneringar_id;
-    }
-
-    public LocalDate getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
@@ -125,60 +92,76 @@ public class Match {
         this.allreadyPlayed = allreadyPlayed;
     }
 
-    public int getPlayer1_id() {
-        return player1_id;
+    public boolean isSingelNotTeam() {
+        return singelNotTeam;
     }
 
-    public void setPlayer1_id(int player1_id) {
-        this.player1_id = player1_id;
+    public void setSingelNotTeam(boolean singelNotTeam) {
+        this.singelNotTeam = singelNotTeam;
     }
 
-    public int getPlayer2_id() {
-        return player2_id;
+    public int getGameId() {
+        return gameId;
     }
 
-    public void setPlayer2_id(int player2_id) {
-        this.player2_id = player2_id;
+    public void setGameId(int gameId) {
+        this.gameId = gameId;
     }
 
-    public int getTeam1_id() {
-        return team1_id;
+    public int getPlayer1Id() {
+        return player1Id;
     }
 
-    public void setTeam1_id(int team1_id) {
-        this.team1_id = team1_id;
+    public void setPlayer1Id(int player1Id) {
+        this.player1Id = player1Id;
     }
 
-    public int getTeam2_id() {
-        return team2_id;
+    public int getPlayer2Id() {
+        return player2Id;
     }
 
-    public void setTeam2_id(int team2_id) {
-        this.team2_id = team2_id;
+    public void setPlayer2Id(int player2Id) {
+        this.player2Id = player2Id;
     }
 
-    public int getGame_id() {
-        return game_id;
+    public int getTeam1Id() {
+        return team1Id;
     }
 
-    public void setGame_id(int game_id) {
-        this.game_id = game_id;
+    public void setTeam1Id(int team1Id) {
+        this.team1Id = team1Id;
     }
 
-    public String getP_name_one() {
-        return p_name_one;
+    public int getTeam2Id() {
+        return team2Id;
     }
 
-    public void setP_name_one(String p_name_one) {
-        this.p_name_one = p_name_one;
+    public void setTeam2Id(int team2Id) {
+        this.team2Id = team2Id;
     }
 
-    public String getP_name_two() {
-        return p_name_two;
+    public int getWinnerId() {
+        return winnerId;
     }
 
-    public void setP_name_two(String p_name_two) {
-        this.p_name_two = p_name_two;
+    public void setWinnerId(int winnerId) {
+        this.winnerId = winnerId;
+    }
+
+    public String getNameOne() {
+        return nameOne;
+    }
+
+    public void setNameOne(String nameOne) {
+        this.nameOne = nameOne;
+    }
+
+    public String getNameTwo() {
+        return nameTwo;
+    }
+
+    public void setNameTwo(String nameTwo) {
+        this.nameTwo = nameTwo;
     }
 }
 

@@ -1,5 +1,6 @@
 package hill.ascona.asconapipergames.views;
 
+import hill.ascona.asconapipergames.DAO.MatchDAO;
 import hill.ascona.asconapipergames.entities.Match;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -185,6 +186,9 @@ registrerar resultatet.
 
     public AnchorPane start() {
 
+
+        MatchDAO matchDAO = new MatchDAO();
+        matchDAO.saveMatch(new Match(true,false, 5, 4, "test", "green"));
         //----Show Matches----
 
         AnchorPane paneShow = new AnchorPane();
@@ -203,11 +207,11 @@ registrerar resultatet.
 
         TableView<Match> table = new TableView<>();
         ObservableList<Match> data = FXCollections.observableArrayList(
-                new Match(true, true, 5, 3, "test", "green"),
-                new Match(true, true, 7, 3, "yeyn", "red"),
-                new Match(true, false, 9, 3, "tb twest", "lila"),
-                new Match(true, false, 2, 3, "tesssett", "blue")
-        );
+               /* new Match(true,false, 5, 4, "test", "green"),
+                new Match(false,true, 7, 3, "yeyn", "red"),
+                new Match(false,true,9, 4, "tb twest", "lila"),
+                new Match(false,true,2, 3, "tesssett", "blue")
+        */);
 
 
         table.setEditable(false);
@@ -221,7 +225,7 @@ registrerar resultatet.
         TableColumn<Match,String> gameCol = new TableColumn<>("Game");
         gameCol.setPrefWidth(90);
         gameCol.setCellValueFactory(
-                new PropertyValueFactory<>("game_id")
+                new PropertyValueFactory<>("gameId")
         );
         TableColumn<Match,String> pOrTCol = new TableColumn<>("Team/\n Singel");
         pOrTCol.setPrefWidth(50);
@@ -231,12 +235,12 @@ registrerar resultatet.
         TableColumn<Match,String> pOrTOneCol = new TableColumn<>("Participant 1");
         pOrTOneCol.setPrefWidth(80);
         pOrTOneCol.setCellValueFactory(
-                new PropertyValueFactory<>("p_name_one")
+                new PropertyValueFactory<>("nameOne")
         );
         TableColumn<Match,String> pOrTTwoCol = new TableColumn<>("Participant 2");
         pOrTTwoCol.setPrefWidth(80);
         pOrTTwoCol.setCellValueFactory(
-                new PropertyValueFactory<>("p_name_two")
+                new PropertyValueFactory<>("nameTwo")
         );
         TableColumn<Match,String> decidedCol = new TableColumn<>("Played?");
         decidedCol.setPrefWidth(80);
@@ -246,7 +250,7 @@ registrerar resultatet.
         TableColumn<Match,String> winnerCol = new TableColumn<>("Winner");
         winnerCol.setPrefWidth(80);
         winnerCol.setCellValueFactory(
-                new PropertyValueFactory<>("winner_id")
+                new PropertyValueFactory<>("winnerId")
         );
 
         table.setItems(data);

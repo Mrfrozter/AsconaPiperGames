@@ -1,10 +1,9 @@
-INSERT INTO games(game_name) VALUES ('Halo 3');
-INSERT INTO games(game_name) VALUES ('Counter Strike 2');
-INSERT INTO games(game_name) VALUES ('Fortnite');
-INSERT INTO games(game_name) VALUES ('Dota 2');
-INSERT INTO games(game_name) VALUES ('LoL');
-INSERT INTO games(game_name) VALUES ('');
-INSERT INTO games(game_name) VALUES ('Valorant');
+INSERT INTO game(game_title, game_genre, game_numberOfTeams) VALUES ('Halo 3', 'FPS', 8);
+INSERT INTO game(game_title, game_genre, game_numberOfTeams) VALUES ('Counter Strike 2', 'FPS', 5);
+INSERT INTO game(game_title, game_genre, game_numberOfTeams) VALUES ('Fortnite', 'BR', 20);
+INSERT INTO game(game_title, game_genre, game_numberOfTeams) VALUES ('Dota 2', 'MOBA', 5);
+INSERT INTO game(game_title, game_genre, game_numberOfTeams) VALUES ('LoL', 'MOBA', 5);
+INSERT INTO game(game_title, game_genre, game_numberOfTeams) VALUES ('Valorant', 'FPS', 5);
 
 
 Insert into persons(p_name, p_lastname, p_nickname, p_address, p_postNumber, p_city, p_country, p_email, p_role, p_teamID) VALUES ('Richard','Hendricks','Rich','NY',123,'NY','Usa','Hendricks@mail','User','');

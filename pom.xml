@@ -61,6 +61,10 @@
                 <directory>src/main/resources/css</directory>
                 <filtering>false</filtering>
             </resource>
+            <resource>
+                <directory>src/main/resources/icons</directory>
+                <filtering>false</filtering>
+            </resource>
         </resources>
         <plugins>
             <plugin>

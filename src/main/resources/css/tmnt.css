@@ -1,18 +1,17 @@
 #basePane{
-	-fx-background-color:#383A40;
+/*	-fx-background-color:#383A40;*/
 	-fx-margin:10%;
 	-fx-padding:5px;
 }
 .txt{
 	-fx-font-size:12;
-	-fx-text-fill:white;
+/*	-fx-text-fill:white;*/
 }
 #log{
 	-fx-font-size:18;
 }
 #listBox{
-	-fx-background-color:#272727;
-/*	-fx-background-radius:0 0 15 15;*/
+/*	-fx-background-color:#272727;*/
 	-fx-background-radius:15;
 }
 .scroll-pane{
@@ -36,18 +35,13 @@
 }
 .btn {
 	-fx-padding:5px;
-/*	-fx-font-size:25px;*/
 	-fx-background-radius:5px;
-	-fx-text-fill:white;
-	-fx-background-color:#555555;
+/*	-fx-text-fill:white;*/
+/*	-fx-background-color:#555555;*/
 }
 #addBtn{
 	-fx-background-color:dodgerblue;
 }
-/*.table-view .column-header-background > .nested-column-header .nested-column-header{
-	-fx-background-color:red;
-
-}*/
 .table-view .column-header,
 .table-view .column-header .filler,
 .table-view .column-header-background,
@@ -57,22 +51,19 @@
 .table-view{
 	-fx-border-radius:10;
 	-fx-background-radius:10;
-	-fx-background-color:#272727;
+/*	-fx-background-color:#272727;*/
 }
 .table-view .column-header .label{
-	-fx-text-fill:white;
+/*	-fx-text-fill:white;*/
 }
 .table-view .table-cell {
-	-fx-text-fill:white;
+/*	-fx-text-fill:white;*/
 	-fx-border-width:0px;
 }
 .table-row-cell{
-    -fx-background-color: #303030;
+/*    -fx-background-color: #303030;*/
 }
 .table-row-cell:odd{
 	-fx-border-width:0px;
     -fx-background-color: transparent;
-}
-#rightCol{
-	-fx-alignment:CENTER_RIGHT;
 }

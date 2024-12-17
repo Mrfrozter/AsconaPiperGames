@@ -8,9 +8,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
@@ -20,17 +25,26 @@ public class TournamentView {
     private ObservableList<Tournament> tournaments = FXCollections.observableList(new ArrayList<>());
     TournamentDAO tDao = new TournamentDAO();
     VBox baseContent;
+    boolean darkMode = false;
 
     public VBox start() {
         baseContent = new VBox();
         baseContent.setSpacing(5);
         baseContent.getStylesheets().add("tmnt.css");
+        if (!darkMode)
+            baseContent.getStylesheets().add("tmnt-light.css");
         Label btn = new Label("New tournament");
         btn.getStyleClass().add("btn");
         btn.setId("addBtn");
 //        tDao.saveTM(new Tournament(new GameDAO().getByName("Halo 3"), "2009-02-15"));
         tournaments = FXCollections.observableList(tDao.getAllTournaments());
-        baseContent.getChildren().addAll(btn, tabView());
+        HBox hBox = new HBox();
+
+        HBox sBtn = switchBtn();
+//        sBtn.setAlignment(Pos.CENTER_RIGHT);
+        hBox.getChildren().addAll(btn, sBtn);
+        HBox.setHgrow(sBtn, Priority.ALWAYS);
+        baseContent.getChildren().addAll(hBox, tabView());
 //        baseContent.getChildren().addAll(btn, logView());
 
         btn.setOnMouseClicked((e) -> {
@@ -85,7 +99,7 @@ public class TournamentView {
         table.setRowFactory(e -> {
             TableRow<Tournament> row = new TableRow<>();
             row.setOnMouseClicked((m) -> {
-                if(!row.isEmpty())
+                if (!row.isEmpty())
                     tournaments.remove(row.getItem());
 //                    System.out.println(row.getItem().getGame().getName());
             });
@@ -100,56 +114,87 @@ public class TournamentView {
         return table;
     }
 
-    public VBox logView() {
-
-        VBox content = new VBox();
-        ScrollPane scrollPane = new ScrollPane();
-        VBox logBox = new VBox();
-//        logBox.setPrefHeight(height);
-//        logBox.setPrefWidth(300);
-        content.setId("listBox");
-        content.setPadding(new Insets(15));
-        int i = 0;
-        for (Tournament tmnt : tournaments) {
-            logBox.getChildren().addAll(rowBox(tmnt));
-        }
-
-        tournaments.addListener(new ListChangeListener<Tournament>() {
-            @Override
-            public void onChanged(Change<? extends Tournament> change) {
-                logBox.getChildren().clear();
-                for (Tournament tmnt : change.getList()) {
-                    logBox.getChildren().addAll(rowBox(tmnt));
-                }
+    private HBox switchBtn() {
+        HBox box = new HBox();
+        ImageView view = new ImageView();
+        Image dark = new Image("moon-solid.png");
+        Image light = new Image("sun-solid.png");
+        Label label = new Label();
+        label.getStyleClass().add("txt");
+//        baseContent.getStylesheets().add("tmnt-light.css");
+        view.setImage(dark);
+        label.setText("Switch to dark");
+        box.setOnMouseClicked((e) -> {
+            darkMode = !darkMode;
+            baseContent.getStylesheets().remove(1);
+            System.out.println(baseContent.getStylesheets().size());
+            if (darkMode) {
+                baseContent.getStylesheets().add("tmnt-dark.css");
+                view.setImage(light);
+                label.setText("Switch to light");
+            } else {
+                baseContent.getStylesheets().add("tmnt-light.css");
+                view.setImage(dark);
+                label.setText("Switch to dark");
             }
         });
-        scrollPane.setContent(logBox);
-        scrollPane.setFitToWidth(true);
-        content.getChildren().add(scrollPane);
-        return content;
+        box.getStyleClass().add("btn");
+        box.setSpacing(5);
+        HBox.setHgrow(view, Priority.ALWAYS);
+        box.getChildren().addAll(label, view);
+        return box;
     }
 
-    private HBox rowBox(Tournament tmnt) {
-        Label idLab = new Label(tmnt.getId() + "");
-        Label gmeLab = new Label(tmnt.getGame() != null ? tmnt.getGame().getName() : "null");
-        Label datLab = new Label(tmnt.getDate());
-        Label delete = new Label("x");
-        idLab.getStyleClass().add("txt");
-        idLab.setId("log");
-        gmeLab.getStyleClass().add("txt");
-        gmeLab.setId("log");
-        datLab.getStyleClass().add("txt");
-        datLab.setId("log");
-        delete.getStyleClass().add("txt");
-        delete.setId("log");
-
-        delete.setOnMouseClicked((e) -> {
-//            tDao.deleteTournament(tmnt);
-        });
-
-        HBox mBox = new HBox();
-        mBox.setSpacing(2);
-        mBox.getChildren().addAll(idLab, gmeLab, datLab, delete);
-        return mBox;
-    }
+//    public VBox logView() {
+//
+//        VBox content = new VBox();
+//        ScrollPane scrollPane = new ScrollPane();
+//        VBox logBox = new VBox();
+////        logBox.setPrefHeight(height);
+////        logBox.setPrefWidth(300);
+//        content.setId("listBox");
+//        content.setPadding(new Insets(15));
+//        int i = 0;
+//        for (Tournament tmnt : tournaments) {
+//            logBox.getChildren().addAll(rowBox(tmnt));
+//        }
+//
+//        tournaments.addListener(new ListChangeListener<Tournament>() {
+//            @Override
+//            public void onChanged(Change<? extends Tournament> change) {
+//                logBox.getChildren().clear();
+//                for (Tournament tmnt : change.getList()) {
+//                    logBox.getChildren().addAll(rowBox(tmnt));
+//                }
+//            }
+//        });
+//        scrollPane.setContent(logBox);
+//        scrollPane.setFitToWidth(true);
+//        content.getChildren().add(scrollPane);
+//        return content;
+//    }
+//
+//    private HBox rowBox(Tournament tmnt) {
+//        Label idLab = new Label(tmnt.getId() + "");
+//        Label gmeLab = new Label(tmnt.getGame() != null ? tmnt.getGame().getName() : "null");
+//        Label datLab = new Label(tmnt.getDate());
+//        Label delete = new Label("x");
+//        idLab.getStyleClass().add("txt");
+//        idLab.setId("log");
+//        gmeLab.getStyleClass().add("txt");
+//        gmeLab.setId("log");
+//        datLab.getStyleClass().add("txt");
+//        datLab.setId("log");
+//        delete.getStyleClass().add("txt");
+//        delete.setId("log");
+//
+//        delete.setOnMouseClicked((e) -> {
+////            tDao.deleteTournament(tmnt);
+//        });
+//
+//        HBox mBox = new HBox();
+//        mBox.setSpacing(2);
+//        mBox.getChildren().addAll(idLab, gmeLab, datLab, delete);
+//        return mBox;
+//    }
 }

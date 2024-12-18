@@ -1,5 +1,7 @@
 package hill.ascona.asconapipergames;
 
+import hill.ascona.asconapipergames.views.GameView;
+import hill.ascona.asconapipergames.views.MatchView;
 import hill.ascona.asconapipergames.views.PersonView;
 import hill.ascona.asconapipergames.views.TournamentView;
 import javafx.application.Application;
@@ -21,7 +23,8 @@ public class HelloApplication extends Application {
         AnchorPane loginAnchorPane=new AnchorPane();
         loginAnchorPane.setPrefSize(700,600);
 
-        Scene loginScene=new Scene(loginAnchorPane);
+        Scene loginScene=new Scene(new MatchView().start());
+        //Scene loginScene=new Scene(loginAnchorPane);
         primaryStage.setScene(loginScene);
 
         Label label = new Label("Welcome to Piper Game page!");
@@ -62,8 +65,8 @@ public class HelloApplication extends Application {
 
         Tab tab1 = new Tab("Users or Players", new PersonView().start());
         Tab tab2 = new Tab("Teams", new Label("Show teams"));
-        Tab tab3 = new Tab("Games", new Label("Show games"));
-        Tab tab4 = new Tab("Matches", new Label("Show matches"));
+        Tab tab3 = new Tab("Games", new GameView().start());
+        Tab tab4 = new Tab("Matches", new MatchView().start());
         Tab tab5 = new Tab("Tournament", new TournamentView().start());
 
         tabPane.getTabs().add(tab1);

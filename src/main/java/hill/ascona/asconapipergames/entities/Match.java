@@ -18,10 +18,10 @@ public class Match {
     @Column(name = "match_date", length =20, nullable = true)
     private String date;
 
-    @Column(name = "match_played", columnDefinition = "boolean default true", nullable = false)
+    @Column(name = "match_played", columnDefinition = "boolean default true", nullable = true)
     private boolean allreadyPlayed = false;
 
-    @Column(name = "match_singel_team", columnDefinition = "boolean default true", nullable = false)
+    @Column(name = "match_singel_team", columnDefinition = "boolean default true", nullable = true)
     private boolean singelNotTeam = false;
 
     @Column(name = "match_game_id", nullable = true)
@@ -51,10 +51,43 @@ public class Match {
     public Match() {
     }
 
-    public Match( boolean allreadyPlayed, boolean singelNotTeam, int gameId,int winnerId, String nameOne, String nameTwo) {
+    //singel's match
+    public Match(String date, boolean allreadyPlayed, boolean singelNotTeam, int gameId, int player1Id, int player2Id, int winnerId, String nameOne, String nameTwo) {
+        this.date = date;
         this.allreadyPlayed = allreadyPlayed;
         this.singelNotTeam = singelNotTeam;
         this.gameId = gameId;
+        this.player1Id = player1Id;
+        this.player2Id = player2Id;
+        this.winnerId = winnerId;
+        this.nameOne = nameOne;
+        this.nameTwo = nameTwo;
+    }
+
+
+    // team match
+    public Match(boolean singelNotTeam,String date, boolean allreadyPlayed,  int gameId,  int team1Id, int team2Id, int winnerId, String nameOne, String nameTwo) {
+        this.singelNotTeam = singelNotTeam;
+        this.date = date;
+        this.allreadyPlayed = allreadyPlayed;
+        this.gameId = gameId;
+        this.team1Id = team1Id;
+        this.team2Id = team2Id;
+        this.winnerId = winnerId;
+        this.nameOne = nameOne;
+        this.nameTwo = nameTwo;
+    }
+
+    public Match(int turneringarId, String date, boolean allreadyPlayed, boolean singelNotTeam, int gameId, int player1Id, int player2Id, int team1Id, int team2Id, int winnerId, String nameOne, String nameTwo) {
+        this.turneringarId = turneringarId;
+        this.date = date;
+        this.allreadyPlayed = allreadyPlayed;
+        this.singelNotTeam = singelNotTeam;
+        this.gameId = gameId;
+        this.player1Id = player1Id;
+        this.player2Id = player2Id;
+        this.team1Id = team1Id;
+        this.team2Id = team2Id;
         this.winnerId = winnerId;
         this.nameOne = nameOne;
         this.nameTwo = nameTwo;

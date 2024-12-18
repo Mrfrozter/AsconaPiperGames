@@ -30,26 +30,30 @@ public class PersonDAO {
         }
     }
 
-    public Person getPersonInfoById(int id){
+    public List<Person> getPlayersInfoByTeamId(String teamId){
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
-        Person personInfoToReturn = entityManager.find(Person.class, id);
+        List<Person> playersToReturn = new ArrayList<>();
+        TypedQuery<Person> result = entityManager.createQuery("FROM Person p WHERE p.teamID = :variabel", Person.class);
+        result.setParameter("variabel", teamId);
+        playersToReturn.addAll(result.getResultList());
         entityManager.close();
+        return playersToReturn;
+    }
+    public List<Person> getAllPlayersOrUsers(String role ){
+        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+        List<Person> listToReturn = new ArrayList<>();
+        TypedQuery<Person> result = entityManager.createQuery("FROM Person p WHERE p.role = :variabel", Person.class);
+        result.setParameter("variabel", role);
+        listToReturn.addAll(result.getResultList());
+        return listToReturn;
+    }
+
+    public List<Person> getPersonInfo(String name){
+        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+        List<Person> personInfoToReturn = new ArrayList<>();
+        TypedQuery<Person> result = entityManager.createQuery("FROM Person p WHERE p.name = :variabel", Person.class);
+        result.setParameter("variabel", name);
+        personInfoToReturn.addAll(result.getResultList());
         return personInfoToReturn;
-    }
-    public List<Person> getAllPlayersInfo(){
-        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
-        List<Person> listToReturn = new ArrayList<>();
-        TypedQuery<Person> result = entityManager.createQuery("FROM Person p WHERE p.role = :variabel", Person.class);
-        result.setParameter("variabel", "Player");
-        listToReturn.addAll(result.getResultList());
-        return listToReturn;
-    }
-    public List<Person> getAllUsersInfo(){
-        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
-        List<Person> listToReturn = new ArrayList<>();
-        TypedQuery<Person> result = entityManager.createQuery("FROM Person p WHERE p.role = :variabel", Person.class);
-        result.setParameter("variabel", "User");
-        listToReturn.addAll(result.getResultList());
-        return listToReturn;
     }
 }

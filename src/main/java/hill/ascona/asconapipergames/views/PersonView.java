@@ -5,6 +5,7 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
@@ -44,14 +45,14 @@ public  class PersonView {
         showButton.setLayoutY(25);
         showButton.setOnAction(e ->{
             if(comboBoxShowTable.getValue().equals("Player")){
-                List<Person> allPlayers= personDAO.getAllPlayersInfo();
+                List<Person> allPlayers= personDAO.getPersonInfo("Player");
                 textArea.clear();
                 for (Person i: allPlayers){
                     System.out.println(i);
                     textArea.appendText(i.toString()+'\n');
                 }
             } else if (comboBoxShowTable.getValue().equals("User")) {
-                List<Person> allUsers = personDAO.getAllUsersInfo();
+                List<Person> allUsers = personDAO.getPersonInfo("User");
                 textArea.clear();
                 for (Person i: allUsers){
                     System.out.println(i);
@@ -138,7 +139,41 @@ public  class PersonView {
         vBox2.setLayoutY(300);
 
         //Ändra/ta bort spelare
-        anchorPane1.getChildren().addAll(pane1,vBox1,labelRegister,tilePane1,labelControl,vBox2);
+
+
+        TableView<Person> tableView = new TableView<>();
+
+        tableView.setPrefSize(690,80);
+        tableView.setLayoutX(5);
+        tableView.setLayoutY(330);
+
+        TableColumn<Person, Integer> column1 = new TableColumn<>("Id");
+        column1.setCellValueFactory(new PropertyValueFactory<>("id"));
+        TableColumn<Person, String> column2 = new TableColumn<>("First Name");
+        column2.setCellValueFactory(new PropertyValueFactory<>("name"));
+        TableColumn<Person, String> column3 = new TableColumn<>("Last Name");
+        column3.setCellValueFactory(new PropertyValueFactory<>("lastname"));
+        TableColumn<Person, String> column4 = new TableColumn<>("Nickname");
+        column4.setCellValueFactory(new PropertyValueFactory<>("nickname"));
+        TableColumn<Person, String> column5 = new TableColumn<>("Address");
+        column5.setCellValueFactory(new PropertyValueFactory<>("address"));
+        TableColumn<Person, String> column6 = new TableColumn<>("Post No.");
+        column6.setCellValueFactory(new PropertyValueFactory<>("postNumber"));
+        TableColumn<Person, String> column7 = new TableColumn<>("City");
+        column7.setCellValueFactory(new PropertyValueFactory<>("city"));
+        TableColumn<Person, String> column8 = new TableColumn<>("Country");
+        column8.setCellValueFactory(new PropertyValueFactory<>("country"));
+        TableColumn<Person, String> column9 = new TableColumn<>("E-mail");
+        column9.setCellValueFactory(new PropertyValueFactory<>("email"));
+        TableColumn<Person, String> column10 = new TableColumn<>("Role");
+        column10.setCellValueFactory(new PropertyValueFactory<>("role"));
+        TableColumn<Person, String> column11 = new TableColumn<>("Team-id");
+        column11.setCellValueFactory(new PropertyValueFactory<>("teamID"));
+
+        tableView.getColumns().addAll(column1,column2,column3,column4,column5,column6,column7,column8,column9,column10,column11);
+
+
+        anchorPane1.getChildren().addAll(pane1,vBox1,labelRegister,tilePane1,labelControl,vBox2,tableView);
         return anchorPane1;
     }
 }

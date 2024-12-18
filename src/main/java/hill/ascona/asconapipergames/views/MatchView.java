@@ -2,8 +2,11 @@ package hill.ascona.asconapipergames.views;
 
 import hill.ascona.asconapipergames.DAO.GameDAO;
 import hill.ascona.asconapipergames.DAO.MatchDAO;
+import hill.ascona.asconapipergames.DAO.PersonDAO;
 import hill.ascona.asconapipergames.entities.Game;
 import hill.ascona.asconapipergames.entities.Match;
+import hill.ascona.asconapipergames.entities.Person;
+import hill.ascona.asconapipergames.entities.Tournament;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
@@ -43,7 +46,8 @@ public class MatchView {
     String date = "";
     boolean allreadyPlayed = false;
     boolean singelNotTeam = false;
-    int gameId;
+    String gameName;
+    Game game;
     int player1Id;
     int player2Id;
     int team1Id;
@@ -109,12 +113,12 @@ public class MatchView {
         Button saveMatch = new Button("Save match");
         saveMatch.setOnAction(event -> {
             if (singelNotTeam) {
-                matchDAO.saveMatch(new Match(date, allreadyPlayed, singelNotTeam, gameId, player1Id,
+                matchDAO.saveMatch(new Match(date, allreadyPlayed, singelNotTeam, game, player1Id,
                         player2Id, winnerId, nameOne, nameTwo));
 
 
             }else {
-                matchDAO.saveMatch(new Match(singelNotTeam, date, allreadyPlayed,  gameId,  team1Id,
+                matchDAO.saveMatch(new Match(singelNotTeam, date, allreadyPlayed, game,  team1Id,
                         team2Id, winnerId, nameOne, nameTwo));
             }
 
@@ -138,20 +142,31 @@ public class MatchView {
   /*      ObservableList<Game> games = FXCollections.observableList(new ArrayList<>());
         GameDAO gDao = new GameDAO();
         games = FXCollections.observableList(gDao.getAllGames());
+
 */
         ComboBox<String> comboBoxGame =new ComboBox<>();
         comboBoxGame.setPromptText("Choose game");
-        comboBoxGame.getItems().addAll();
-        //comboBoxGame.getItems().addAll("Chess", "WoW", "CoD", "Halo 2", "Halo 3"); // TODO -------get real gameList----
+        GameDAO gDao = new GameDAO();
+        List<Game> games = gDao.getAllGames();
+        for (Game game : games) {
+            comboBoxGame.getItems().add(game.getTitle());
+        }
         comboBoxGame.setOnAction(e ->{
             gameChosen = (String) comboBoxGame.getValue();
-            gameId = random.nextInt(10);;                                    // TODO ------------get real gameId---
+            game = gDao.getByName(gameChosen);
         });
 
-
+        PersonDAO pDao = new PersonDAO();
+        List<Person> persons = pDao.getAllPlayersInfo();
         ComboBox<String> comboBoxPOrT1 =new ComboBox<>();
-        comboBoxPOrT1.setPromptText("Choose first participant");                       // TODO ----------------------
-        comboBoxPOrT1.getItems().addAll("ADD Players/teams HERE", "Kalle", "Sara", "The team", "the lost ones", "Fredrik");    // TODO ----------------------
+        comboBoxPOrT1.setPromptText("Choose first participant");
+        if (singelNotTeam) {
+            for (Person person : persons) {
+                comboBoxPOrT1.getItems().add(person.getName());
+            }
+        }else{                                  // TODO ----get teams-------------
+
+        }
         comboBoxPOrT1.setOnAction(e ->{
             //player1Id = comboBoxPOrT1.getSelectionModel().getSelectedIndex();
             nameOne = comboBoxPOrT1.getValue();
@@ -277,17 +292,19 @@ public class MatchView {
         );*/
 
         TableView<Match> table = new TableView<>();
-/*      ObservableList<Match> data = FXCollections.observableArrayList(
-*//*                new Match(true,false, 5, 4, "test", "green"),
+      ObservableList<Match> data = FXCollections.observableArrayList(
+/*                new Match(true,false, 5, 4, "test", "green"),
                 new Match(false,true, 7, 3, "yeyn", "red"),
-                new Match(false,true,9, 4, "tb twest", "lila"),
-                new Match(false,true,2, 3, "tesssett", "blue")*//*
-      );*/
+                ne w Match(false,true,9, 4, "tb twest", "lila"),
+                new Match(false,true,2, 3, "tesssett", "blue")*/
+      );
+/*
 
         List<Match> test = matchDAO.getAllMatches();
         // data = FXCollections.observableList(test);
+*/
 
-        ObservableList<Match> data = FXCollections.observableList(matchDAO.getAllMatches());
+        //ObservableList<Match> data = FXCollections.observableList(matchDAO.getAllMatches());
 
                 table.setEditable(false);
         table.setPrefWidth(530);

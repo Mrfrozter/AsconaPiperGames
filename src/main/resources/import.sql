@@ -1,8 +1,8 @@
-/*INSERT INTO matches(match_singel_team, match_Played, match_game_id, match_winner, part_one_name, part_two_name) VALUES(true, true,3,7,'ettTredjeNamn', 'steffe');
+INSERT INTO matches(match_singel_team, match_Played, match_game_id, match_winner, part_one_name, part_two_name) VALUES(true, true,3,7,'ettTredjeNamn', 'steffe');
 INSERT INTO matches(match_singel_team, match_Played, match_game_id, match_winner, part_one_name, part_two_name) VALUES(false, true,9,4,'ettTillNamn', 'janne');
 INSERT INTO matches(match_singel_team, match_Played, match_game_id, match_winner, part_one_name, part_two_name) VALUES(true, false,6,3,'ettNamn', 'carl');
 INSERT INTO matches(match_singel_team, match_Played, match_game_id, match_winner, part_one_name, part_two_name) VALUES(false, false,8,9,'Laban', 'stina');
-*/
+
 
 INSERT INTO game(game_title, game_genre, game_numberOfTeams) VALUES ('Halo 3', 'FPS', 8);
 INSERT INTO game(game_title, game_genre, game_numberOfTeams) VALUES ('Counter Strike 2', 'FPS', 5);

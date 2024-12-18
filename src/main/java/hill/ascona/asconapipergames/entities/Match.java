@@ -24,8 +24,9 @@ public class Match {
     @Column(name = "match_singel_team", columnDefinition = "boolean default true", nullable = true)
     private boolean singelNotTeam = false;
 
-    @Column(name = "match_game_id", nullable = true)
-    private int gameId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "match_game_id")
+    private Game game;
 
     @Column(name = "match_player1", nullable = true)
     private int player1Id;
@@ -52,11 +53,11 @@ public class Match {
     }
 
     //singel's match
-    public Match(String date, boolean allreadyPlayed, boolean singelNotTeam, int gameId, int player1Id, int player2Id, int winnerId, String nameOne, String nameTwo) {
+    public Match(String date, boolean allreadyPlayed, boolean singelNotTeam, Game game, int player1Id, int player2Id, int winnerId, String nameOne, String nameTwo) {
         this.date = date;
         this.allreadyPlayed = allreadyPlayed;
         this.singelNotTeam = singelNotTeam;
-        this.gameId = gameId;
+        this.game = game;
         this.player1Id = player1Id;
         this.player2Id = player2Id;
         this.winnerId = winnerId;
@@ -66,11 +67,11 @@ public class Match {
 
 
     // team match
-    public Match(boolean singelNotTeam,String date, boolean allreadyPlayed,  int gameId,  int team1Id, int team2Id, int winnerId, String nameOne, String nameTwo) {
+    public Match(boolean singelNotTeam,String date, boolean allreadyPlayed,  Game game,  int team1Id, int team2Id, int winnerId, String nameOne, String nameTwo) {
         this.singelNotTeam = singelNotTeam;
         this.date = date;
         this.allreadyPlayed = allreadyPlayed;
-        this.gameId = gameId;
+        this.game = game;
         this.team1Id = team1Id;
         this.team2Id = team2Id;
         this.winnerId = winnerId;
@@ -78,12 +79,12 @@ public class Match {
         this.nameTwo = nameTwo;
     }
 
-    public Match(int turneringarId, String date, boolean allreadyPlayed, boolean singelNotTeam, int gameId, int player1Id, int player2Id, int team1Id, int team2Id, int winnerId, String nameOne, String nameTwo) {
+    public Match(int turneringarId, String date, boolean allreadyPlayed, boolean singelNotTeam, Game game, int player1Id, int player2Id, int team1Id, int team2Id, int winnerId, String nameOne, String nameTwo) {
         this.turneringarId = turneringarId;
         this.date = date;
         this.allreadyPlayed = allreadyPlayed;
         this.singelNotTeam = singelNotTeam;
-        this.gameId = gameId;
+        this.game = game;
         this.player1Id = player1Id;
         this.player2Id = player2Id;
         this.team1Id = team1Id;
@@ -133,12 +134,12 @@ public class Match {
         this.singelNotTeam = singelNotTeam;
     }
 
-    public int getGameId() {
-        return gameId;
+    public Game getGame() {
+        return game;
     }
 
-    public void setGameId(int gameId) {
-        this.gameId = gameId;
+    public void setGame(Game game) {
+        this.game = game;
     }
 
     public int getPlayer1Id() {

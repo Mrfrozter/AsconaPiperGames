@@ -15,3 +15,9 @@ Insert into persons(p_name, p_lastname, p_nickname, p_address, p_postNumber, p_c
 Insert into persons(p_name, p_lastname, p_nickname, p_address, p_postNumber, p_city, p_country, p_email, p_role, p_teamID) VALUES ('Sara','Emill','Sara','Mamlmö',123,'Mamlmö','Sverige','Emill@mail','Player',1);
 Insert into persons(p_name, p_lastname, p_nickname, p_address, p_postNumber, p_city, p_country, p_email, p_role, p_teamID) VALUES ('Anna','Hendricksson','Queen12','Skåne',3135,'Skåne','Sverige','Hendricksson@mail','Player',1);
 Insert into persons(p_name, p_lastname, p_nickname, p_address, p_postNumber, p_city, p_country, p_email, p_role, p_teamID) VALUES ('Simon','Andersson','Sim30','Gävle',123,'Mamlmö','Sverige','Andersson30@mail','Player',2);
+
+INSERT INTO tournaments(game_id, tmnt_date) VALUES (1, '2024-12-18');
+INSERT INTO tournaments(game_id, tmnt_date) VALUES (2, '2024-12-19');
+INSERT INTO tournaments(game_id, tmnt_date) VALUES (3, '2024-12-20');
+INSERT INTO tournaments(game_id, tmnt_date) VALUES (4, '2024-12-21');
+INSERT INTO tournaments(game_id, tmnt_date) VALUES (5, '2024-12-24');

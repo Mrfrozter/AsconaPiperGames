@@ -2,7 +2,9 @@ package hill.ascona.asconapipergames;
 
 import hill.ascona.asconapipergames.DAO.PersonDAO;
 import hill.ascona.asconapipergames.entities.Person;
+import hill.ascona.asconapipergames.views.GameView;
 import hill.ascona.asconapipergames.views.PersonView;
+import hill.ascona.asconapipergames.views.TournamentView;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -13,9 +15,12 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class HelloApplication extends Application {
     public void start(Stage primaryStage) throws IOException {
+        Logger.getLogger("org.hibernate").setLevel(Level.OFF);
         AnchorPane loginAnchorPane=new AnchorPane();
         loginAnchorPane.setPrefSize(700,600);
 
@@ -54,7 +59,7 @@ public class HelloApplication extends Application {
         loginAnchorPane.getChildren().addAll(label,loginComboBox,loginButton);
 
         primaryStage.setTitle("Piper Game");
-        primaryStage.setResizable(false);
+//        primaryStage.setResizable(false);
         primaryStage.show();
     }
 
@@ -65,9 +70,9 @@ public class HelloApplication extends Application {
 
         Tab tab1 = new Tab("Users or Players", new PersonView().start());
         Tab tab2 = new Tab("Teams", new Label("Show teams"));
-        Tab tab3 = new Tab("Games", new Label("Show games"));
+        Tab tab3 = new Tab("Games", new GameView().start());
         Tab tab4 = new Tab("Matches", new Label("Show matches"));
-        Tab tab5 = new Tab("Tournament", new Label("Show tournament"));
+        Tab tab5 = new Tab("Tournament", new TournamentView().start());
 
         tabPane.getTabs().add(tab1);
         tabPane.getTabs().add(tab2);
@@ -75,8 +80,8 @@ public class HelloApplication extends Application {
         tabPane.getTabs().add(tab4);
         tabPane.getTabs().add(tab5);
 
-        AnchorPane mainAnchorPane = new AnchorPane(tabPane);
-        return new Scene(mainAnchorPane, 700, 600);
+//        AnchorPane mainAnchorPane = new AnchorPane(tabPane);
+        return new Scene(tabPane);
     }
 
     public static void main(String[] args) {

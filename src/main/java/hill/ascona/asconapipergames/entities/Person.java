@@ -16,14 +16,14 @@ public class Person {
     @Column(name = "p_lastname", length =25, nullable = false)
     private String lastname;
 
-    @Column(name = "p_nickname", length =25)
+    @Column(name = "p_nickname", length =25, nullable = false)
     private String nickname;
 
     @Column(name = "p_address", length =30)
     private String address;
 
-    @Column(name = "p_postNumber")
-    private int postNumber;
+    @Column(name = "p_postNumber", length = 10)
+    private String postNumber;
 
     @Column(name = "p_city", length =15, nullable = false)
     private String city;
@@ -37,13 +37,13 @@ public class Person {
     @Column(name = "p_role", length =15, nullable = false)
     private String role;
 
-    @Column(name = "p_teamID", nullable = false)
-    private int teamID;
+    @Column(name = "p_teamID",length = 3, nullable = false)
+    private String teamID;
 
     public Person() {
     }
 
-    public Person(String name, String lastname, String nickname, String address, int postNumber, String city, String country, String email, String role, int teamID) {
+    public Person(String name, String lastname, String nickname, String address, String postNumber, String city, String country, String email, String role, String teamID) {
         this.name = name;
         this.lastname = lastname;
         this.nickname = nickname;
@@ -96,11 +96,11 @@ public class Person {
         this.address = address;
     }
 
-    public int getPostNumber() {
+    public String getPostNumber() {
         return postNumber;
     }
 
-    public void setPostNumber(int postNumber) {
+    public void setPostNumber(String postNumber) {
         this.postNumber = postNumber;
     }
 
@@ -136,11 +136,27 @@ public class Person {
         this.role = role;
     }
 
-    public int getTeamID() {
+    public String getTeamID() {
         return teamID;
     }
 
-    public void setTeamID(int teamID) {
+    public void setTeamID(String teamID) {
         this.teamID = teamID;
+    }
+
+    @Override
+    public String toString() {
+        return
+                "id: " + id +
+                " " + name +
+                " " + lastname +
+                ", nickname: " + nickname +
+                ", address: " + address +
+                ", postNumber: " + postNumber +
+                ", city: " + city +
+                ", country: " + country +
+                ", email: " + email +
+                ", role: " + role +
+                ", teamID: " + teamID;
     }
 }

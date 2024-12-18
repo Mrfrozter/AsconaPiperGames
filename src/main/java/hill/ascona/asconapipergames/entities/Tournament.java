@@ -2,6 +2,9 @@ package hill.ascona.asconapipergames.entities;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "tournaments")
 public class Tournament {
@@ -16,6 +19,9 @@ public class Tournament {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "game_id")
     private Game game;
+
+    @OneToMany(fetch = FetchType.EAGER)
+    private List<Match> matches = new ArrayList<>();
 
     public Tournament(){
 

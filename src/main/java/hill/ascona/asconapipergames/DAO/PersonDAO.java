@@ -28,7 +28,6 @@ public class PersonDAO {
         }finally {
             entityManager.close();
         }
-
     }
 
     public Person getPersonInfoById(int id){
@@ -37,13 +36,20 @@ public class PersonDAO {
         entityManager.close();
         return personInfoToReturn;
     }
-    public List<Person> getAllPersonsInfo(){
+    public List<Person> getAllPlayersInfo(){
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         List<Person> listToReturn = new ArrayList<>();
         TypedQuery<Person> result = entityManager.createQuery("FROM Person p WHERE p.role = :variabel", Person.class);
-        result.setParameter("variabel", "spelare");
+        result.setParameter("variabel", "Player");
         listToReturn.addAll(result.getResultList());
         return listToReturn;
     }
-
+    public List<Person> getAllUsersInfo(){
+        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+        List<Person> listToReturn = new ArrayList<>();
+        TypedQuery<Person> result = entityManager.createQuery("FROM Person p WHERE p.role = :variabel", Person.class);
+        result.setParameter("variabel", "User");
+        listToReturn.addAll(result.getResultList());
+        return listToReturn;
+    }
 }

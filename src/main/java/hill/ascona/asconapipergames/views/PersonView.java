@@ -17,9 +17,13 @@ import java.util.List;
 
 public  class PersonView {
     public AnchorPane start() {
+
         PersonDAO personDAO = new PersonDAO();
         AnchorPane anchorPane1= new AnchorPane();
         anchorPane1.setPrefSize(690,690);
+
+        Button showButton=new Button("Show information");
+        showButton.setDisable(true);
         Label labelShowTable= new Label("Person's information:");
         labelShowTable.setLayoutX(10);
         labelShowTable.setLayoutY(5);
@@ -28,13 +32,7 @@ public  class PersonView {
         comboBoxShowTable.setLayoutX(10);
         comboBoxShowTable.setLayoutY(25);
         comboBoxShowTable.getItems().addAll("Player","User");
-        comboBoxShowTable.setOnAction(e ->{
-            if(comboBoxShowTable.getValue().equals("Player")){
-
-            } else if (comboBoxShowTable.getValue().equals("User")) {
-
-            }
-        });
+        comboBoxShowTable.setOnAction(e-> showButton.setDisable(false));
 
         TextArea textArea= new TextArea();
         textArea.setEditable(false);
@@ -42,20 +40,28 @@ public  class PersonView {
         textArea.setLayoutX(10);
         textArea.setLayoutY(60);
 
-        Button showButton=new Button("Show information");
         showButton.setLayoutX(130);
         showButton.setLayoutY(25);
         showButton.setOnAction(e ->{
-           List<Person> allPlayers= personDAO.getAllPlayersInfo();
-//            Person personFromDatabase = personDAO.getPersonInfoById(1);
-//            System.out.println("Hämtad från db med namn: " + personFromDatabase.getName());
-            for (Person i: allPlayers){
-                textArea.appendText(personDAO.getAllPlayersInfo().toString());
+            if(comboBoxShowTable.getValue().equals("Player")){
+                List<Person> allPlayers= personDAO.getAllPlayersInfo();
+                textArea.clear();
+                for (Person i: allPlayers){
+                    System.out.println(i);
+                    textArea.appendText(i.toString()+'\n');
+                }
+            } else if (comboBoxShowTable.getValue().equals("User")) {
+                List<Person> allUsers = personDAO.getAllUsersInfo();
+                textArea.clear();
+                for (Person i: allUsers){
+                    System.out.println(i);
+                    textArea.appendText(i.toString()+'\n');
+                }
             }
         });
 
         Pane pane1=new Pane(labelShowTable,comboBoxShowTable,showButton,textArea);
-        pane1.setPrefSize(700,135);
+        pane1.setPrefSize(690,135);
         pane1.setLayoutX(5);
         pane1.setLayoutY(5);
 
@@ -63,11 +69,12 @@ public  class PersonView {
         VBox vBox1=new VBox(separator1);
         vBox1.setPrefSize(690,10);
         vBox1.setLayoutX(5);
-        vBox1.setLayoutY(145);
+        vBox1.setLayoutY(150);
 
         Label labelRegister= new Label("Add new person:");
         labelRegister.setLayoutX(10);
         labelRegister.setLayoutY(155);
+
         ComboBox<String> comboBoxRole =new ComboBox<>();
         comboBoxRole.setPromptText("Role:");
         comboBoxRole.getItems().addAll("Player","User");
@@ -83,7 +90,7 @@ public  class PersonView {
         TextField textFieldPostNo= new TextField();
         textFieldPostNo.setPromptText("Post number");
         TextField textFieldCity= new TextField();
-        textFieldCity.setPromptText("Zone");
+        textFieldCity.setPromptText("City");
         TextField textFieldCountry= new TextField();
         textFieldCountry.setPromptText("Country");
         TextField textFieldEmail= new TextField();
@@ -91,24 +98,32 @@ public  class PersonView {
         TextField textFieldTeamId= new TextField();
         textFieldTeamId.setPromptText("Team-Id");
 
-        Label labelControl = new Label("First-name, Last-name, Nickname");
+        Label labelControl = new Label("Enter the person's first name, last name and nickname");
+        labelControl.setLayoutX(10);
+        labelControl.setLayoutY(270);
         labelControl.setTextFill(Color.RED);
         labelControl.setVisible(false);
 
         Button buttonSave=new Button("Save");
         buttonSave.setPrefSize(145,23);
         buttonSave.setOnAction(e->{
-            labelControl.setVisible(true);
-            Person user = new Person(textFieldName.getText(),textFieldLastName.getText(),textFieldNickName.getText(),textFieldAddress.getText()
-                    ,textFieldPostNo.getText(),textFieldCity.getText(),textFieldCountry.getText(),textFieldEmail.getText(),comboBoxRole.getValue(), textFieldTeamId.getText());
-            if (personDAO.addPerson(user)){
-                System.out.println("User saved!");
-            }else {
-                System.out.println("Not saved!");
+            if (textFieldName.getText().isEmpty()|| textFieldLastName.getText().isEmpty()||textFieldNickName.getText().isEmpty()){
+
+                labelControl.setVisible(true);
+            } else {
+                Person user = new Person(textFieldName.getText(), textFieldLastName.getText(), textFieldNickName.getText(), textFieldAddress.getText()
+                        , textFieldPostNo.getText(), textFieldCity.getText(), textFieldCountry.getText(), textFieldEmail.getText(), comboBoxRole.getValue(), textFieldTeamId.getText());
+                if (personDAO.addPerson(user)) {
+                    labelControl.setText("User saved!");
+                    System.out.println("User saved!");
+                } else {
+                    labelControl.setText("Not saved!");
+                    System.out.println("Not saved!");
+                }
             }
         });
 
-        TilePane tilePane1= new TilePane((Node) comboBoxRole,textFieldName,textFieldLastName,textFieldNickName,textFieldAddress,textFieldPostNo,textFieldCity,textFieldCountry,textFieldEmail,textFieldTeamId, labelControl,buttonSave);
+        TilePane tilePane1= new TilePane((Node) comboBoxRole,textFieldName,textFieldLastName,textFieldNickName,textFieldAddress,textFieldPostNo,textFieldCity,textFieldCountry,textFieldEmail,textFieldTeamId, buttonSave);
         tilePane1.setHgap(5);
         tilePane1.setVgap(5);
         tilePane1.setTileAlignment(Pos.CENTER);
@@ -120,10 +135,10 @@ public  class PersonView {
         VBox vBox2=new VBox(separator2);
         vBox2.setPrefSize(690,10);
         vBox2.setLayoutX(5);
-        vBox2.setLayoutY(310);
+        vBox2.setLayoutY(300);
 
         //Ändra/ta bort spelare
-        anchorPane1.getChildren().addAll(pane1,vBox1,labelRegister,tilePane1,vBox2);
+        anchorPane1.getChildren().addAll(pane1,vBox1,labelRegister,tilePane1,labelControl,vBox2);
         return anchorPane1;
     }
 }

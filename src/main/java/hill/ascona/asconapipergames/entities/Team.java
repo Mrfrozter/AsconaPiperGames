@@ -1,6 +1,10 @@
 package hill.ascona.asconapipergames.entities;
 
 import jakarta.persistence.*;
+import hill.ascona.asconapipergames.entities.Person;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "Teams")
@@ -10,8 +14,8 @@ public class Team {
     @Column(name = "team_id")
     private int team_id;
 
-    @Column(name = "medlemmar", length = 100)
-    private String members;
+    @OneToMany(fetch = FetchType.EAGER)
+    private List<Person> members = new ArrayList<>();
 
     @Column(name = "game_id", length = 50, nullable = false)
     private String game_id;
@@ -24,10 +28,11 @@ public class Team {
 
     //Konstruktor med allt förutom ID, eftersom att vi inte ska välja ID själva
 
-    public Team(String game_id, String members) {
-        this.game_id = game_id;
+    public Team(List<Person> members, String game_id) {
         this.members = members;
+        this.game_id = game_id;
     }
+
 
     //Getters och setters
 
@@ -40,11 +45,11 @@ public class Team {
         this.team_id = team_id;
     }
 
-    public String getMembers() {
+    public List<Person> getMembers() {
         return members;
     }
 
-    public void setMembers(String members) {
+    public void setMembers(List<Person> members) {
         this.members = members;
     }
 

@@ -1,7 +1,5 @@
 package hill.ascona.asconapipergames;
 
-import hill.ascona.asconapipergames.views.GameView;
-import hill.ascona.asconapipergames.views.MatchView;
 import hill.ascona.asconapipergames.views.PersonView;
 import hill.ascona.asconapipergames.views.TournamentView;
 import javafx.application.Application;
@@ -16,10 +14,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class HelloApplication extends Application {
-    @Override
     public void start(Stage primaryStage) throws IOException {
         Logger.getLogger("org.hibernate").setLevel(Level.OFF);
-
         AnchorPane loginAnchorPane=new AnchorPane();
         loginAnchorPane.setPrefSize(700,600);
 
@@ -40,13 +36,18 @@ public class HelloApplication extends Application {
             primaryStage.setScene(showMainScene());});
         loginButton.setPrefSize(115,28);
         loginButton.setLayoutX(275);
-        loginButton.setLayoutY(330);
+        loginButton.setLayoutY(310);
 
         ComboBox<String> loginComboBox =new ComboBox<>();
         loginComboBox.setPromptText("Choose your name:");
         loginComboBox.setLayoutX(260);
         loginComboBox.setLayoutY(280);
-        loginComboBox.getItems().addAll("Richard Hendricks","Bertram Gilfoyle","Dinesh Chugtai");
+
+        PersonDAO personDAO = new PersonDAO();
+        List<Person> allUsers= personDAO.getAllUsersInfo();
+        for (Person i: allUsers){
+            loginComboBox.getItems().add(i.getName()+' '+i.getLastname());
+        }
         loginComboBox.setOnAction(e ->{
             loginButton.setDisable(false);
         });
@@ -54,7 +55,7 @@ public class HelloApplication extends Application {
         loginAnchorPane.getChildren().addAll(label,loginComboBox,loginButton);
 
         primaryStage.setTitle("Piper Game");
-        primaryStage.setResizable(false);
+//        primaryStage.setResizable(false);
         primaryStage.show();
     }
 
@@ -75,8 +76,8 @@ public class HelloApplication extends Application {
         tabPane.getTabs().add(tab4);
         tabPane.getTabs().add(tab5);
 
-        AnchorPane mainAnchorPane = new AnchorPane(tabPane);
-        return new Scene(mainAnchorPane);
+//        AnchorPane mainAnchorPane = new AnchorPane(tabPane);
+        return new Scene(tabPane);
     }
 
     public static void main(String[] args) {

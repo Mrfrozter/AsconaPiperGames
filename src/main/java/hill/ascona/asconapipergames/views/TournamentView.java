@@ -101,7 +101,6 @@ public class TournamentView {
             row.setOnMouseClicked((m) -> {
                 if (!row.isEmpty())
                     tournaments.remove(row.getItem());
-//                    System.out.println(row.getItem().getGame().getName());
             });
             return row;
         });

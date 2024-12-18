@@ -20,7 +20,7 @@ public class Tournament {
     @JoinColumn(name = "game_id")
     private Game game;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER)
     private List<Match> matches = new ArrayList<>();
 
     public Tournament(){

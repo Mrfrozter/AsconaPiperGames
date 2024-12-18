@@ -1,4 +1,4 @@
 .idea/
 target/
 **/META-INF
-**/persistence.xml
+*.iml

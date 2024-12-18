@@ -1,7 +1,8 @@
 package hill.ascona.asconapipergames;
 
+import hill.ascona.asconapipergames.DAO.PersonDAO;
+import hill.ascona.asconapipergames.entities.Person;
 import hill.ascona.asconapipergames.views.PersonView;
-import hill.ascona.asconapipergames.views.TournamentView;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -9,15 +10,12 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.List;
 
 public class HelloApplication extends Application {
-    @Override
     public void start(Stage primaryStage) throws IOException {
-        Logger.getLogger("org.hibernate").setLevel(Level.OFF);
-
         AnchorPane loginAnchorPane=new AnchorPane();
         loginAnchorPane.setPrefSize(700,600);
 
@@ -37,13 +35,18 @@ public class HelloApplication extends Application {
             primaryStage.setScene(showMainScene());});
         loginButton.setPrefSize(115,28);
         loginButton.setLayoutX(275);
-        loginButton.setLayoutY(330);
+        loginButton.setLayoutY(310);
 
         ComboBox<String> loginComboBox =new ComboBox<>();
         loginComboBox.setPromptText("Choose your name:");
         loginComboBox.setLayoutX(260);
         loginComboBox.setLayoutY(280);
-        loginComboBox.getItems().addAll("Richard Hendricks","Bertram Gilfoyle","Dinesh Chugtai");
+
+        PersonDAO personDAO = new PersonDAO();
+        List<Person> allUsers= personDAO.getAllUsersInfo();
+        for (Person i: allUsers){
+            loginComboBox.getItems().add(i.getName()+' '+i.getLastname());
+        }
         loginComboBox.setOnAction(e ->{
             loginButton.setDisable(false);
         });
@@ -64,7 +67,7 @@ public class HelloApplication extends Application {
         Tab tab2 = new Tab("Teams", new Label("Show teams"));
         Tab tab3 = new Tab("Games", new Label("Show games"));
         Tab tab4 = new Tab("Matches", new Label("Show matches"));
-        Tab tab5 = new Tab("Tournament", new TournamentView().start());
+        Tab tab5 = new Tab("Tournament", new Label("Show tournament"));
 
         tabPane.getTabs().add(tab1);
         tabPane.getTabs().add(tab2);
@@ -73,7 +76,7 @@ public class HelloApplication extends Application {
         tabPane.getTabs().add(tab5);
 
         AnchorPane mainAnchorPane = new AnchorPane(tabPane);
-        return new Scene(mainAnchorPane);
+        return new Scene(mainAnchorPane, 700, 600);
     }
 
     public static void main(String[] args) {

@@ -156,6 +156,7 @@ public class MatchView {
             game = gDao.getByName(gameChosen);
         });
 
+
         PersonDAO pDao = new PersonDAO();
         List<Person> persons = pDao.getAllPlayersInfo();
         ComboBox<String> comboBoxPOrT1 =new ComboBox<>();

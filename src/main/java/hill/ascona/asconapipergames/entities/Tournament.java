@@ -66,4 +66,8 @@ public class Tournament {
     public void setTitle(String title) {
         this.title = title;
     }
+
+    public List<Match> getMatches(){
+        return matches;
+    }
 }

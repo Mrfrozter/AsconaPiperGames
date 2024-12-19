@@ -3,19 +3,17 @@ package hill.ascona.asconapipergames.views;
 import hill.ascona.asconapipergames.DAO.GameDAO;
 import hill.ascona.asconapipergames.DAO.TournamentDAO;
 import hill.ascona.asconapipergames.entities.Game;
+import hill.ascona.asconapipergames.entities.Match;
 import hill.ascona.asconapipergames.entities.Tournament;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
@@ -87,15 +85,45 @@ public class TournamentView {
 
         TableColumn<Tournament, Integer> id = new TableColumn<>("id");
         id.setCellValueFactory(new PropertyValueFactory<>("id"));
-        TableColumn<Tournament, Game> game = new TableColumn<>("game");
-        game.setCellValueFactory(new PropertyValueFactory<>("game"));
-        TableColumn<Tournament, String> date = new TableColumn<>("date");
-        date.setCellValueFactory(new PropertyValueFactory<>("date"));
+        TableColumn<Tournament, Game> gameCol = new TableColumn<>("game");
+        gameCol.setCellValueFactory(new PropertyValueFactory<>("game"));
+        TableColumn<Tournament, String> dateCol = new TableColumn<>("date");
+        dateCol.setCellValueFactory(new PropertyValueFactory<>("date"));
+        table.getColumns().addAll(id, dateCol, gameCol);
 
-        table.getColumns().addAll(id, date, game);
+        if(!tournaments.isEmpty() && !tournaments.get(0).getMatches().isEmpty()) {
+            TableColumn<Tournament, List<Match>> matchCol = new TableColumn<>("matches");
+            matchCol.setCellValueFactory(new PropertyValueFactory<>("matches"));
+            matchCol.setCellFactory(c -> new TableCell<Tournament, List<Match>>() {
+                @Override
+                public void updateItem(List<Match> matches, boolean empty) {
+                    super.updateItem(matches, empty);
+                    if (!empty) {
+                        ChoiceBox box = new ChoiceBox();
+                        for (Match m : matches) {
+                            box.getItems().add(m.getNameOne() + " vs" + m.getNameTwo());
+                        }
+                        box.setValue(box.getItems().get(0));
+                        setGraphic(box);
+                    } else
+                        setText(null);
+                }
+            });
+            table.getColumns().add(matchCol);
+        }
+
 
         table.setItems(tournaments);
-//        table.setId("tableView");
+        gameCol.setCellFactory(c -> new TableCell<Tournament, Game>() {
+            @Override
+            public void updateItem(Game gme, boolean empty) {
+                super.updateItem(gme, empty);
+                if (!empty)
+                    setText(gme.getTitle());
+                else
+                    setText(null);
+            }
+        });
         table.setRowFactory(e -> {
             TableRow<Tournament> row = new TableRow<>();
             row.setOnMouseClicked((m) -> {

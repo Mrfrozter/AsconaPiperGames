@@ -51,7 +51,7 @@ public class HelloApplication extends Application {
         loginComboBox.setLayoutY(280);
 
         PersonDAO personDAO = new PersonDAO();
-        List<Person> allUsers= personDAO.getAllUsersInfo();
+        List<Person> allUsers= personDAO.getAllPlayersOrUsers("User");
         for (Person i: allUsers){
             loginComboBox.getItems().add(i.getName()+' '+i.getLastname());
         }
@@ -82,8 +82,7 @@ public class HelloApplication extends Application {
         tabPane.getTabs().add(tab3);
         tabPane.getTabs().add(tab4);
         tabPane.getTabs().add(tab5);
-
-//        AnchorPane mainAnchorPane = new AnchorPane(tabPane);
+        
         return new Scene(tabPane);
     }
 

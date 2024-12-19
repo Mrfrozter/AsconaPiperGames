@@ -151,10 +151,6 @@ public class Person {
                 " " + name +
                 " " + lastname +
                 ", nickname: " + nickname +
-                ", address: " + address +
-                ", postNumber: " + postNumber +
-                ", city: " + city +
-                ", country: " + country +
                 ", email: " + email +
                 ", role: " + role +
                 ", teamID: " + teamID;

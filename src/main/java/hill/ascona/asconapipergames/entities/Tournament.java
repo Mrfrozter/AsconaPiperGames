@@ -13,6 +13,9 @@ public class Tournament {
     @Column(name = "tmnt_id")
     private int id;
 
+    @Column(name = "tmnt_title")
+    private String title;
+
     @Column(name = "tmnt_date")
     private String date;
 
@@ -23,11 +26,11 @@ public class Tournament {
     @OneToMany(fetch = FetchType.EAGER)
     private List<Match> matches = new ArrayList<>();
 
-    public Tournament(){
+    public Tournament() {
 
     }
 
-    public Tournament(Game game, String date){
+    public Tournament(Game game, String date) {
         this.game = game;
         this.date = date;
     }
@@ -54,5 +57,13 @@ public class Tournament {
 
     public void setGame(Game game) {
         this.game = game;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

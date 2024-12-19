@@ -73,7 +73,7 @@ public class MatchView {
         stage2.setScene(scene2);
         stage2.show();
         PersonDAO pDao = new PersonDAO();
-        List<Person> persons = pDao.getAllPlayersInfo();
+        List<Person> persons = pDao.getAllPlayersOrUsers("players");
         TeamDAO teamDao = new TeamDAO();
         List<Team> teams = teamDao.getAllTeams();
 

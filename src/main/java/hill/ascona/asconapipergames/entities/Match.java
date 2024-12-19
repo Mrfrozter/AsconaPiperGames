@@ -21,8 +21,8 @@ public class Match {
     @Column(name = "match_singel_team", columnDefinition = "boolean default true", nullable = true)
     private boolean singelNotTeam = false;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "match_game")
+    @ManyToOne(fetch = FetchType.EAGER    )
+    @JoinColumn(name = "game_id")
     private Game game;
 
     @ManyToMany(fetch = FetchType.EAGER)

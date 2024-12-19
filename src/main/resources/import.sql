@@ -29,9 +29,9 @@ Insert into persons(p_name, p_lastname, p_nickname, p_address, p_postNumber, p_c
 
 
 
-INSERT INTO matches(match_singel_team, match_Played, match_date, part_one_name,part_two_name ) VALUES(true,true,'2024-10-10','test1', 'fykgui');
-INSERT INTO matches(match_singel_team, match_Played, match_date, part_one_name,part_two_name ) VALUES(false,true,'2024-11-11','Test 2', 'Test3');
-INSERT INTO matches(match_singel_team, match_Played, match_date, part_one_name,part_two_name ) VALUES(true,false,'2024-12-11','Karl', 'Labaan');
+INSERT INTO matches(game_id,match_singel_team, match_Played, match_date, part_one_name,part_two_name ) VALUES(1,true,true,'2024-10-10','test1', 'fykgui');
+INSERT INTO matches(game_id,match_singel_team, match_Played, match_date, part_one_name,part_two_name ) VALUES(1,false,true,'2024-11-11','Test 2', 'Test3');
+INSERT INTO matches(game_id,match_singel_team, match_Played, match_date, part_one_name,part_two_name ) VALUES(3,true,false,'2024-12-11','Karl', 'Labaan');
 
 
 

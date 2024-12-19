@@ -43,6 +43,15 @@ public class MatchDAO {
         return matchToReturn;
     }
 
+    public List<Match> getAllreadyPlayed(boolean allreadyPlayed ) {
+        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+        List<Match> listToReturn = new ArrayList<>();
+        TypedQuery<Match> result = entityManager.createQuery("FROM Match m WHERE m.allreadyPlayed = :variabel", Match.class);
+        result.setParameter("variabel", allreadyPlayed);
+        listToReturn.addAll(result.getResultList());
+        return listToReturn;
+    }
+
 
     public List<Match> getAllMatches(){
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();

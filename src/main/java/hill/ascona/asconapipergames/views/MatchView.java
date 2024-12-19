@@ -5,6 +5,8 @@ import hill.ascona.asconapipergames.DAO.MatchDAO;
 import hill.ascona.asconapipergames.DAO.PersonDAO;
 import hill.ascona.asconapipergames.DAO.TeamDAO;
 import hill.ascona.asconapipergames.entities.*;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -51,7 +53,7 @@ public class MatchView {
     private int player2Id;
     private int team1Id;
     private int team2Id;
-    private int winnerId;
+    private int winnerIdSend;
     private String nameOne;
     private String nameTwo;
     private Random random = new Random();
@@ -164,7 +166,7 @@ public class MatchView {
         comboBoxWinner.setPromptText("Enter winner");                              // TODO ----------------------
         comboBoxWinner.getItems().addAll("ADD Players/teams HERE", "Medium"); // TODO ----------------------
         comboBoxWinner.setOnAction(e ->{
-            winnerId=99;                                                     // TODO ----------------------
+            winnerIdSend=1;                                                     // TODO ----------------------
         });
 
         ComboBox<String> comboBoxMvp =new ComboBox<>();
@@ -217,22 +219,13 @@ public class MatchView {
         Button cancel = new Button("Cancel");
         cancel.setOnAction( event ->{
 
-            /// ////////test av matchDAO.getAllMatches()
-/*            System.out.println("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
-            matchSimple.addAll(matchDAO.getAllMatches());
-            matches.addAll(matchDAO.getAllMatches());
-            for (Match match : matches) {
-                System.out.println("gega");
-                System.out.println(match.getNameOne());
-            }*/
-            /// //testrader slut-------------------------------------------------------------
-                   stage2.close();
+            stage2.close();
                 }
         );
 
         Button saveTheMatch = new Button("Save match");
         saveTheMatch.setOnAction(event -> {
-            /// ////////// olika matchtemp beronde på avgjord eller inte????? winnerId,
+            /// ////////// olika matchtemp beroende på avgjord eller inte????? winnerId,
             Match matchTemp = new Match(date, allreadyPlayed, singelNotTeam, gamePlay, nameOne, nameTwo);
 
             if (singelNotTeam) {
@@ -359,16 +352,16 @@ public class MatchView {
         decidedCol.setCellValueFactory(
                 new PropertyValueFactory<>("allreadyPlayed")
         );
-/*        TableColumn<Match,String> winnerCol = new TableColumn<>("Winner");
+        TableColumn<Match,String> winnerCol = new TableColumn<>("Winner");
         winnerCol.setPrefWidth(80);
         winnerCol.setCellValueFactory(
                 new PropertyValueFactory<>("winnerId")
 
-                , winnerCol
-        );*/
+
+        );
 
         table.setItems(matches);
-        table.getColumns().addAll(dateCol, gameCol, pOrTCol, pOrTOneCol, pOrTTwoCol, decidedCol);
+        table.getColumns().addAll(dateCol, gameCol, pOrTCol, winnerCol, pOrTOneCol, pOrTTwoCol, decidedCol);
 
        // matches.addListener(new ListChangeListener<>();
 
@@ -427,13 +420,22 @@ public class MatchView {
 
         //table.getSelectionModel().getSelectedCells().addListener((v, oldValue, newValue)->buttonDelete.setDisable(false); );
 
-    /*    togglePorT.selectedToggleProperty().addListener(new ChangeListener<Toggle>()
-        {
+        togglePorT.selectedToggleProperty().addListener(new ChangeListener<>() {
             public void changed(ObservableValue<? extends Toggle> ob,
-                                Toggle o, Toggle n)
-            {
+                                Toggle o, Toggle n) {
 
-                RadioButton rb = (RadioButton)togglePorT.getSelectedToggle();
+                RadioButton rb = (RadioButton) togglePorT.getSelectedToggle();
+
+                if (rb == r1) {
+                    matches.clear();
+                    matches.addAll(matchDAO.getAllMatches());
+                } else if (rb == r2) {
+                    matches.clear();
+                    matches.addAll(matchDAO.getAllreadyPlayed(false));
+                }else if (rb == r3) {
+                    matches.clear();
+                    matches.addAll(matchDAO.getAllreadyPlayed(true));
+                }
 
                 if (rb != null) {
                     String s = rb.getText();
@@ -442,7 +444,7 @@ public class MatchView {
                     //l2.setText(s + " selected");
                 }
             }
-        });*/
+        });
 
         paneShow.getChildren().add(vbox);
 

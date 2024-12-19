@@ -31,8 +31,8 @@ public class Match {
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Team> teams = new ArrayList<>();
 
-  /*  @Column(name = "match_winner", nullable = true)
-    private int winnerId;*/
+    @Column(name = "match_winner", nullable = true)
+    private Integer winnerId;
 
     @Column(name = "part_one_name", length = 50, nullable = true)
     private String nameOne;
@@ -110,13 +110,13 @@ public class Match {
         this.teams = teams;
     }
 
-/*    public int getWinnerId() {
+    public Integer getWinnerId() {
         return winnerId;
     }
 
-    public void setWinnerId(int winnerId) {
+    public void setWinnerId(Integer winnerId) {
         this.winnerId = winnerId;
-    }*/
+    }
 
     public String getNameOne() {
         return nameOne;

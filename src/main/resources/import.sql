@@ -1,11 +1,3 @@
---INSERT INTO matches(match_singel_team, match_Played, match_game, part_one_name, part_two_name) VALUES(true, true,3,'ettTredjeNamn', 'steffe');
---INSERT INTO matches(match_singel_team, match_Played, match_game, part_one_name, part_two_name) VALUES(false, true,5,'ettTillNamn', 'janne');
---INSERT INTO matches(match_singel_team, match_Played, match_game, part_one_name, part_two_name) VALUES(true, false,6,'ettNamn', 'carl');
-INSERT INTO matches(match_date, part_one_name) VALUES('2020-20-20','test1');
-INSERT INTO matches(part_one_name) VALUES('carl');
-INSERT INTO matches(part_one_name) VALUES('srwsts');
-
-
 
 INSERT INTO game(game_title, game_genre, game_numberOfTeams) VALUES ('Halo 3', 'FPS', 8);
 INSERT INTO game(game_title, game_genre, game_numberOfTeams) VALUES ('Counter Strike 2', 'FPS', 5);
@@ -16,6 +8,8 @@ INSERT INTO game(game_title, game_genre, game_numberOfTeams) VALUES ('Valorant',
 
 
 
+
+
 INSERT into teams(team_name, game_id) values  ('the Clowns', 1);
 INSERT into teams(team_name, game_id) values  ('the blues', 2);
 INSERT into teams(team_name, game_id) values  ('the greens', 3);
@@ -23,7 +17,7 @@ INSERT into teams(team_name, game_id) values  ('plupparna ', 3);
 
 
 
-Insert into persons(p_name, p_lastname, p_nickname, p_address, p_postNumber, p_city, p_country, p_email, p_role, p_teamID) VALUES ('Richard','Hendricks','Rich','NY',123,'NY','Usa','Hendricks@mail','User','');
+Insert into persons(p_name, p_lastname, p_nickname, p_address, p_postNumber, p_city, p_country, p_email, p_role) VALUES ('Richard','Hendricks','Rich','NY',123,'NY','Usa','Hendricks@mail','User');
 Insert into persons(p_name, p_lastname, p_nickname, p_address, p_postNumber, p_city, p_country, p_email, p_role, p_teamID) VALUES ('Bertram','Gilfoyle','BG','NY',567,'NY','Usa','Gilfoyle@mail','User','');
 Insert into persons(p_name, p_lastname, p_nickname, p_address, p_postNumber, p_city, p_country, p_email, p_role, p_teamID) VALUES ('Dinesh','Chugtai','Din23','NY',348,'NY','Usa','Chugtai@mail','User','');
 Insert into persons(p_name, p_lastname, p_nickname, p_address, p_postNumber, p_city, p_country, p_email, p_role, p_teamID) VALUES ('Elham','Farhang','ElFa','Stockholm',123,'Stockholm','Sverige','Farhang@mail','Player',1);
@@ -32,6 +26,15 @@ Insert into persons(p_name, p_lastname, p_nickname, p_address, p_postNumber, p_c
 Insert into persons(p_name, p_lastname, p_nickname, p_address, p_postNumber, p_city, p_country, p_email, p_role, p_teamID) VALUES ('Sara','Emill','Sara','Mamlmö',123,'Mamlmö','Sverige','Emill@mail','Player',1);
 Insert into persons(p_name, p_lastname, p_nickname, p_address, p_postNumber, p_city, p_country, p_email, p_role, p_teamID) VALUES ('Anna','Hendricksson','Queen12','Skåne',3135,'Skåne','Sverige','Hendricksson@mail','Player',1);
 Insert into persons(p_name, p_lastname, p_nickname, p_address, p_postNumber, p_city, p_country, p_email, p_role, p_teamID) VALUES ('Simon','Andersson','Sim30','Gävle',123,'Mamlmö','Sverige','Andersson30@mail','Player',2);
+
+
+
+INSERT INTO matches(match_singel_team, match_Played, match_date, part_one_name,part_two_name ) VALUES(true,true,'2024-10-10','test1', 'fykgui');
+INSERT INTO matches(match_singel_team, match_Played, match_date, part_one_name,part_two_name ) VALUES(false,true,'2024-11-11','Test 2', 'Test3');
+INSERT INTO matches(match_singel_team, match_Played, match_date, part_one_name,part_two_name ) VALUES(true,false,'2024-12-11','Karl', 'Labaan');
+
+
+
 
 INSERT INTO tournaments(game_id, tmnt_date) VALUES (1, '2024-12-18');
 INSERT INTO tournaments(game_id, tmnt_date) VALUES (2, '2024-12-19');

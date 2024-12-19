@@ -1,5 +1,6 @@
 package hill.ascona.asconapipergames.DAO;
 
+import hill.ascona.asconapipergames.entities.Game;
 import jakarta.persistence.*;
 import hill.ascona.asconapipergames.entities.Team;
 
@@ -116,6 +117,22 @@ public class TeamDAO {
         }
         finally {
             entityManager.close();
+        }
+    }
+
+    //Modifierad getByName från GameDAO
+    public Team getTeamByName(String teamName){
+        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+        try{
+            // JPQL-fråga för att hämta spelet baserat på titeln
+            TypedQuery<Team> query = entityManager.createQuery("SELECT t FROM Team t WHERE t.team_name = :teamName", Team.class);
+            query.setParameter("teamName", teamName);
+            return query.getSingleResult(); // Return the team if found
+        } catch (NoResultException e) {
+            // Returnera null om inget spel hittas
+            return null;
+        } finally {
+            entityManager.close(); // Ensure entity manager is closed
         }
     }
 }

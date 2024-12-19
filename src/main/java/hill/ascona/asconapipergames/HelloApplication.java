@@ -3,6 +3,7 @@ package hill.ascona.asconapipergames;
 import hill.ascona.asconapipergames.DAO.PersonDAO;
 import hill.ascona.asconapipergames.entities.Person;
 import hill.ascona.asconapipergames.views.GameView;
+import hill.ascona.asconapipergames.views.MatchView;
 import hill.ascona.asconapipergames.views.PersonView;
 import hill.ascona.asconapipergames.views.TournamentView;
 import javafx.application.Application;
@@ -48,7 +49,7 @@ public class HelloApplication extends Application {
         loginComboBox.setLayoutY(280);
 
         PersonDAO personDAO = new PersonDAO();
-        List<Person> allUsers= personDAO.getAllUsersInfo();
+        List<Person> allUsers= personDAO.getAllPlayersOrUsers("User");
         for (Person i: allUsers){
             loginComboBox.getItems().add(i.getName()+' '+i.getLastname());
         }
@@ -71,7 +72,7 @@ public class HelloApplication extends Application {
         Tab tab1 = new Tab("Users or Players", new PersonView().start());
         Tab tab2 = new Tab("Teams", new Label("Show teams"));
         Tab tab3 = new Tab("Games", new GameView().start());
-        Tab tab4 = new Tab("Matches", new Label("Show matches"));
+        Tab tab4 = new Tab("Matches", new MatchView().start());
         Tab tab5 = new Tab("Tournament", new TournamentView().start());
 
         tabPane.getTabs().add(tab1);
@@ -79,8 +80,7 @@ public class HelloApplication extends Application {
         tabPane.getTabs().add(tab3);
         tabPane.getTabs().add(tab4);
         tabPane.getTabs().add(tab5);
-
-//        AnchorPane mainAnchorPane = new AnchorPane(tabPane);
+        
         return new Scene(tabPane);
     }
 

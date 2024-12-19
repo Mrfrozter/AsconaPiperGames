@@ -1,6 +1,7 @@
 package hill.ascona.asconapipergames.DAO;
 
 import hill.ascona.asconapipergames.entities.Game;
+import hill.ascona.asconapipergames.entities.Tournament;
 import jakarta.persistence.*;
 import hill.ascona.asconapipergames.entities.Match;
 
@@ -41,42 +42,15 @@ public class MatchDAO {
         entityManager.close();
         return matchToReturn;
     }
-/*    List<Match> listToReturn = new ArrayList<>();
-    TypedQuery<Match> result = entityManager.createQuery("FROM Match", Match.class);
-        listToReturn.addAll(result.getResultList());*/
-    /*public List<Match> getAllMatches(){
-        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
-        EntityTransaction transaction = null;
-        try {
-            transaction = entityManager.getTransaction();
-            transaction.begin();
-            List<Match> listToReturn = new ArrayList<>(entityManager.createQuery("from Match", Match.class).getResultList());
-            transaction.commit();
-            return listToReturn;
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-            if(transaction != null){
-                transaction.rollback();
-            }
-          e.printStackTrace();
-        }finally {
-            entityManager.close();
-        }
-        return null;
-    }*/
 
-    public List<Match> getAllMatches() {
+
+    public List<Match> getAllMatches(){
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
-        try {
-            TypedQuery<Match> query = entityManager.createQuery("FROM Match ", Match.class);
-            return query.getResultList();
-        } finally {
-            entityManager.close();
-        }
+        List<Match> listToReturn = new ArrayList<>();
+        TypedQuery<Match> result = entityManager.createQuery("FROM Match", Match.class);
+        listToReturn.addAll(result.getResultList());
+        return listToReturn;
     }
-
-
-
 
     // Update
     public void updateMatch(Match matchToUpdate){

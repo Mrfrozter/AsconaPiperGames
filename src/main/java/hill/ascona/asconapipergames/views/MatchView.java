@@ -3,11 +3,10 @@ package hill.ascona.asconapipergames.views;
 import hill.ascona.asconapipergames.DAO.GameDAO;
 import hill.ascona.asconapipergames.DAO.MatchDAO;
 import hill.ascona.asconapipergames.DAO.PersonDAO;
-import hill.ascona.asconapipergames.entities.Game;
-import hill.ascona.asconapipergames.entities.Match;
-import hill.ascona.asconapipergames.entities.Person;
-import hill.ascona.asconapipergames.entities.Tournament;
+import hill.ascona.asconapipergames.DAO.TeamDAO;
+import hill.ascona.asconapipergames.entities.*;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -37,26 +36,31 @@ registrerar resultatet.
 • */
 
 public class MatchView {
-    MatchDAO matchDAO = new MatchDAO();
+    private MatchDAO matchDAO = new MatchDAO();
     private String gameChosen = "";
-    Boolean team = false;
-    Boolean upcoming = true;
-    String pOrTString = "Player";
-    int turneringarId;
-    String date = "";
-    boolean allreadyPlayed = false;
-    boolean singelNotTeam = false;
-    String gameName;
-    Game game;
-    int player1Id;
-    int player2Id;
-    int team1Id;
-    int team2Id;
-    int winnerId;
-    String nameOne;
-    String nameTwo;
-    Random random = new Random();
-
+    private Boolean team = false;
+    private Boolean upcoming = true;
+    private String pOrTString = "Player";
+    private int turneringarId;
+    private String date = "";
+    private boolean allreadyPlayed = false;
+    private boolean singelNotTeam = true;
+    private  String gameName;
+    private Game gamePlay;
+    private int player1Id;
+    private int player2Id;
+    private int team1Id;
+    private int team2Id;
+    private int winnerId;
+    private String nameOne;
+    private String nameTwo;
+    private Random random = new Random();
+    private Person player1;
+    private Person player2;
+    private Team team1;
+    private Team team2;
+    private ObservableList<Match> matches = FXCollections.observableList(new ArrayList<>());
+    private List<Match> matchSimple = new ArrayList<>();
 
 
     public void addMatch(){
@@ -66,10 +70,15 @@ public class MatchView {
         Stage stage2 = new Stage();
         stage2.setScene(scene2);
         stage2.show();
+        PersonDAO pDao = new PersonDAO();
+        List<Person> persons = pDao.getAllPlayersInfo();
+        TeamDAO teamDao = new TeamDAO();
+        List<Team> teams = teamDao.getAllTeams();
+
 
         //----------------------------------------------------------------------Labels---------------
 
-        Label nowShowing = new Label("ADD A TEAM MATCH");
+        Label nowShowing = new Label("ADD A PLAYER MATCH");
         nowShowing.setFont(new Font("Arial bold", 12));
 
         Label labelGame = new Label("Game: ");
@@ -84,47 +93,6 @@ public class MatchView {
         Label labelPOrTOneName = new Label("Show p1 name: ");
         Label labelPOrTTwoName = new Label("Show p2 name: ");
 
-        //----------------------------------------------------------------------Buttons---------------
-
-        Button pOrTButton = new Button("Add a team match");
-        pOrTButton.setOnAction(event -> {
-            singelNotTeam=!singelNotTeam;
-            if (singelNotTeam){
-                pOrTButton.setText("Add a player match");
-                pOrTString = "Team";
-                nowShowing.setText("ADD A TEAM MATCH");
-            }else{
-                pOrTButton.setText("Add a team match");
-                pOrTString = "Player";
-                nowShowing.setText("ADD A PLAYER MATCH");
-            }
-            labelPOrTOne.setText(pOrTString + " one: ");
-            labelPOrTwo.setText(pOrTString + " two: ");
-                //update participant comboboxes                                // TODO ----------------------
-                }
-        );
-
-        Button cancel = new Button("Cancel");
-        cancel.setOnAction( event ->{
-                    stage2.close();
-                }
-        );
-
-        Button saveMatch = new Button("Save match");
-        saveMatch.setOnAction(event -> {
-            if (singelNotTeam) {
-                matchDAO.saveMatch(new Match(date, allreadyPlayed, singelNotTeam, game, player1Id,
-                        player2Id, winnerId, nameOne, nameTwo));
-
-
-            }else {
-                matchDAO.saveMatch(new Match(singelNotTeam, date, allreadyPlayed, game,  team1Id,
-                        team2Id, winnerId, nameOne, nameTwo));
-            }
-
-            //int turneringarId;
-            stage2.close(); ///// nollställ istället?
-        });
 
         //----------------------------------------------------------------------Checkbox---------------
         CheckBox checkBox = new CheckBox();
@@ -139,11 +107,7 @@ public class MatchView {
         //comboBoxGame.setValue("Delay rounds 3 second");
 
 
-  /*      ObservableList<Game> games = FXCollections.observableList(new ArrayList<>());
-        GameDAO gDao = new GameDAO();
-        games = FXCollections.observableList(gDao.getAllGames());
 
-*/
         ComboBox<String> comboBoxGame =new ComboBox<>();
         comboBoxGame.setPromptText("Choose game");
         GameDAO gDao = new GameDAO();
@@ -153,40 +117,46 @@ public class MatchView {
         }
         comboBoxGame.setOnAction(e ->{
             gameChosen = (String) comboBoxGame.getValue();
-            game = gDao.getByName(gameChosen);
+            gamePlay = gDao.getByName(gameChosen);
         });
 
-
-        PersonDAO pDao = new PersonDAO();
-        List<Person> persons = pDao.getAllPlayersInfo();
         ComboBox<String> comboBoxPOrT1 =new ComboBox<>();
         comboBoxPOrT1.setPromptText("Choose first participant");
+        ComboBox<String> comboBoxPOrT2 =new ComboBox<>();
+        comboBoxPOrT2.setPromptText("Choose second participant");
         if (singelNotTeam) {
             for (Person person : persons) {
-                comboBoxPOrT1.getItems().add(person.getName());
+                comboBoxPOrT1.getItems().add(person.getNickname());
+                comboBoxPOrT2.getItems().add(person.getNickname());
             }
-        }else{                                  // TODO ----get teams-------------
-
+        }else{
+            for (Team team : teams) {
+                comboBoxPOrT1.getItems().add(team.getTeam_name());               // TODO ----get teams-------------
+                comboBoxPOrT2.getItems().add(team.getTeam_name());
+            }
         }
+
         comboBoxPOrT1.setOnAction(e ->{
-            //player1Id = comboBoxPOrT1.getSelectionModel().getSelectedIndex();
             nameOne = comboBoxPOrT1.getValue();
-            if (singelNotTeam) {                                                // TODO ----------------------
-                player1Id=random.nextInt(10);
+            if (singelNotTeam) {
+                player1Id = comboBoxPOrT1.getSelectionModel().getSelectedIndex();
+                player1 = persons.get(player1Id);                   // TODO -----borde vara getByName???????------------
             }else {
-                team1Id=random.nextInt(10);
+                team1Id = comboBoxPOrT1.getSelectionModel().getSelectedIndex();
+                team1 = teams.get(team1Id);
             }
+
         });
 
-        ComboBox<String> comboBoxPOrT2 =new ComboBox<>();
-        comboBoxPOrT2.setPromptText("Choose second participant");                   // TODO ----------------------
-        comboBoxPOrT2.getItems().addAll("ADD Players/teams2 HERE",  "Kalle", "Sara", "The team", "the lost ones", "Fredrik"); // TODO ----------------------
-        comboBoxPOrT2.setOnAction(e ->{
+                     // TODO ----------------------
+      comboBoxPOrT2.setOnAction(e ->{
             nameTwo = comboBoxPOrT2.getValue();
             if (singelNotTeam) {                                                // TODO ----------------------
-                player2Id=random.nextInt(10);
+                player2Id = comboBoxPOrT1.getSelectionModel().getSelectedIndex();
+                player2 = persons.get(player2Id);
             }else {                                                                  // TODO ----------------------
-                team2Id=random.nextInt(10);
+                team2Id = comboBoxPOrT1.getSelectionModel().getSelectedIndex();
+                team2 = teams.get(team1Id);
             }
         });
 
@@ -211,6 +181,75 @@ public class MatchView {
                 LocalDate dateLocal = datePicker.getValue();
                 date = dateLocal.toString();
             }
+        });
+        //----------------------------------------------------------------------Buttons---------------
+
+        Button pOrTButton = new Button("Add a team match");
+        pOrTButton.setOnAction(event -> {
+                    singelNotTeam=!singelNotTeam;
+                    comboBoxPOrT1.getItems().clear();
+                    comboBoxPOrT2.getItems().clear();
+                    if(singelNotTeam){
+                        pOrTButton.setText("Add a team match");
+                        pOrTString = "Player";
+                        nowShowing.setText("ADD A PLAYER MATCH");
+
+                        for (Team team : teams) {
+                            comboBoxPOrT1.getItems().add(team.getTeam_name());               // TODO ----get teams-------------
+                            comboBoxPOrT2.getItems().add(team.getTeam_name());
+                        }
+
+                    }else{
+                        pOrTButton.setText("Add a player match");
+                        pOrTString = "Team";
+                        nowShowing.setText("ADD A TEAM MATCH");
+                        for (Person person : persons) {
+                            comboBoxPOrT1.getItems().add(person.getNickname());
+                            comboBoxPOrT2.getItems().add(person.getNickname());
+                        }
+                    }
+                    labelPOrTOne.setText(pOrTString + " one: ");
+                    labelPOrTwo.setText(pOrTString + " two: ");
+                    //update participant comboboxes                                // TODO ----------------------
+                }
+        );
+
+        Button cancel = new Button("Cancel");
+        cancel.setOnAction( event ->{
+
+            /// ////////test av matchDAO.getAllMatches()
+/*            System.out.println("-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+            matchSimple.addAll(matchDAO.getAllMatches());
+            matches.addAll(matchDAO.getAllMatches());
+            for (Match match : matches) {
+                System.out.println("gega");
+                System.out.println(match.getNameOne());
+            }*/
+            /// //testrader slut-------------------------------------------------------------
+                   stage2.close();
+                }
+        );
+
+        Button saveTheMatch = new Button("Save match");
+        saveTheMatch.setOnAction(event -> {
+            /// ////////// olika matchtemp beronde på avgjord eller inte????? winnerId,
+            Match matchTemp = new Match(date, allreadyPlayed, singelNotTeam, gamePlay, nameOne, nameTwo);
+
+            if (singelNotTeam) {
+                matchTemp.getPlayers().add(player1);
+                matchTemp.getPlayers().add(player2);
+            }else {
+                matchTemp.getTeams().add(team1);
+                matchTemp.getTeams().add(team2);
+            }
+            matchDAO.saveMatch(matchTemp);
+
+            matches.add(matchTemp);
+//            matches.clear();
+//            matches.addAll(matchDAO.getAllMatches());
+
+
+         //   stage2.close(); ///// nollställ istället?
         });
 
         //----------------------------------------------------------------------Layout---------------
@@ -261,53 +300,33 @@ public class MatchView {
         comboBoxPOrT2.setLayoutY(85);
         comboBoxMvp.setLayoutX(330);
         comboBoxMvp.setLayoutY(185);
-        saveMatch.setLayoutX(340);
-        saveMatch.setLayoutY(255);
+        saveTheMatch.setLayoutX(340);
+        saveTheMatch.setLayoutY(255);
 
 
         paneAdd.getChildren().addAll(checkBox, labelGame, labelPOrTOne,labelDate, labelWinner,pOrTButton, nowShowing, labelScore,
                 labelTime, labelUpcoming,  labelMvp,
                 labelPOrTwo,labelPOrTOneName,labelPOrTTwoName,
                 comboBoxGame,comboBoxPOrT1,comboBoxPOrT2,comboBoxWinner,comboBoxMvp,
-                datePicker,cancel, saveMatch);
+                datePicker,cancel, saveTheMatch);
     }
 
 
-    public AnchorPane start() {
-
-
- //----Show Matches----
+    public AnchorPane start() { //----Show Matches----
 
         AnchorPane paneShow = new AnchorPane();
         paneShow.setPrefSize(550, 600);
 
-        //----TableView----
+        //----TableView-------------------------------------------------------------------------------
 
 
-   /*     TableView<TestMatch> tableTest = new TableView<>();
-        ObservableList<TestMatch> data2 = FXCollections.observableArrayList(
-                new TestMatch("2024-11-12", "tetris", "Team", "röda", true, "blåa"),
-                new TestMatch("igår", "WoW", "Single", "röda", true, "röda"),
-                 new TestMatch("imorgon", "CoD", "blåa", "gröna", false, null),
-                new TestMatch("idag", "halo", "röda", "lila", true, "lila")
-        );*/
+      // matches = FXCollections.observableList(matchDAO.getAllMatches());
+        // matches.add(matchDAO.getMatchById(3));
+        //matches.add(matchDAO.getMatchById(2));
+        matches.addAll(matchDAO.getAllMatches());
 
         TableView<Match> table = new TableView<>();
-      ObservableList<Match> data = FXCollections.observableArrayList(
-/*                new Match(true,false, 5, 4, "test", "green"),
-                new Match(false,true, 7, 3, "yeyn", "red"),
-                ne w Match(false,true,9, 4, "tb twest", "lila"),
-                new Match(false,true,2, 3, "tesssett", "blue")*/
-      );
-/*
-
-        List<Match> test = matchDAO.getAllMatches();
-        // data = FXCollections.observableList(test);
-*/
-
-        //ObservableList<Match> data = FXCollections.observableList(matchDAO.getAllMatches());
-
-                table.setEditable(false);
+        table.setEditable(true);    //???????
         table.setPrefWidth(530);
 
         TableColumn<Match,String> dateCol = new TableColumn<>("Date");
@@ -318,7 +337,7 @@ public class MatchView {
         TableColumn<Match,String> gameCol = new TableColumn<>("Game");
         gameCol.setPrefWidth(90);
         gameCol.setCellValueFactory(
-                new PropertyValueFactory<>("gameId")
+                new PropertyValueFactory<>("game")
         );
         TableColumn<Match,String> pOrTCol = new TableColumn<>("Team/\n Singel");
         pOrTCol.setPrefWidth(50);
@@ -340,14 +359,18 @@ public class MatchView {
         decidedCol.setCellValueFactory(
                 new PropertyValueFactory<>("allreadyPlayed")
         );
-        TableColumn<Match,String> winnerCol = new TableColumn<>("Winner");
+/*        TableColumn<Match,String> winnerCol = new TableColumn<>("Winner");
         winnerCol.setPrefWidth(80);
         winnerCol.setCellValueFactory(
                 new PropertyValueFactory<>("winnerId")
-        );
 
-        table.setItems(data);
-        table.getColumns().addAll(dateCol, gameCol, pOrTCol, pOrTOneCol, pOrTTwoCol, decidedCol, winnerCol);
+                , winnerCol
+        );*/
+
+        table.setItems(matches);
+        table.getColumns().addAll(dateCol, gameCol, pOrTCol, pOrTOneCol, pOrTTwoCol, decidedCol);
+
+       // matches.addListener(new ListChangeListener<>();
 
 
         //----End TableView----
@@ -427,25 +450,4 @@ public class MatchView {
         return paneShow;
 
     }
-
-
-    public void saveButtonClicked(){
-/*        TestMatch testMatch = new TestMatch();
-        testMatch.setDate("new Date");
-        testMatch.setGame("Single");
-        testMatch.setTeam1("ettan");
-        testMatch.setTeam2("tvåan");
-        testMatch.setPlayed(true);
-        testMatch.setWinner("ettan");*/
-        //datepicker.clear();
-
-    }
-
-    public void deleteButtonClicked(){
-
-
-    }
-
-
-
 }

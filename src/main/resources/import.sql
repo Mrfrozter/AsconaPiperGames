@@ -1,7 +1,10 @@
-INSERT INTO matches(match_singel_team, match_Played, match_game_id, match_winner, part_one_name, part_two_name) VALUES(true, true,3,7,'ettTredjeNamn', 'steffe');
-INSERT INTO matches(match_singel_team, match_Played, match_game_id, match_winner, part_one_name, part_two_name) VALUES(false, true,9,4,'ettTillNamn', 'janne');
-INSERT INTO matches(match_singel_team, match_Played, match_game_id, match_winner, part_one_name, part_two_name) VALUES(true, false,6,3,'ettNamn', 'carl');
-INSERT INTO matches(match_singel_team, match_Played, match_game_id, match_winner, part_one_name, part_two_name) VALUES(false, false,8,9,'Laban', 'stina');
+--INSERT INTO matches(match_singel_team, match_Played, match_game, part_one_name, part_two_name) VALUES(true, true,3,'ettTredjeNamn', 'steffe');
+--INSERT INTO matches(match_singel_team, match_Played, match_game, part_one_name, part_two_name) VALUES(false, true,5,'ettTillNamn', 'janne');
+--INSERT INTO matches(match_singel_team, match_Played, match_game, part_one_name, part_two_name) VALUES(true, false,6,'ettNamn', 'carl');
+INSERT INTO matches(match_date, part_one_name) VALUES('2020-20-20','test1');
+INSERT INTO matches(part_one_name) VALUES('carl');
+INSERT INTO matches(part_one_name) VALUES('srwsts');
+
 
 
 INSERT INTO game(game_title, game_genre, game_numberOfTeams) VALUES ('Halo 3', 'FPS', 8);
@@ -10,6 +13,14 @@ INSERT INTO game(game_title, game_genre, game_numberOfTeams) VALUES ('Fortnite',
 INSERT INTO game(game_title, game_genre, game_numberOfTeams) VALUES ('Dota 2', 'MOBA', 5);
 INSERT INTO game(game_title, game_genre, game_numberOfTeams) VALUES ('LoL', 'MOBA', 5);
 INSERT INTO game(game_title, game_genre, game_numberOfTeams) VALUES ('Valorant', 'FPS', 5);
+
+
+
+INSERT into teams(team_name, game_id) values  ('the Clowns', 1);
+INSERT into teams(team_name, game_id) values  ('the blues', 2);
+INSERT into teams(team_name, game_id) values  ('the greens', 3);
+INSERT into teams(team_name, game_id) values  ('plupparna ', 3);
+
 
 
 Insert into persons(p_name, p_lastname, p_nickname, p_address, p_postNumber, p_city, p_country, p_email, p_role, p_teamID) VALUES ('Richard','Hendricks','Rich','NY',123,'NY','Usa','Hendricks@mail','User','');
@@ -27,10 +38,3 @@ INSERT INTO tournaments(game_id, tmnt_date) VALUES (2, '2024-12-19');
 INSERT INTO tournaments(game_id, tmnt_date) VALUES (3, '2024-12-20');
 INSERT INTO tournaments(game_id, tmnt_date) VALUES (4, '2024-12-21');
 INSERT INTO tournaments(game_id, tmnt_date) VALUES (5, '2024-12-24');
-
-
-/*INSERT INTO matches(match_singel_team, match_Played, match_game_id, match_winner, part_one_name, part_two_name,match_player1,match_player2) VALUES(true, true,3,7,'ettTredjeNamn', 'steffe', 1,2);
-INSERT INTO matches(match_singel_team, match_Played, match_game_id, match_winner, part_one_name, part_two_name) VALUES(false, true,9,4,'ettTillNamn', 'janne');
-INSERT INTO matches(match_singel_team, match_Played, match_game_id, match_winner, part_one_name, part_two_name) VALUES(true, false,6,3,'ettNamn', 'carl');
-INSERT INTO matches(match_singel_team, match_Played, match_game_id, match_winner, part_one_name, part_two_name) VALUES(false, false,8,9,'Laban', 'stina');
-*//*

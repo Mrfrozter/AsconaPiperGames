@@ -14,6 +14,9 @@ public class Team {
     @Column(name = "team_id")
     private int team_id;
 
+    @Column(name = "team_name")
+    private String team_name;
+
     @OneToMany(fetch = FetchType.EAGER)
     private List<Person> members = new ArrayList<>();
 
@@ -28,11 +31,11 @@ public class Team {
 
     //Konstruktor med allt förutom ID, eftersom att vi inte ska välja ID själva
 
-    public Team(List<Person> members, String game_id) {
+    public Team(String team_name, List<Person> members, String game_id) {
+        this.team_name = team_name;
         this.members = members;
         this.game_id = game_id;
     }
-
 
     //Getters och setters
 
@@ -60,5 +63,12 @@ public class Team {
     public void setGame_id(String game_id) {
         this.game_id = game_id;
     }
-}
 
+    public String getTeam_name() {
+        return team_name;
+    }
+
+    public void setTeam_name(String team_name) {
+        this.team_name = team_name;
+    }
+}

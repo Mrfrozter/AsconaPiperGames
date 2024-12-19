@@ -1,6 +1,9 @@
 package hill.ascona.asconapipergames.entities;
 
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -19,6 +22,9 @@ public class Game {
 
     @Column(name = "game_numberOfTeams", nullable = false)
     private int numberOfTeams;
+
+    @OneToMany(fetch = FetchType.EAGER)
+    private List<Team> teams = new ArrayList<>();
 
     // Constructors
     public Game() {
@@ -71,6 +77,14 @@ public class Game {
             throw new IllegalArgumentException("Number of teams must be greater than 0.");
         }
         this.numberOfTeams = numberOfTeams;
+    }
+
+    public List<Team> getTeams() {
+        return teams;
+    }
+
+    public void setTeams(List<Team> teams) {
+        this.teams = teams;
     }
 
     // Override equals and hashCode for proper entity comparison

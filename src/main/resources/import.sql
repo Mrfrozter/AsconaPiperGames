@@ -21,3 +21,12 @@ INSERT INTO tournaments(game_id, tmnt_date) VALUES (2, '2024-12-19');
 INSERT INTO tournaments(game_id, tmnt_date) VALUES (3, '2024-12-20');
 INSERT INTO tournaments(game_id, tmnt_date) VALUES (4, '2024-12-21');
 INSERT INTO tournaments(game_id, tmnt_date) VALUES (5, '2024-12-24');
+
+INSERT INTO teams(game_id, team_name) VALUES (1, 'Hammarby');
+INSERT INTO teams(game_id, team_name) VALUES (2, 'Malmö');
+INSERT INTO teams(game_id, team_name) VALUES (3, 'Göteborg');
+INSERT INTO teams(game_id, team_name) VALUES (4, 'AIK');
+INSERT INTO teams(game_id, team_name) VALUES (5, 'Djurgården');
+INSERT INTO teams(game_id, team_name) VALUES (1, 'Norrköping');
+INSERT INTO teams(game_id, team_name) VALUES (2, 'Elfsborg');
+INSERT INTO teams(game_id, team_name) VALUES (3, 'GAIS');

@@ -8,16 +8,15 @@ import hill.ascona.asconapipergames.entities.*;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -26,7 +25,6 @@ import javafx.stage.Stage;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /*
 • Matchen avgörs (poängen sätts) genom att Pied Pipers personal loggar in och
@@ -293,15 +291,12 @@ public class MatchView {
     }
 
 
-    public AnchorPane start() { //----Show Matches----
-
-        AnchorPane paneShow = new AnchorPane();
-        paneShow.setPrefSize(550, 600);
+    public VBox start() { //----Show Matches----
 
         //----TableView-------------------------------------------------------------------------------
 
 
-      matches = FXCollections.observableList(matchDAO.getAllMatches());
+        matches = FXCollections.observableList(matchDAO.getAllMatches());
 
         TableView<Match> table = new TableView<>();
         table.setEditable(true);    //???????
@@ -366,6 +361,7 @@ public class MatchView {
 
 
         table.setItems(matches);
+
         gameCol.setCellFactory(c -> new TableCell<Match, Game>() {
             @Override
             public void updateItem(Game game, boolean empty) {
@@ -377,43 +373,19 @@ public class MatchView {
             }
         });
 
- /*       CheckBox checkBoxTable = new CheckBox();
-        decidedCol.setCellFactory(c -> new TableCell<Match, Boolean>() {
-            if (match.isAllreadyPlayed()){
-                  checkBoxTable.setSelected(true);
-              }else {
-                  checkBoxTable.setSelected(false);
-              }
-        });*/
 
-
-
-
-
-/*                decidedCol.setCellFactory(column -> new CheckBoxTableCell<>());
-                decidedCol.setCellValueFactory(cellData -> {
-                table cellValue = cellData.getValue();
-                allreadyPlayed property = cellValue.choosedProperty();
-
-                // Add listener to handler change
-                property.addListener((observable, oldValue, newValue) -> cellValue.setChoosed(newValue));
-
-                return property;
-            });*/
 
         table.getColumns().addAll(dateCol, gameCol, pOrTCol, winnerCol, pOrTOneCol, pOrTTwoCol, decidedCol);
         table.setPlaceholder(
                 new Label("No matches like that in the database. Try adding one!"));
 
+        // matches.addListener(new ListChangeListener<>();
 
+        //----------------------------------------------End TableView--------------------------------
 
-       // matches.addListener(new ListChangeListener<>();
-
-
-        //----End TableView----
-
-        HBox hBox = new HBox();
-        VBox vbox = new VBox();
+        VBox vBoxAll = new VBox();
+        vBoxAll.setPrefSize(580, 600);
+        HBox hBoxUnderTable = new HBox();
 
         Button buttonDelete = new Button("Delete match");
         buttonDelete.setDisable(true);
@@ -440,64 +412,97 @@ public class MatchView {
             buttonDelete.setDisable(false);
         });
 
-
-        ToggleGroup togglePorT = new ToggleGroup();
-
-        RadioButton r1 = new RadioButton("Show both upcoming and finished matches");
-        RadioButton r2 = new RadioButton("Show only upcoming matches");
-        RadioButton r3 = new RadioButton("Show only finished matches");
-
-        r1.setToggleGroup(togglePorT);
-        r2.setToggleGroup(togglePorT);
-        r3.setToggleGroup(togglePorT);
-        togglePorT.selectToggle(r1);
-
-        VBox r = new VBox();
-        r.setSpacing(10);
-        r.getChildren().add(r1);
-        r.getChildren().add(r2);
-        r.getChildren().add(r3);
-
         VBox buttons = new VBox();
         buttons.setSpacing(10);
         buttons.getChildren().addAll(buttonNew,  buttonDelete); //buttonEdit,
-        hBox.setSpacing(20);
-        vbox.setSpacing(10);
-        hBox.getChildren().addAll(r,buttons);
-        vbox.getChildren().addAll(table, hBox);
-        vbox.setPadding(new Insets(10, 10, 10, 10));
 
+        //----------------------------------------------Toggle buttons--------------------------------
 
-        togglePorT.selectedToggleProperty().addListener(new ChangeListener<>() {
-            public void changed(ObservableValue<? extends Toggle> ob,
-                                Toggle o, Toggle n) {
+        ToggleGroup togglePlayed = new ToggleGroup();
+        ToggleGroup togglePorT = new ToggleGroup();
 
-                RadioButton rb = (RadioButton) togglePorT.getSelectedToggle();
+        RadioButton rbPlayed1 = new RadioButton("Show both upcoming and finished matches");
+        RadioButton rbPlayed2 = new RadioButton("Show only upcoming matches");
+        RadioButton rbPlayed3 = new RadioButton("Show only finished matches");
+
+        RadioButton rbPorT1 = new RadioButton("Show both \"Team\" and \"Player\" matches");
+        RadioButton rbPort2 = new RadioButton("Show only \"Team\" matches");
+        RadioButton rbPorT3 = new RadioButton("Show only \"Player\" matches");
+
+        rbPlayed1.setToggleGroup(togglePlayed);
+        rbPlayed2.setToggleGroup(togglePlayed);
+        rbPlayed3.setToggleGroup(togglePlayed);
+        togglePlayed.selectToggle(rbPlayed1);
+
+        rbPorT1.setToggleGroup(togglePorT);
+        rbPort2.setToggleGroup(togglePorT);
+        rbPorT3.setToggleGroup(togglePorT);
+        togglePorT.selectToggle(rbPorT1);
+
+        VBox vBoxPlayed = new VBox();
+        vBoxPlayed.setSpacing(10);
+        vBoxPlayed.getChildren().add(rbPlayed1);
+        vBoxPlayed.getChildren().add(rbPlayed2);
+        vBoxPlayed.getChildren().add(rbPlayed3);
+
+        VBox vBoxPorT = new VBox();
+        vBoxPorT.setSpacing(10);
+        vBoxPorT.getChildren().add(rbPorT1);
+        vBoxPorT.getChildren().add(rbPort2);
+        vBoxPorT.getChildren().add(rbPorT3);
+
+        togglePlayed.selectedToggleProperty().addListener(new ChangeListener<>() {
+            public void changed(ObservableValue<? extends Toggle> ob, Toggle o, Toggle n) {
+                RadioButton rb = (RadioButton) togglePlayed.getSelectedToggle();
                 buttonDelete.setDisable(true);
-                if (rb == r1) {
+                if (rb == rbPlayed1) {
                     matches.clear();
                     matches.addAll(matchDAO.getAllMatches());
-                } else if (rb == r2) {
+                } else if (rb == rbPlayed2) {
                     matches.clear();
                     matches.addAll(matchDAO.getAllreadyPlayed(false));
-                }else if (rb == r3) {
+                }else if (rb == rbPlayed3) {
                     matches.clear();
                     matches.addAll(matchDAO.getAllreadyPlayed(true));
                 }
+            }
+        });///////TODO/////////
 
-                if (rb != null) {
-                    String s = rb.getText();
 
-                    // change the label
-                    //l2.setText(s + " selected");
+        togglePorT.selectedToggleProperty().addListener(new ChangeListener<>() {
+            public void changed(ObservableValue<? extends Toggle> ob, Toggle o, Toggle n) {
+                RadioButton rb = (RadioButton) togglePlayed.getSelectedToggle();
+                buttonDelete.setDisable(true);
+                if (rb == rbPorT1) {
+                    matches.clear();
+                    matches.addAll(matchDAO.getAllMatches());
+                } else if (rb == rbPort2) {
+                    matches.clear();
+                    matches.addAll(matchDAO.getAllreadyPlayed(false));
+                }else if (rb == rbPorT3) {
+                    matches.clear();
+                    matches.addAll(matchDAO.getAllreadyPlayed(true));
                 }
             }
-        });
-
-        paneShow.getChildren().add(vbox);
+        });///////TODO/////////
 
 
-        return paneShow;
+        //---------------------------------------End Toggle buttons------------------------
+        hBoxUnderTable.setSpacing(20);
+        vBoxAll.setSpacing(10);
+        hBoxUnderTable.getChildren().addAll(vBoxPlayed,vBoxPorT);
+        vBoxAll.getChildren().addAll(table, hBoxUnderTable,buttons);
+        vBoxAll.setPadding(new Insets(10, 10, 10, 10));
 
+        vBoxPlayed.setPadding(new Insets(10, 10, 10, 10));
+        vBoxPorT.setPadding(new Insets(10, 10, 10, 10));
+
+        String cssLayout = "-fx-border-color: lightgrey;\n" +
+                "-fx-border-radius: 10px;" +
+                "-fx-border-width: 1;";
+
+        vBoxPorT.setStyle(cssLayout);
+        vBoxPlayed.setStyle(cssLayout);
+        return vBoxAll;
     }
 }

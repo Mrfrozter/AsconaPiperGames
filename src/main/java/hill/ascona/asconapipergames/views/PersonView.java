@@ -103,8 +103,8 @@ public  class PersonView {
         column9.setCellValueFactory(new PropertyValueFactory<>("email"));
         TableColumn<Person, String> column10 = new TableColumn<>("Role");
         column10.setCellValueFactory(new PropertyValueFactory<>("role"));
-        TableColumn<Person, String> column11 = new TableColumn<>("Team-id");
-        column11.setCellValueFactory(new PropertyValueFactory<>("teamID"));
+        TableColumn<Person, Team> column11 = new TableColumn<>("Team");
+        column11.setCellValueFactory(new PropertyValueFactory<>("team"));
 
         tableView.getColumns().addAll(column1,column2,column3,column4,column5,column6,column7,column8,column9,column10,column11);
 
@@ -130,10 +130,20 @@ public  class PersonView {
         labelRegister.setLayoutX(15);
         labelRegister.setLayoutY(310);
 
+        ComboBox<Team> comboBoxTeam =new ComboBox<>();
+        comboBoxTeam.setPromptText("Team:");
+        comboBoxTeam.getItems().addAll(teamDAO.getAllTeams());
+        comboBoxTeam.setPrefSize(165,23);
         ComboBox<String> comboBoxRole =new ComboBox<>();
         comboBoxRole.setPromptText("Role:");
         comboBoxRole.getItems().addAll("Player","User");
         comboBoxRole.setPrefSize(165,23);
+        comboBoxRole.setOnAction(e->{
+            if(comboBoxRole.getValue().equals("User"))
+                comboBoxTeam.setDisable(true);
+            else if (comboBoxRole.getValue().equals("Player"))
+                comboBoxTeam.setDisable(false);
+        });
         TextField textFieldName= new TextField();
         textFieldName.setPromptText("First name");
         TextField textFieldLastName= new TextField();
@@ -150,13 +160,6 @@ public  class PersonView {
         textFieldCountry.setPromptText("Country");
         TextField textFieldEmail= new TextField();
         textFieldEmail.setPromptText("e-mail");
-        TextField textFieldTeamId= new TextField();
-        textFieldTeamId.setPromptText("Team-Id");
-        ComboBox<Team> comboBoxTeam =new ComboBox<>();
-        comboBoxTeam.setPromptText("Team:");
-        comboBoxTeam.getItems().addAll(teamDAO.getAllTeams());
-
-
 
         Label labelControl = new Label("Enter the person's first name, last name and nickname");
         labelControl.setLayoutX(10);
@@ -185,7 +188,7 @@ public  class PersonView {
             }
         });
 
-        TilePane tilePane1= new TilePane((Node) comboBoxRole,textFieldName,textFieldLastName,textFieldNickName,textFieldAddress,textFieldPostNo,textFieldCity,textFieldCountry,textFieldEmail,textFieldTeamId, buttonSave);
+        TilePane tilePane1= new TilePane((Node) comboBoxRole,textFieldName,textFieldLastName,textFieldNickName,textFieldAddress,textFieldPostNo,textFieldCity,textFieldCountry,textFieldEmail,comboBoxTeam, buttonSave);
         tilePane1.setHgap(5);
         tilePane1.setVgap(5);
         tilePane1.setTileAlignment(Pos.CENTER);
@@ -244,8 +247,8 @@ public  class PersonView {
         column4.setCellValueFactory(new PropertyValueFactory<>("nickname"));
         TableColumn<Person, String> column10 = new TableColumn<>("Role");
         column10.setCellValueFactory(new PropertyValueFactory<>("role"));
-        TableColumn<Person, String> column11 = new TableColumn<>("Team-id");
-        column11.setCellValueFactory(new PropertyValueFactory<>("teamID"));
+        TableColumn<Person, Team> column11 = new TableColumn<>("Team");
+        column11.setCellValueFactory(new PropertyValueFactory<>("team"));
 
         tableView.getColumns().addAll(column1,column2,column3,column4,column10,column11);
 
@@ -311,10 +314,20 @@ public  class PersonView {
         buttonSearch.setLayoutX(310);
         buttonSearch.setLayoutY(52);
 
+        ComboBox<Team> comboBoxTeam =new ComboBox<>();
+        comboBoxTeam.setPromptText("Team:");
+        comboBoxTeam.getItems().addAll(teamDAO.getAllTeams());
+        comboBoxTeam.setPrefSize(165,23);
         ComboBox<String> comboBoxRole =new ComboBox<>();
         comboBoxRole.setPromptText("Role:");
         comboBoxRole.getItems().addAll("Player","User");
         comboBoxRole.setPrefSize(165,23);
+        comboBoxRole.setOnAction(e->{
+            if(comboBoxRole.getValue().equals("User"))
+                comboBoxTeam.setDisable(true);
+            else if (comboBoxRole.getValue().equals("Player"))
+                comboBoxTeam.setDisable(false);
+        });
         TextField textFieldName= new TextField();
         textFieldName.setPromptText("First name");
         TextField textFieldLastName= new TextField();
@@ -331,9 +344,6 @@ public  class PersonView {
         textFieldCountry.setPromptText("Country");
         TextField textFieldEmail= new TextField();
         textFieldEmail.setPromptText("e-mail");
-        ComboBox<Team> comboBoxTeam =new ComboBox<>();
-        comboBoxTeam.setPromptText("Team:");
-        comboBoxTeam.getItems().addAll(teamDAO.getAllTeams());
 
         Label labelInfo= new Label();
         labelInfo.setLayoutX(75);
@@ -384,8 +394,8 @@ public  class PersonView {
         column4.setCellValueFactory(new PropertyValueFactory<>("nickname"));
         TableColumn<Person, String> column10 = new TableColumn<>("Role");
         column10.setCellValueFactory(new PropertyValueFactory<>("role"));
-        TableColumn<Person, String> column11 = new TableColumn<>("Team-id");
-        column11.setCellValueFactory(new PropertyValueFactory<>("teamID"));
+        TableColumn<Person, Team> column11 = new TableColumn<>("Team");
+        column11.setCellValueFactory(new PropertyValueFactory<>("team"));
 
         tableView.getColumns().addAll(column1,column2,column3,column4,column10,column11);
 

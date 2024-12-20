@@ -5,6 +5,10 @@ INSERT INTO game(game_title, game_genre, game_numberOfTeams) VALUES ('Dota 2', '
 INSERT INTO game(game_title, game_genre, game_numberOfTeams) VALUES ('LoL', 'MOBA', 5);
 INSERT INTO game(game_title, game_genre, game_numberOfTeams) VALUES ('Valorant', 'FPS', 5);
 
+Insert into teams(game_id,team_name) VALUES ('1','team1');
+Insert into teams(game_id,team_name) VALUES ('2','team2');
+Insert into teams(game_id,team_name) VALUES ('3','team3');
+
 
 Insert into persons(p_name, p_lastname, p_nickname, p_address, p_postNumber, p_city, p_country, p_email, p_role, team_id) VALUES ('Richard','Hendricks','Rich','NY',123,'NY','Usa','Hendricks@mail','User',null);
 Insert into persons(p_name, p_lastname, p_nickname, p_address, p_postNumber, p_city, p_country, p_email, p_role, team_id) VALUES ('Bertram','Gilfoyle','BG','NY',567,'NY','Usa','Gilfoyle@mail','User',null);

@@ -63,9 +63,10 @@ public class PersonDAO {
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-//            if (entityManager.contains(dataToUpdate)){
-//                entityManager.persist(dataToUpdate);
-//            }else {
+            if (entityManager.contains(dataToUpdate)){
+                entityManager.persist(dataToUpdate);
+            }
+//            else {
 //                Person player = entityManager.merge(dataToUpdate);
 //            }
             entityManager.merge(dataToUpdate);

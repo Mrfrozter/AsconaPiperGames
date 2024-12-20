@@ -344,10 +344,9 @@ public  class PersonView {
         Button buttonUpdate=new Button("Update");
         buttonUpdate.setPrefSize(145,23);
         buttonUpdate.setOnAction(e->{
-            datatoUpdate =new Person(textFieldName.getText(), textFieldLastName.getText(),
-                    textFieldNickName.getText(), textFieldAddress.getText()
-                    , textFieldPostNo.getText(), textFieldCity.getText(), textFieldCountry.getText(),
-                    textFieldEmail.getText(), comboBoxRole.getValue(), comboBoxTeam.getValue());
+            datatoUpdate.setName(textFieldName.getText());
+            datatoUpdate.setLastname(textFieldLastName.getText());
+            // Continue...
             personDAO.updatePlayersInfo(datatoUpdate);
             labelInfo.setText("Updated!");
             labelInfo.setVisible(true);

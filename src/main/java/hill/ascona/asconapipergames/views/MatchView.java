@@ -15,6 +15,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -49,10 +50,10 @@ public class MatchView {
     private boolean singelNotTeam = true;
     private  String gameName;
     private Game gamePlay;
-    private int player1Id;
-    private int player2Id;
-    private int team1Id;
-    private int team2Id;
+    private String player1Nickname;
+    private String player2Nickname;
+    private String team1Name;
+    private String team2Name;
     private int winnerIdSend;
     private String nameOne;
     private String nameTwo;
@@ -92,8 +93,6 @@ public class MatchView {
 
         //----------------------------------------------------------------------ComboBoxes---------------
 
-        //comboBoxGame.setValue("Delay rounds 3 second");
-
         ComboBox<String> comboBoxPOrT1 =new ComboBox<>();
         comboBoxPOrT1.setPromptText("Picka a game first");
         comboBoxPOrT1.setDisable(true);
@@ -116,17 +115,25 @@ public class MatchView {
             comboBoxPOrT2.setDisable(false);
             comboBoxPOrT1.setPromptText("Choose first participant");
             comboBoxPOrT2.setPromptText("Choose second participant");
-            comboBoxPOrT1.getItems().clear();
-            comboBoxPOrT2.getItems().clear();
+            comboBoxPOrT1.getItems().removeAll(comboBoxPOrT1.getItems());
+            comboBoxPOrT2.getItems().removeAll(comboBoxPOrT2.getItems());
             if (singelNotTeam) {
                 for (Person person : persons) {
                     comboBoxPOrT1.getItems().add(person.getNickname());
                     comboBoxPOrT2.getItems().add(person.getNickname());
                 }
             }else{
+                int teamsCount= 0;
                 for (Team team : teams) {
-                    comboBoxPOrT1.getItems().add(team.getTeam_name());               // TODO ----get teams-------------
-                    comboBoxPOrT2.getItems().add(team.getTeam_name());
+                    if (team.getGame_id()==gamePlay.getId()){
+                        teamsCount++;
+                        comboBoxPOrT1.getItems().add(team.getTeam_name());               // TODO ----get teams-------------
+                        comboBoxPOrT2.getItems().add(team.getTeam_name());
+                    }
+                    if (teamsCount==0){
+                        comboBoxPOrT1.setPromptText("No teams for that game");
+                        comboBoxPOrT2.setPromptText("No teams for that game");
+                    }
                 }
             }
         });
@@ -136,11 +143,11 @@ public class MatchView {
         comboBoxPOrT1.setOnAction(e ->{
             nameOne = comboBoxPOrT1.getValue();
             if (singelNotTeam) {
-                player1Id = comboBoxPOrT1.getSelectionModel().getSelectedIndex();
-                player1 = persons.get(player1Id);                   // TODO -----borde vara getByName???????------------
+                player1Nickname = nameOne;
+                player1 = pDao.getByNickname(player1Nickname);                   // TODO -----borde vara getByName???????------------
             }else {
-                team1Id = comboBoxPOrT1.getSelectionModel().getSelectedIndex();
-                team1 = teams.get(team1Id);
+                team1Name = nameOne;
+                team1 = teamDao.getTeamByName(team1Name);
             }
         });
 
@@ -148,11 +155,11 @@ public class MatchView {
       comboBoxPOrT2.setOnAction(e ->{
             nameTwo = comboBoxPOrT2.getValue();
             if (singelNotTeam) {                                                // TODO ----------------------
-                player2Id = comboBoxPOrT1.getSelectionModel().getSelectedIndex();
-                player2 = persons.get(player2Id);
+                player2Nickname = nameOne;
+                player2 = pDao.getByNickname(player2Nickname);
             }else {                                                                  // TODO ----------------------
-                team2Id = comboBoxPOrT1.getSelectionModel().getSelectedIndex();
-                team2 = teams.get(team1Id);
+                team2Name = nameOne;
+                team2 = teamDao.getTeamByName(team2Name);
             }
         });
 
@@ -180,20 +187,26 @@ public class MatchView {
         checkBox.setSelected(true);
         checkBox.setOnAction(event -> {
             allreadyPlayed=!allreadyPlayed;
-            comboBoxWinner.setDisable(!allreadyPlayed);                                // TODO ----------------------
+            comboBoxWinner.setDisable(!allreadyPlayed);
+            if (allreadyPlayed) {
+                comboBoxWinner.getItems().addAll(nameOne,nameTwo);                 // TODO -------fyll i addAll---------------
+            }else{
+                comboBoxWinner.getItems().removeAll(nameOne,nameTwo);
+            }
         });
         //----------------------------------------------------------------------Buttons---------------
 
         Button pOrTButton = new Button("Add a team match");
         pOrTButton.setOnAction(event -> {
                     singelNotTeam=!singelNotTeam;
-                    comboBoxPOrT1.getItems().clear();
-                    comboBoxPOrT2.getItems().clear();
+                    comboBoxPOrT1.setPromptText("Choose first participant");     // TODO ----------------
+                    comboBoxPOrT2.setPromptText("Choose second participant");
+                    comboBoxPOrT1.getItems().removeAll(comboBoxPOrT1.getItems());
+                    comboBoxPOrT2.getItems().removeAll(comboBoxPOrT2.getItems());
                     if(singelNotTeam){
                         pOrTButton.setText("Add a team match");
                         pOrTString = "Player";
                         nowShowing.setText("ADD A PLAYER MATCH");
-
                         for (Team team : teams) {
                             comboBoxPOrT1.getItems().add(team.getTeam_name());               // TODO ----get teams-------------
                             comboBoxPOrT2.getItems().add(team.getTeam_name());
@@ -216,16 +229,13 @@ public class MatchView {
 
         Button cancel = new Button("Cancel");
         cancel.setOnAction( event ->{
-
             stage2.close();
                 }
         );
 
         Button saveTheMatch = new Button("Save match");
         saveTheMatch.setOnAction(event -> {
-            /// ////////// olika matchtemp beroende på avgjord eller inte????? winnerId,
-            Match matchTemp = new Match(date, allreadyPlayed, singelNotTeam, gamePlay, nameOne, nameTwo);
-
+            Match matchTemp = new Match(date, allreadyPlayed, pOrTString, gamePlay, nameOne, nameTwo);
             if (singelNotTeam) {
                 matchTemp.getPlayers().add(player1);
                 matchTemp.getPlayers().add(player2);
@@ -234,7 +244,6 @@ public class MatchView {
                 matchTemp.getTeams().add(team2);
             }
             matchDAO.saveMatch(matchTemp);
-
             matches.add(matchTemp);
 //            matches.clear();
 //            matches.addAll(matchDAO.getAllMatches());
@@ -322,7 +331,7 @@ public class MatchView {
         TableColumn<Match,String> pOrTCol = new TableColumn<>("Team/\nSingel\nplayer");
         pOrTCol.setPrefWidth(50);
         pOrTCol.setCellValueFactory(
-                new PropertyValueFactory<>("singelNotTeam")
+                new PropertyValueFactory<>("playerTeam")
         );
         TableColumn<Match,String> pOrTOneCol = new TableColumn<>("Participant 1");
         pOrTOneCol.setPrefWidth(80);
@@ -334,7 +343,7 @@ public class MatchView {
         pOrTTwoCol.setCellValueFactory(
                 new PropertyValueFactory<>("nameTwo")
         );
-        TableColumn<Match,String> decidedCol = new TableColumn<>("Played?");
+        TableColumn<Match, Boolean> decidedCol = new TableColumn<>("Played?");
         decidedCol.setPrefWidth(80);
         decidedCol.setCellValueFactory(
                 new PropertyValueFactory<>("allreadyPlayed")
@@ -359,10 +368,22 @@ public class MatchView {
             }
         });
 
+/*                decidedCol.setCellFactory(column -> new CheckBoxTableCell<>());
+                decidedCol.setCellValueFactory(cellData -> {
+                table cellValue = cellData.getValue();
+                allreadyPlayed property = cellValue.choosedProperty();
+
+                // Add listener to handler change
+                property.addListener((observable, oldValue, newValue) -> cellValue.setChoosed(newValue));
+
+                return property;
+            });*/
 
         table.getColumns().addAll(dateCol, gameCol, pOrTCol, winnerCol, pOrTOneCol, pOrTTwoCol, decidedCol);
         table.setPlaceholder(
-                new Label("No matches in the database. Try adding one!"));
+                new Label("No matches like that in the database. Try adding one!"));
+
+
 
        // matches.addListener(new ListChangeListener<>();
 
@@ -370,28 +391,34 @@ public class MatchView {
         //----End TableView----
 
 
-
         HBox hBox = new HBox();
         VBox vbox = new VBox();
-        Button buttonNew = new Button("Add a new match");
-        buttonNew.setOnAction(event -> {
-            addMatch();
-    /*        table.getSelectionModel().clearSelection();
-            table.getSelectionModel().getSelectedItems();
-            table.getSelectionModel().getSelectedCells().clear();*/
-        });
 
         Button buttonDelete = new Button("Delete match");
-        //buttonDelete.setDisable(true);
+        buttonDelete.setDisable(true);
         buttonDelete.setOnAction(event -> {
-     //       data.remove(table.getSelectionModel().getSelectedItem());
+            buttonDelete.setDisable(true);
+            matchDAO.deleteMatch(table.getSelectionModel().getSelectedItem());
+            matches.remove(table.getSelectionModel().getSelectedItem());
         });
 
-        Button buttonEdit = new Button("Edit/see details of match");
+        Button buttonNew = new Button("Add a new match");
+        buttonNew.setOnAction(event -> {
+            buttonDelete.setDisable(true);
+            addMatch();
+        });
+
+/*        Button buttonEdit = new Button("Edit/see details of match");
         buttonEdit.setDisable(true);
         buttonEdit.setOnAction(event -> {
 
+        });*/
+
+
+        table.setOnMouseClicked((e) -> {
+            buttonDelete.setDisable(false);
         });
+
 
         ToggleGroup togglePorT = new ToggleGroup();
 
@@ -412,21 +439,20 @@ public class MatchView {
 
         VBox buttons = new VBox();
         buttons.setSpacing(10);
-        buttons.getChildren().addAll(buttonNew, buttonEdit, buttonDelete);
+        buttons.getChildren().addAll(buttonNew,  buttonDelete); //buttonEdit,
         hBox.setSpacing(20);
         vbox.setSpacing(10);
         hBox.getChildren().addAll(r,buttons);
         vbox.getChildren().addAll(table, hBox);
         vbox.setPadding(new Insets(10, 10, 10, 10));
 
-        //table.getSelectionModel().getSelectedCells().addListener((v, oldValue, newValue)->buttonDelete.setDisable(false); );
 
         togglePorT.selectedToggleProperty().addListener(new ChangeListener<>() {
             public void changed(ObservableValue<? extends Toggle> ob,
                                 Toggle o, Toggle n) {
 
                 RadioButton rb = (RadioButton) togglePorT.getSelectedToggle();
-
+                buttonDelete.setDisable(true);
                 if (rb == r1) {
                     matches.clear();
                     matches.addAll(matchDAO.getAllMatches());

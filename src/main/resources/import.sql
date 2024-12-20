@@ -12,8 +12,14 @@ INSERT INTO game(game_title, game_genre, game_numberOfTeams) VALUES ('Valorant',
 
 INSERT into teams(team_name, game_id) values  ('the Clowns', 1);
 INSERT into teams(team_name, game_id) values  ('the blues', 2);
-INSERT into teams(team_name, game_id) values  ('the greens', 3);
-INSERT into teams(team_name, game_id) values  ('plupparna ', 3);
+INSERT into teams(team_name, game_id) values  ('the reds', 3);
+INSERT into teams(team_name, game_id) values  ('orange ', 3);
+INSERT into teams(team_name, game_id) values  ('the stars', 1);
+INSERT into teams(team_name, game_id) values  ('the lions', 2);
+INSERT into teams(team_name, game_id) values  ('the cats', 1);
+INSERT into teams(team_name, game_id) values  ('the wolfs ', 3);
+INSERT into teams(team_name, game_id) values  ('the 42´s', 1);
+
 
 
 
@@ -29,9 +35,9 @@ Insert into persons(p_name, p_lastname, p_nickname, p_address, p_postNumber, p_c
 
 
 
-INSERT INTO matches(game_id,match_singel_team, match_Played, match_date, part_one_name,part_two_name ) VALUES(1,true,true,'2024-10-10','test1', 'fykgui');
-INSERT INTO matches(game_id,match_singel_team, match_Played, match_date, part_one_name,part_two_name ) VALUES(1,false,true,'2024-11-11','Test 2', 'Test3');
-INSERT INTO matches(game_id,match_singel_team, match_Played, match_date, part_one_name,part_two_name ) VALUES(3,true,false,'2024-12-11','Karl', 'Labaan');
+INSERT INTO matches(game_id,match_singel_team, match_Played, match_date, part_one_name,part_two_name ) VALUES(1,'Player',true, '2024-10-10','test1', 'fykgui');
+INSERT INTO matches(game_id,match_singel_team, match_Played, match_date, part_one_name,part_two_name ) VALUES(1,'Team',true,'2024-11-11','Test 2', 'Test3');
+INSERT INTO matches(game_id,match_singel_team, match_Played, match_date, part_one_name,part_two_name ) VALUES(3,'Player',false,'2024-12-11','Karl', 'Labaan');
 
 
 

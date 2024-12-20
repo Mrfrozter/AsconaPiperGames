@@ -18,8 +18,8 @@ public class Match {
     @Column(name = "match_played", columnDefinition = "boolean default true", nullable = true)
     private boolean allreadyPlayed = false;
 
-    @Column(name = "match_singel_team", columnDefinition = "boolean default true", nullable = true)
-    private boolean singelNotTeam = false;
+    @Column(name = "match_singel_team", nullable = true)
+    private String playerTeam;
 
     @ManyToOne(fetch = FetchType.EAGER    )
     @JoinColumn(name = "game_id")
@@ -44,10 +44,10 @@ public class Match {
     }
 
 
-    public Match(String date, boolean allreadyPlayed, boolean singelNotTeam, Game game, String nameOne, String nameTwo) {
+    public Match(String date, boolean allreadyPlayed, String playerTeam, Game game, String nameOne, String nameTwo) {
         this.date = date;
         this.allreadyPlayed = allreadyPlayed;
-        this.singelNotTeam = singelNotTeam;
+        this.playerTeam = playerTeam;
         this.game = game;
        // this.winnerId = winnerId; int winnerId,
         this.nameOne = nameOne;
@@ -78,12 +78,12 @@ public class Match {
         this.allreadyPlayed = allreadyPlayed;
     }
 
-    public boolean isSingelNotTeam() {
-        return singelNotTeam;
+    public String getPlayerTeam() {
+        return playerTeam;
     }
 
-    public void setSingelNotTeam(boolean singelNotTeam) {
-        this.singelNotTeam = singelNotTeam;
+    public void setPlayerTeam(String playerTeam) {
+        this.playerTeam = playerTeam;
     }
 
     public Game getGame() {

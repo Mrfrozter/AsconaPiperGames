@@ -56,4 +56,20 @@ public class PersonDAO {
         personInfoToReturn.addAll(result.getResultList());
         return personInfoToReturn;
     }
+
+    /// ////////////////////////Anna behöver
+    public Person getByNickname(String nickname) {
+        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+        try {
+            // JPQL-fråga för att hämta spelet baserat på titeln
+            TypedQuery<Person> query = entityManager.createQuery("SELECT p FROM Person p WHERE p.nickname = :variabel", Person.class);
+            query.setParameter("variabel", nickname);
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            // Returnera null om inget spel hittas
+            return null;
+        } finally {
+            entityManager.close();
+        }
+    }
 }

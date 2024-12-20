@@ -8,7 +8,7 @@ public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "p_id")
-    private int id;
+    private Integer id;
 
     @Column(name = "p_name", length =25, nullable = false)
     private String name;
@@ -37,13 +37,16 @@ public class Person {
     @Column(name = "p_role", length =15, nullable = false)
     private String role;
 
-    @Column(name = "p_teamID",length = 3, nullable = false)
-    private String teamID;
+//    @Column(name = "p_teamID",length = 3, nullable = false)
+//    private String teamID;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "team_id")
+    private Team team;
 
     public Person() {
     }
 
-    public Person(String name, String lastname, String nickname, String address, String postNumber, String city, String country, String email, String role, String teamID) {
+    public Person(String name, String lastname, String nickname, String address, String postNumber, String city, String country, String email, String role, Team team) {
         this.name = name;
         this.lastname = lastname;
         this.nickname = nickname;
@@ -53,14 +56,14 @@ public class Person {
         this.country = country;
         this.email = email;
         this.role = role;
-        this.teamID = teamID;
+        this.team = team;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -136,23 +139,41 @@ public class Person {
         this.role = role;
     }
 
-    public String getTeamID() {
-        return teamID;
+//    public String getTeamID() {
+//        return teamID;
+//    }
+//
+//    public void setTeamID(String teamID) {
+//        this.teamID = teamID;
+//    }
+
+    public Team getTeam() {
+        return team;
     }
 
-    public void setTeamID(String teamID) {
-        this.teamID = teamID;
+    public void setTeam(Team team) {
+        this.team = team;
     }
+//
+//    @Override
+//    public String toString() {
+//        return
+//                "id: " + id +
+//                " " + name +
+//                " " + lastname +
+//                ", nickname: " + nickname +
+//                ", role: " + role +
+//                ", teamID: " + teamID;
+//    }
 
     @Override
     public String toString() {
         return
-                "id: " + id +
-                " " + name +
-                " " + lastname +
-                ", nickname: " + nickname +
-                ", email: " + email +
-                ", role: " + role +
-                ", teamID: " + teamID;
+                "id:" + id +
+                " '" + name +
+                " '" + lastname +
+                ", nickname:" + nickname +
+                ", role:" + role +
+                ", team:" + team;
     }
 }

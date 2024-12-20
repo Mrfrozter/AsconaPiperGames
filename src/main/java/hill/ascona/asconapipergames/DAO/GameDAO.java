@@ -3,11 +3,10 @@ package hill.ascona.asconapipergames.DAO;
 import hill.ascona.asconapipergames.entities.Game;
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class GameDAO {
-    // Skapa en EntityManagerFactory för att hantera databasanslutningar
+
     private static final EntityManagerFactory ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("myconfig");
 
     // Skapa (Create)
@@ -21,7 +20,7 @@ public class GameDAO {
             transaction.commit();
             return true;
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.err.println("Error saving game: " + e.getMessage());
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }
@@ -56,12 +55,11 @@ public class GameDAO {
     public Game getByName(String title) {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         try {
-            // JPQL-fråga för att hämta spelet baserat på titeln
             TypedQuery<Game> query = entityManager.createQuery("SELECT g FROM Game g WHERE g.title = :title", Game.class);
             query.setParameter("title", title);
             return query.getSingleResult();
         } catch (NoResultException e) {
-            // Returnera null om inget spel hittas
+            System.err.println("Game not found with title: " + title);
             return null;
         } finally {
             entityManager.close();
@@ -69,26 +67,33 @@ public class GameDAO {
     }
 
     // Uppdatera (Update) ett spel
-    public void updateGame(Game gameToUpdate) {
+    public boolean updateGame(Game gameToUpdate) {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
+            Game existingGame = entityManager.find(Game.class, gameToUpdate.getId());
+            if (existingGame == null) {
+                System.err.println("Game with ID " + gameToUpdate.getId() + " not found.");
+                return false;
+            }
             entityManager.merge(gameToUpdate);
             transaction.commit();
+            return true;
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.err.println("Error updating game: " + e.getMessage());
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }
+            return false;
         } finally {
             entityManager.close();
         }
     }
 
     // Ta bort (Delete) ett spel
-    public void deleteGame(Game game) {
+    public boolean deleteGame(Game game) {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
@@ -99,11 +104,13 @@ public class GameDAO {
             }
             entityManager.remove(game);
             transaction.commit();
+            return true;
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.err.println("Error deleting game: " + e.getMessage());
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }
+            return false;
         } finally {
             entityManager.close();
         }
@@ -117,14 +124,15 @@ public class GameDAO {
             transaction = entityManager.getTransaction();
             transaction.begin();
             Game gameToDelete = entityManager.find(Game.class, id);
-            if (gameToDelete != null) {
-                entityManager.remove(gameToDelete);
-                transaction.commit();
-                return true;
+            if (gameToDelete == null) {
+                System.err.println("Game with ID " + id + " not found.");
+                return false;
             }
-            return false;
+            entityManager.remove(gameToDelete);
+            transaction.commit();
+            return true;
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.err.println("Error deleting game by ID: " + e.getMessage());
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }

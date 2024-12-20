@@ -48,7 +48,7 @@ public class HelloApplication extends Application {
         ComboBox<String> loginComboBox =new ComboBox<>();
         loginComboBox.setPromptText("Choose your name:");
         loginComboBox.setLayoutX(260);
-        loginComboBox.setLayoutY(280);
+        loginComboBox.setLayoutY(275);
 
         PersonDAO personDAO = new PersonDAO();
         List<Person> allUsers= personDAO.getAllPlayersOrUsers("User");
@@ -62,7 +62,7 @@ public class HelloApplication extends Application {
         loginAnchorPane.getChildren().addAll(label,loginComboBox,loginButton);
 
         primaryStage.setTitle("Piper Game");
-//        primaryStage.setResizable(false);
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
 

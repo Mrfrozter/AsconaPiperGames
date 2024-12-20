@@ -1,7 +1,6 @@
 package hill.ascona.asconapipergames.entities;
 
 import jakarta.persistence.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -23,7 +22,8 @@ public class Game {
     @Column(name = "game_numberOfTeams", nullable = false)
     private int numberOfTeams;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "game_id")
     private List<Team> teams = new ArrayList<>();
 
     // Constructors
@@ -87,6 +87,14 @@ public class Game {
         this.teams = teams;
     }
 
+    public void addTeam(Team team) {
+        this.teams.add(team);
+    }
+
+    public void removeTeam(Team team) {
+        this.teams.remove(team);
+    }
+
     // Override equals and hashCode for proper entity comparison
     @Override
     public boolean equals(Object o) {
@@ -96,12 +104,13 @@ public class Game {
         return id == game.id &&
                 numberOfTeams == game.numberOfTeams &&
                 Objects.equals(title, game.title) &&
-                Objects.equals(genre, game.genre);
+                Objects.equals(genre, game.genre) &&
+                Objects.equals(teams, game.teams);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, genre, numberOfTeams);
+        return Objects.hash(id, title, genre, numberOfTeams, teams);
     }
 
     // toString for easy debugging
@@ -112,6 +121,7 @@ public class Game {
                 ", title='" + title + '\'' +
                 ", genre='" + genre + '\'' +
                 ", numberOfTeams=" + numberOfTeams +
+                ", teams=" + teams +
                 '}';
     }
 }

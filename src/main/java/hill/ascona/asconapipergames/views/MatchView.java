@@ -29,11 +29,6 @@ import java.util.List;
 import java.util.Random;
 
 /*
-När personalen listar matcher ska det synas vilka spelare/lag som tävlar mot
-varandra samt om matchen är kommande eller avgjord, om matchen är avgjord ska
-det gå att se vem som blev vinnare. Här implementeras med fördel funktionalitet för
-att lista samtliga matcher, endast avgjorda och endast kommande matcher.
-• Matcher ska alltid ha ett datum.
 • Matchen avgörs (poängen sätts) genom att Pied Pipers personal loggar in och
 registrerar resultatet.
 • */
@@ -48,7 +43,6 @@ public class MatchView {
     private String date = "";
     private boolean allreadyPlayed = false;
     private boolean singelNotTeam = true;
-    private  String gameName;
     private Game gamePlay;
     private String player1Nickname;
     private String player2Nickname;
@@ -127,7 +121,7 @@ public class MatchView {
                 for (Team team : teams) {
                     if (team.getGame_id()==gamePlay.getId()){
                         teamsCount++;
-                        comboBoxPOrT1.getItems().add(team.getTeam_name());               // TODO ----get teams-------------
+                        comboBoxPOrT1.getItems().add(team.getTeam_name());
                         comboBoxPOrT2.getItems().add(team.getTeam_name());
                     }
                     if (teamsCount==0){
@@ -144,20 +138,19 @@ public class MatchView {
             nameOne = comboBoxPOrT1.getValue();
             if (singelNotTeam) {
                 player1Nickname = nameOne;
-                player1 = pDao.getByNickname(player1Nickname);                   // TODO -----borde vara getByName???????------------
+                player1 = pDao.getByNickname(player1Nickname);
             }else {
                 team1Name = nameOne;
                 team1 = teamDao.getTeamByName(team1Name);
             }
         });
 
-                     // TODO ----------------------
       comboBoxPOrT2.setOnAction(e ->{
             nameTwo = comboBoxPOrT2.getValue();
-            if (singelNotTeam) {                                                // TODO ----------------------
+            if (singelNotTeam) {
                 player2Nickname = nameOne;
                 player2 = pDao.getByNickname(player2Nickname);
-            }else {                                                                  // TODO ----------------------
+            }else {
                 team2Name = nameOne;
                 team2 = teamDao.getTeamByName(team2Name);
             }
@@ -199,19 +192,18 @@ public class MatchView {
         Button pOrTButton = new Button("Add a team match");
         pOrTButton.setOnAction(event -> {
                     singelNotTeam=!singelNotTeam;
-                    comboBoxPOrT1.setPromptText("Choose first participant");     // TODO ----------------
+                    comboBoxPOrT1.setPromptText("Choose first participant");
                     comboBoxPOrT2.setPromptText("Choose second participant");
-                    comboBoxPOrT1.getItems().removeAll(comboBoxPOrT1.getItems());
+                    comboBoxPOrT1.getItems().removeAll(comboBoxPOrT1.getItems()); // TODO ----------------
                     comboBoxPOrT2.getItems().removeAll(comboBoxPOrT2.getItems());
                     if(singelNotTeam){
                         pOrTButton.setText("Add a team match");
                         pOrTString = "Player";
                         nowShowing.setText("ADD A PLAYER MATCH");
                         for (Team team : teams) {
-                            comboBoxPOrT1.getItems().add(team.getTeam_name());               // TODO ----get teams-------------
+                            comboBoxPOrT1.getItems().add(team.getTeam_name());
                             comboBoxPOrT2.getItems().add(team.getTeam_name());
                         }
-
                     }else{
                         pOrTButton.setText("Add a player match");
                         pOrTString = "Team";
@@ -255,8 +247,6 @@ public class MatchView {
         //----------------------------------------------------------------------Layout---------------
         nowShowing.setLayoutX(20);
         nowShowing.setLayoutY(20);
-
-
 
         labelGame.setLayoutX(20);
         labelGame.setLayoutY(55);
@@ -312,7 +302,6 @@ public class MatchView {
 
 
       matches = FXCollections.observableList(matchDAO.getAllMatches());
-        //   matches.addAll(matchDAO.getAllMatches());
 
         TableView<Match> table = new TableView<>();
         table.setEditable(true);    //???????
@@ -352,9 +341,8 @@ public class MatchView {
         winnerCol.setPrefWidth(80);
         winnerCol.setCellValueFactory(
                 new PropertyValueFactory<>("winnerId")
-
-
         );
+
 
         table.setItems(matches);
         gameCol.setCellFactory(c -> new TableCell<Match, Game>() {
@@ -367,6 +355,16 @@ public class MatchView {
                     setText(null);
             }
         });
+
+        CheckBox checkBoxTable = new CheckBox();
+        decidedCol.setCellFactory(c -> new TableCell<Match, Boolean>() {
+            if (match.isAllreadyPlayed()){
+                  checkBoxTable.setSelected(true);
+              }else {
+                  checkBoxTable.setSelected(false);
+              }
+        });
+
 
 /*                decidedCol.setCellFactory(column -> new CheckBoxTableCell<>());
                 decidedCol.setCellValueFactory(cellData -> {

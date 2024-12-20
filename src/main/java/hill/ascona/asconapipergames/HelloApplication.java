@@ -26,8 +26,7 @@ public class HelloApplication extends Application {
         AnchorPane loginAnchorPane=new AnchorPane();
         loginAnchorPane.setPrefSize(700,600);
 
-        Scene loginScene=new Scene(new MatchView().start());
-        //Scene loginScene=new Scene(loginAnchorPane);
+        Scene loginScene=new Scene(loginAnchorPane);
         primaryStage.setScene(loginScene);
 
         Label label = new Label("Welcome to Piper Game page!");

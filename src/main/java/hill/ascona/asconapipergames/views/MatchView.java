@@ -337,6 +337,27 @@ public class MatchView {
         decidedCol.setCellValueFactory(
                 new PropertyValueFactory<>("allreadyPlayed")
         );
+        decidedCol.setEditable(false);
+        decidedCol.setCellFactory(c->new TableCell<Match,Boolean>(){
+            @Override
+            protected void updateItem(Boolean item, boolean empty) {
+                super.updateItem(item, empty);
+                if(!empty) {
+                    CheckBox checkBoxTable = new CheckBox();
+                    checkBoxTable.setDisable(true);
+                    checkBoxTable.setOpacity(1);
+                        if (item) {
+                            checkBoxTable.setSelected(true);
+                        } else {
+                         checkBoxTable.setSelected(false);
+                        }
+                    setGraphic(checkBoxTable);
+                }
+                else{setGraphic(null);}
+            }
+        });
+
+
         TableColumn<Match,String> winnerCol = new TableColumn<>("Winner");
         winnerCol.setPrefWidth(80);
         winnerCol.setCellValueFactory(
@@ -356,14 +377,17 @@ public class MatchView {
             }
         });
 
-        CheckBox checkBoxTable = new CheckBox();
+ /*       CheckBox checkBoxTable = new CheckBox();
         decidedCol.setCellFactory(c -> new TableCell<Match, Boolean>() {
             if (match.isAllreadyPlayed()){
                   checkBoxTable.setSelected(true);
               }else {
                   checkBoxTable.setSelected(false);
               }
-        });
+        });*/
+
+
+
 
 
 /*                decidedCol.setCellFactory(column -> new CheckBoxTableCell<>());
@@ -387,7 +411,6 @@ public class MatchView {
 
 
         //----End TableView----
-
 
         HBox hBox = new HBox();
         VBox vbox = new VBox();

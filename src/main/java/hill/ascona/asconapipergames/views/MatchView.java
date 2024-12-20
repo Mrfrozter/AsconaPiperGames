@@ -54,7 +54,10 @@ public class MatchView {
     private Team team1;
     private Team team2;
     private ObservableList<Match> matches = FXCollections.observableList(new ArrayList<>());
-    private List<Match> matchSimple = new ArrayList<>();
+    private int checkPlayed=1;
+    private int checkPorT=1;
+
+
 
 
     public void addMatch(){
@@ -383,9 +386,8 @@ public class MatchView {
 
         //----------------------------------------------End TableView--------------------------------
 
-        VBox vBoxAll = new VBox();
-        vBoxAll.setPrefSize(580, 600);
-        HBox hBoxUnderTable = new HBox();
+
+        //----------------------------------------------Buttons--------------------------------
 
         Button buttonDelete = new Button("Delete match");
         buttonDelete.setDisable(true);
@@ -401,20 +403,21 @@ public class MatchView {
             addMatch();
         });
 
-/*        Button buttonEdit = new Button("Edit/see details of match");
+        Button buttonEdit = new Button("Edit/see details of match");
         buttonEdit.setDisable(true);
         buttonEdit.setOnAction(event -> {
 
-        });*/
+        });
 
 
         table.setOnMouseClicked((e) -> {
             buttonDelete.setDisable(false);
         });
 
-        VBox buttons = new VBox();
+
+        HBox buttons = new HBox();
         buttons.setSpacing(10);
-        buttons.getChildren().addAll(buttonNew,  buttonDelete); //buttonEdit,
+        buttons.getChildren().addAll(buttonNew,buttonEdit, buttonDelete);
 
         //----------------------------------------------Toggle buttons--------------------------------
 
@@ -428,6 +431,8 @@ public class MatchView {
         RadioButton rbPorT1 = new RadioButton("Show both \"Team\" and \"Player\" matches");
         RadioButton rbPort2 = new RadioButton("Show only \"Team\" matches");
         RadioButton rbPorT3 = new RadioButton("Show only \"Player\" matches");
+
+
 
         rbPlayed1.setToggleGroup(togglePlayed);
         rbPlayed2.setToggleGroup(togglePlayed);
@@ -455,39 +460,95 @@ public class MatchView {
             public void changed(ObservableValue<? extends Toggle> ob, Toggle o, Toggle n) {
                 RadioButton rb = (RadioButton) togglePlayed.getSelectedToggle();
                 buttonDelete.setDisable(true);
-                if (rb == rbPlayed1) {
-                    matches.clear();
-                    matches.addAll(matchDAO.getAllMatches());
-                } else if (rb == rbPlayed2) {
-                    matches.clear();
-                    matches.addAll(matchDAO.getAllreadyPlayed(false));
-                }else if (rb == rbPlayed3) {
-                    matches.clear();
-                    matches.addAll(matchDAO.getAllreadyPlayed(true));
+                if (rb==rbPlayed1) {
+                    checkPlayed=1;
+                    if (checkPorT==1) {
+                        matches.clear();
+                        matches.addAll(matchDAO.getAllMatches());
+                    } else if (checkPorT==2) {
+                        matches.clear();
+                        matches.addAll(matchDAO.getPlayerTeam("Team"));
+                    } else if (checkPorT==3) {
+                        matches.clear();
+                        matches.addAll(matchDAO.getPlayerTeam("Player"));
+                    }
+                } else if (rb==rbPlayed2) {
+                    checkPlayed=2;
+                    if (checkPorT==1) {
+                        matches.clear();
+                        matches.addAll(matchDAO.getAllreadyPlayed(false));
+                    } else if (checkPorT==2) {
+                        matches.clear();
+                        matches.addAll(matchDAO.getAllreadyPlayedAndPorT(false, "Team"));
+                    } else if (checkPorT==3) {
+                        matches.clear();
+                        matches.addAll(matchDAO.getAllreadyPlayedAndPorT(false,"Player"));
+                    }
+                } else if (rb==rbPlayed3) {
+                    checkPlayed=3;
+                    if (checkPorT==1) {
+                        matches.clear();
+                        matches.addAll(matchDAO.getAllreadyPlayed(true));
+                    } else if (checkPorT==2) {
+                        matches.clear();
+                        matches.addAll(matchDAO.getAllreadyPlayedAndPorT(true, "Team"));
+                    } else if (checkPorT==3) {
+                        matches.clear();
+                        matches.addAll(matchDAO.getAllreadyPlayedAndPorT(true, "Player"));
+                    }
                 }
             }
-        });///////TODO/////////
-
+        });
 
         togglePorT.selectedToggleProperty().addListener(new ChangeListener<>() {
             public void changed(ObservableValue<? extends Toggle> ob, Toggle o, Toggle n) {
-                RadioButton rb = (RadioButton) togglePlayed.getSelectedToggle();
+                RadioButton rb2 = (RadioButton) togglePorT.getSelectedToggle();
                 buttonDelete.setDisable(true);
-                if (rb == rbPorT1) {
-                    matches.clear();
-                    matches.addAll(matchDAO.getAllMatches());
-                } else if (rb == rbPort2) {
-                    matches.clear();
-                    matches.addAll(matchDAO.getAllreadyPlayed(false));
-                }else if (rb == rbPorT3) {
-                    matches.clear();
-                    matches.addAll(matchDAO.getAllreadyPlayed(true));
+                if (rb2==rbPorT1) {
+                    checkPorT=1;
+                    if (checkPlayed==1) {
+                        matches.clear();
+                        matches.addAll(matchDAO.getAllMatches());
+                    } else if (checkPlayed==2) {
+                        matches.clear();
+                        matches.addAll(matchDAO.getAllreadyPlayed(false));
+                    } else if (checkPlayed==3) {
+                        matches.clear();
+                        matches.addAll(matchDAO.getAllreadyPlayed(true));
+                    }
+                } else if (rb2==rbPort2) {
+                    checkPorT=2;
+                    if (checkPlayed==1) {
+                        matches.clear();
+                        matches.addAll(matchDAO.getPlayerTeam("Team"));
+                    } else if (checkPlayed==2) {
+                        matches.clear();
+                        matches.addAll(matchDAO.getAllreadyPlayedAndPorT(false, "Team"));
+                    } else if (checkPlayed==3) {
+                        matches.clear();
+                        matches.addAll(matchDAO.getAllreadyPlayedAndPorT(true,"Team"));
+                    }
+                } else if (rb2==rbPorT3) {
+                    checkPorT=3;
+                    if (checkPlayed==1) {
+                        matches.clear();
+                        matches.addAll(matchDAO.getPlayerTeam("Player"));
+                    } else if (checkPlayed==2) {
+                        matches.clear();
+                        matches.addAll(matchDAO.getAllreadyPlayedAndPorT(false, "Player"));
+                    } else if (checkPlayed==3) {
+                        matches.clear();
+                        matches.addAll(matchDAO.getAllreadyPlayedAndPorT(true, "Player"));
+                    }
                 }
             }
-        });///////TODO/////////
-
-
+        });
         //---------------------------------------End Toggle buttons------------------------
+
+
+        VBox vBoxAll = new VBox();
+        vBoxAll.setPrefSize(580, 600);
+        HBox hBoxUnderTable = new HBox();
         hBoxUnderTable.setSpacing(20);
         vBoxAll.setSpacing(10);
         hBoxUnderTable.getChildren().addAll(vBoxPlayed,vBoxPorT);

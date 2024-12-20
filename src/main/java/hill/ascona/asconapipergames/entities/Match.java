@@ -15,8 +15,8 @@ public class Match {
     @Column(name = "match_date", length =20, nullable = true)
     private String date;
 
-    @Column(name = "match_played", columnDefinition = "boolean default true", nullable = true)
-    private boolean allreadyPlayed = false;
+    @Column(name = "match_played", columnDefinition = "boolean default false", nullable = true)
+    private boolean allreadyPlayed;
 
     @Column(name = "match_singel_team", nullable = true)
     private String playerTeam;

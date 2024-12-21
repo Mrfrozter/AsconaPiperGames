@@ -9,7 +9,7 @@ public class GameDAO {
 
     private static final EntityManagerFactory ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("myconfig");
 
-    // Skapa (Create)
+    // Skapa (Create) (CRUD)
     public boolean saveGame(Game game) {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
@@ -30,7 +30,7 @@ public class GameDAO {
         }
     }
 
-    // Läs (Read) ett spel baserat på ID
+    // Läs (Read) CRUD
     public Game getGameById(int id) {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         try {
@@ -40,7 +40,7 @@ public class GameDAO {
         }
     }
 
-    // Läs (Read) alla spel
+    // Läs (Read) (CRUD) alla spel
     public List<Game> getAllGames() {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         try {
@@ -93,16 +93,16 @@ public class GameDAO {
     }
 
     // Ta bort (Delete) ett spel
-    public boolean deleteGame(Game game) {
+    public boolean deleteGame(Game gameToDelete) {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            if (!entityManager.contains(game)) {
-                game = entityManager.merge(game);
+            if (!entityManager.contains(gameToDelete)) {
+                gameToDelete = entityManager.merge(gameToDelete);
             }
-            entityManager.remove(game);
+            entityManager.remove(gameToDelete);
             transaction.commit();
             return true;
         } catch (Exception e) {

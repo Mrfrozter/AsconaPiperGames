@@ -18,7 +18,9 @@ public class GameView {
 
     public VBox start() {
         VBox content = new VBox();
+
         Label btn = new Label("New game");
+
         games = FXCollections.observableList(gDao.getAllGames());
         content.getChildren().addAll(logView(200), btn);
 
@@ -30,13 +32,18 @@ public class GameView {
 
     public VBox newGame() {
         VBox content = new VBox();
+
         Label title = new Label("Add New Game");
+
         TextField nameField = new TextField();
         nameField.setPromptText("Game title");
+
         TextField genreField = new TextField();
         genreField.setPromptText("Game genre");
+
         TextField teamsField = new TextField();
         teamsField.setPromptText("Number of teams");
+
         Label add = new Label("Add game");
 
         add.setOnMouseClicked((e) -> {
@@ -68,11 +75,12 @@ public class GameView {
 
     public VBox logView(int height) {
         VBox content = new VBox();
+
         ScrollPane scrollPane = new ScrollPane();
+
         VBox logBox = new VBox();
         logBox.setPrefHeight(height);
         logBox.setPrefWidth(300);
-        content.setId("listBox");
         content.setPadding(new Insets(15));
 
         for (Game game : games) {
@@ -96,31 +104,32 @@ public class GameView {
     }
 
     private HBox rowBox(Game game) {
-        Label idLab = new Label(game.getId() + "");
-        Label titleLab = new Label(game.getTitle());
-        Label genreLab = new Label(game.getGenre());
-        Label teamsLab = new Label(String.valueOf(game.getNumberOfTeams()));
-        Label delete = new Label("x");
+        Label idLab = new Label("ID: " + game.getId());
 
-        idLab.getStyleClass().add("txt");
-        idLab.setId("log");
-        titleLab.getStyleClass().add("txt");
-        titleLab.setId("log");
-        genreLab.getStyleClass().add("txt");
-        genreLab.setId("log");
-        teamsLab.getStyleClass().add("txt");
-        teamsLab.setId("log");
-        delete.getStyleClass().add("txt");
-        delete.setId("log");
+        Label titleLab = new Label("Title: " + game.getTitle());
 
-        delete.setOnMouseClicked((e) -> {
-            gDao.deleteGame(game);
-            games.remove(game);
-        });
+        Label genreLab = new Label("Genre: " + game.getGenre());
+
+        Label teamsLab = new Label("Teams: " + game.getNumberOfTeams());
+
+        Label delete = new Label("<(^^)>");
 
         HBox mBox = new HBox();
-        mBox.setSpacing(2);
+        mBox.setSpacing(10);
         mBox.getChildren().addAll(idLab, titleLab, genreLab, teamsLab, delete);
+
+        mBox.setOnMouseClicked((e) -> {
+            Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION,
+                    "Do you want to delete the game: " + game.getTitle() + "?",
+                    ButtonType.YES, ButtonType.NO);
+            confirmation.showAndWait();
+
+            if (confirmation.getResult() == ButtonType.YES) {
+                gDao.deleteGame(game); // Radera från databasen
+                games.remove(game); // Ta bort från ObservableList
+            }
+        });
+
         return mBox;
     }
 }

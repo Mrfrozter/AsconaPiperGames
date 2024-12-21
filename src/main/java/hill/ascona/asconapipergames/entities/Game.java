@@ -96,17 +96,7 @@ public class Game {
     }
 
     // Override equals and hashCode for proper entity comparison
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Game game = (Game) o;
-        return id == game.id &&
-                numberOfTeams == game.numberOfTeams &&
-                Objects.equals(title, game.title) &&
-                Objects.equals(genre, game.genre) &&
-                Objects.equals(teams, game.teams);
-    }
+
 
     @Override
     public int hashCode() {

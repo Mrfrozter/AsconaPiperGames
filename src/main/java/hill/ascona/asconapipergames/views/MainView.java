@@ -16,19 +16,6 @@ public class MainView {
         TabPane tabPane = new TabPane();
         box.setMaxSize(700,600);
 
-        Label usrLabel = new Label("Logged in as "+ViewManager.getLoggedInUser());
-        usrLabel.setMaxHeight(20);
-
-        HBox usrBox = new HBox();
-        Button logBtn = new Button("Logout");
-        logBtn.setOnAction((e)->{
-            ViewManager.loginView();
-        });
-        usrBox.setPadding(new Insets(2));
-        usrBox.setSpacing(5);
-        usrBox.getChildren().addAll(usrLabel,logBtn);
-        usrBox.setAlignment(Pos.BASELINE_RIGHT);
-
         Tab tab1 = new Tab("Users or Players", new PersonView().start());
         Tab tab2 = new Tab("Teams", new Label("Show teams"));
         Tab tab3 = new Tab("Games", new GameView().start());
@@ -41,7 +28,7 @@ public class MainView {
         tabPane.getTabs().add(tab4);
         tabPane.getTabs().add(tab5);
 
-        box.getChildren().addAll(tabPane, usrBox);
+        box.getChildren().addAll(tabPane, BottomPanel.show());
 
         return box;
     }

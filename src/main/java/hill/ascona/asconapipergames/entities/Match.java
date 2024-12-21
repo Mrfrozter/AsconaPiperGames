@@ -53,14 +53,10 @@ public class Match {
     }
 
         // To save player match
-    public Match(String date, boolean allreadyPlayed, String playerTeam, Game game, String nameOne, String nameTwo) {
+    public Match(String date, boolean allreadyPlayed, String playerTeam) {
         this.date = date;
         this.allreadyPlayed = allreadyPlayed;
         this.playerTeam = playerTeam;
-        this.game = game;
-        // this.winnerId = winnerId; int winnerId,
-        this.nameOne = nameOne;
-        this.nameTwo = nameTwo;
     }
 
 

@@ -296,8 +296,8 @@ public class MatchView {
                 datePicker,cancel, saveTheMatch);
     }
 
-
-    public VBox start() { //----Show Matches----
+    //----Show Matches----
+    public VBox start() {
 
         //----TableView-------------------------------------------------------------------------------
 

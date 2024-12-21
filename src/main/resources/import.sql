@@ -63,6 +63,20 @@ INSERT INTO matches(game_id,match_singel_team, match_Played, match_date, part_on
 INSERT INTO matches(game_id,match_singel_team, match_Played, match_date, part_one_name,part_two_name ) VALUES(3,'Player',false,'2024-12-11','Sim30', 'ErEr');
 
 
+INSERT INTO matches(game_id,match_singel_team, match_Played, match_date, part_one_name,part_two_name ) VALUES(1,'Player',true, '2024-10-10','Sim30', 'Queen12');
+INSERT INTO matches(game_id,match_singel_team, match_Played, match_date, part_one_name,part_two_name ) VALUES(1,'Team',false,'2024-11-11','Norrköping', 'Elfsborg');
+INSERT INTO matches(game_id,match_singel_team, match_Played, match_date, part_one_name,part_two_name ) VALUES(3,'Team',false,'2024-12-11','Göteborg', 'AIK');
+INSERT INTO matches(game_id,match_singel_team, match_Played, match_date, part_one_name,part_two_name ) VALUES(1,'Player',true, '2024-10-10','Sara', 'ErEr');
+INSERT INTO matches(game_id,match_singel_team, match_Played, match_date, part_one_name,part_two_name ) VALUES(1,'Team',false,'2024-11-11','Hammarby', 'Malmö');
+INSERT INTO matches(game_id,match_singel_team, match_Played, match_date, part_one_name,part_two_name ) VALUES(3,'Player',false,'2024-12-11','Queen', 'ElFa');
+INSERT INTO matches(game_id,match_singel_team, match_Played, match_date, part_one_name,part_two_name ) VALUES(1,'Player',true, '2024-10-10','Sara', 'Din23');
+INSERT INTO matches(game_id,match_singel_team, match_Played, match_date, part_one_name,part_two_name ) VALUES(1,'Team',true,'2024-11-11','GAIS', 'Djurgården');
+INSERT INTO matches(game_id,match_singel_team, match_Played, match_date, part_one_name,part_two_name ) VALUES(3,'Team',false,'2024-12-11','Hammarby', 'Elfsborg');
+INSERT INTO matches(game_id,match_singel_team, match_Played, match_date, part_one_name,part_two_name ) VALUES(1,'Player',true, '2024-10-10','Queen12', 'Sim30');
+INSERT INTO matches(game_id,match_singel_team, match_Played, match_date, part_one_name,part_two_name ) VALUES(1,'Team',true,'2024-11-11','Norrköping', 'Malmö');
+INSERT INTO matches(game_id,match_singel_team, match_Played, match_date, part_one_name,part_two_name ) VALUES(3,'Player',false,'2024-12-11','Sim30', 'ErEr');
+
+
 INSERT INTO tournaments(game_id, tmnt_date) VALUES (1, '2024-12-18');
 INSERT INTO tournaments(game_id, tmnt_date) VALUES (2, '2024-12-19');
 INSERT INTO tournaments(game_id, tmnt_date) VALUES (3, '2024-12-20');

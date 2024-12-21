@@ -1,5 +1,7 @@
 package hill.ascona.asconapipergames.DAO;
 
+import hill.ascona.asconapipergames.entities.Game;
+import hill.ascona.asconapipergames.entities.Tournament;
 import jakarta.persistence.*;
 import hill.ascona.asconapipergames.entities.Match;
 
@@ -40,6 +42,16 @@ public class MatchDAO {
         entityManager.close();
         return matchToReturn;
     }
+
+    public List<Match> getAllreadyPlayed(boolean allreadyPlayed ) {
+        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+        List<Match> listToReturn = new ArrayList<>();
+        TypedQuery<Match> result = entityManager.createQuery("FROM Match m WHERE m.allreadyPlayed = :variabel", Match.class);
+        result.setParameter("variabel", allreadyPlayed);
+        listToReturn.addAll(result.getResultList());
+        return listToReturn;
+    }
+
 
     public List<Match> getAllMatches(){
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();

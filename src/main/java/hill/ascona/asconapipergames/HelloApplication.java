@@ -1,6 +1,8 @@
 package hill.ascona.asconapipergames;
 
+import hill.ascona.asconapipergames.DAO.MatchDAO;
 import hill.ascona.asconapipergames.DAO.PersonDAO;
+import hill.ascona.asconapipergames.entities.Match;
 import hill.ascona.asconapipergames.entities.Person;
 import hill.ascona.asconapipergames.views.GameView;
 import hill.ascona.asconapipergames.views.MatchView;
@@ -13,7 +15,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;

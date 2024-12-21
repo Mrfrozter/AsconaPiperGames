@@ -1,12 +1,10 @@
 package hill.ascona.asconapipergames.DAO;
 
 import hill.ascona.asconapipergames.entities.Game;
-import hill.ascona.asconapipergames.entities.Person;
 import jakarta.persistence.*;
 import hill.ascona.asconapipergames.entities.Team;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class TeamDAO {
@@ -122,15 +120,20 @@ public class TeamDAO {
         }
     }
 
-//////////////////////
-    public Team getTeamIdByGameTitle(int game_id) {
+    //Modifierad getByName från GameDAO
+    public Team getTeamByName(String teamName){
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
-        Team teamInfoToReturn = null;
-        TypedQuery<Team> result = entityManager.createQuery("SELECT t FROM Team t WHERE t.game_id = :variable", Team.class);
-        result.setParameter("variable", game_id);
-        teamInfoToReturn=result.getSingleResult();
-        entityManager.close();
-        return teamInfoToReturn;
+        try{
+            // JPQL-fråga för att hämta spelet baserat på titeln
+            TypedQuery<Team> query = entityManager.createQuery("SELECT t FROM Team t WHERE t.team_name = :teamName", Team.class);
+            query.setParameter("teamName", teamName);
+            return query.getSingleResult(); // Return the team if found
+        } catch (NoResultException e) {
+            // Returnera null om inget spel hittas
+            return null;
+        } finally {
+            entityManager.close(); // Ensure entity manager is closed
+        }
     }
 }
 

@@ -1,5 +1,6 @@
 package hill.ascona.asconapipergames.DAO;
 
+import hill.ascona.asconapipergames.entities.Team;
 import jakarta.persistence.*;
 import hill.ascona.asconapipergames.entities.Person;
 import java.util.ArrayList;
@@ -29,11 +30,11 @@ public class PersonDAO {
         }
     }
 
-    public List<Person> getPlayersInfoByTeamId(String teamId) {
+    public List<Person> getPlayersInfoByTeamId(Team team) {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         List<Person> playersToReturn = new ArrayList<>();
-        TypedQuery<Person> result = entityManager.createQuery("FROM Person p WHERE p.team = :variabel", Person.class);
-        result.setParameter("variabel", teamId);
+        TypedQuery<Person> result = entityManager.createQuery("FROM Person p WHERE p.team = :variable", Person.class);
+        result.setParameter("variable", team);
         playersToReturn.addAll(result.getResultList());
         entityManager.close();
         return playersToReturn;
@@ -42,8 +43,8 @@ public class PersonDAO {
     public List<Person> getAllPlayersOrUsers(String role) {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         List<Person> listToReturn = new ArrayList<>();
-        TypedQuery<Person> result = entityManager.createQuery("FROM Person p WHERE p.role = :variabel", Person.class);
-        result.setParameter("variabel", role);
+        TypedQuery<Person> result = entityManager.createQuery("FROM Person p WHERE p.role = :variable", Person.class);
+        result.setParameter("variable", role);
         listToReturn.addAll(result.getResultList());
         return listToReturn;
     }
@@ -51,8 +52,8 @@ public class PersonDAO {
     public List<Person> getPersonInfo(String name) {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         List<Person> personInfoToReturn = new ArrayList<>();
-        TypedQuery<Person> result = entityManager.createQuery("FROM Person p WHERE p.name = :variabel", Person.class);
-        result.setParameter("variabel", name);
+        TypedQuery<Person> result = entityManager.createQuery("FROM Person p WHERE p.name = :variable", Person.class);
+        result.setParameter("variable", name);
         personInfoToReturn.addAll(result.getResultList());
         return personInfoToReturn;
     }
@@ -66,9 +67,6 @@ public class PersonDAO {
             if (entityManager.contains(dataToUpdate)){
                 entityManager.persist(dataToUpdate);
             }
-//            else {
-//                Person player = entityManager.merge(dataToUpdate);
-//            }
             entityManager.merge(dataToUpdate);
             transaction.commit();
         } catch (Exception e) {
@@ -80,7 +78,6 @@ public class PersonDAO {
             entityManager.close();
         }
     }
-
 
     public void remove(Person player) {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
@@ -106,12 +103,10 @@ public class PersonDAO {
     public Person getByNickname(String nickname) {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         try {
-            // JPQL-fråga för att hämta spelet baserat på titeln
-            TypedQuery<Person> query = entityManager.createQuery("SELECT p FROM Person p WHERE p.nickname = :variabel", Person.class);
-            query.setParameter("variabel", nickname);
+            TypedQuery<Person> query = entityManager.createQuery("SELECT p FROM Person p WHERE p.nickname = :variable", Person.class);
+            query.setParameter("variable", nickname);
             return query.getSingleResult();
         } catch (NoResultException e) {
-            // Returnera null om inget spel hittas
             return null;
         } finally {
             entityManager.close();

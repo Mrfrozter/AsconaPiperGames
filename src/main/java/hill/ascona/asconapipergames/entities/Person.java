@@ -37,8 +37,6 @@ public class Person {
     @Column(name = "p_role", length =15, nullable = false)
     private String role;
 
-//    @Column(name = "p_teamID",length = 3, nullable = false)
-//    private String teamID;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "team_id")
     private Team team;
@@ -139,14 +137,6 @@ public class Person {
         this.role = role;
     }
 
-//    public String getTeamID() {
-//        return teamID;
-//    }
-//
-//    public void setTeamID(String teamID) {
-//        this.teamID = teamID;
-//    }
-
     public Team getTeam() {
         return team;
     }
@@ -154,17 +144,6 @@ public class Person {
     public void setTeam(Team team) {
         this.team = team;
     }
-//
-//    @Override
-//    public String toString() {
-//        return
-//                "id: " + id +
-//                " " + name +
-//                " " + lastname +
-//                ", nickname: " + nickname +
-//                ", role: " + role +
-//                ", teamID: " + teamID;
-//    }
 
     @Override
     public String toString() {

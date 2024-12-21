@@ -1,9 +1,12 @@
 package hill.ascona.asconapipergames.DAO;
 
 import hill.ascona.asconapipergames.entities.Game;
+import hill.ascona.asconapipergames.entities.Person;
+import hill.ascona.asconapipergames.entities.Team;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class GameDAO {
@@ -132,5 +135,16 @@ public class GameDAO {
         } finally {
             entityManager.close();
         }
+    }
+
+/////////////
+
+    public Game getGameIdByTitle(String title) {
+        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+        Game gameInfoToReturn = null;
+        TypedQuery<Game> result = entityManager.createQuery("SELECT g FROM Game g WHERE g.title = :variable", Game.class);
+        result.setParameter("variable", title);
+        gameInfoToReturn=result.getSingleResult();
+        return gameInfoToReturn;
     }
 }

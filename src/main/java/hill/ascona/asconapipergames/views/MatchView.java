@@ -5,6 +5,7 @@ import hill.ascona.asconapipergames.DAO.MatchDAO;
 import hill.ascona.asconapipergames.DAO.PersonDAO;
 import hill.ascona.asconapipergames.DAO.TeamDAO;
 import hill.ascona.asconapipergames.entities.*;
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -103,6 +104,7 @@ public class MatchView {
         for (Game game : games) {
             comboBoxGame.getItems().add(game.getTitle());
         }
+
         comboBoxGame.setOnAction(e ->{
             gameChosen = (String) comboBoxGame.getValue();
             gamePlay = gDao.getByName(gameChosen);
@@ -116,6 +118,7 @@ public class MatchView {
                 for (Person person : persons) {
                     comboBoxPOrT1.getItems().add(person.getNickname());
                     comboBoxPOrT2.getItems().add(person.getNickname());
+                    System.out.println(person.getNickname());
                 }
             }else{
                 int teamsCount= 0;
@@ -125,10 +128,10 @@ public class MatchView {
                         comboBoxPOrT1.getItems().add(team.getTeam_name());
                         comboBoxPOrT2.getItems().add(team.getTeam_name());
                     }
-                    if (teamsCount==0){
-                        comboBoxPOrT1.setPromptText("No teams for that game");
-                        comboBoxPOrT2.setPromptText("No teams for that game");
-                    }
+                }
+                if (teamsCount==0){
+                    comboBoxPOrT1.setPromptText("No teams for that game");
+                    comboBoxPOrT2.setPromptText("No teams for that game");
                 }
             }
         });
@@ -359,7 +362,7 @@ public class MatchView {
         TableColumn<Match,String> winnerCol = new TableColumn<>("Winner");
         winnerCol.setPrefWidth(80);
         winnerCol.setCellValueFactory(
-                new PropertyValueFactory<>("winnerId")
+                new PropertyValueFactory<>("winnerName")
         );
 
 
@@ -390,35 +393,50 @@ public class MatchView {
         //----------------------------------------------Buttons--------------------------------
 
         Button buttonDelete = new Button("Delete match");
-        buttonDelete.setDisable(true);
+        //buttonDelete.setDisable(true);
         buttonDelete.setOnAction(event -> {
-            buttonDelete.setDisable(true);
+           // buttonDelete.setDisable(true);
             matchDAO.deleteMatch(table.getSelectionModel().getSelectedItem());
             matches.remove(table.getSelectionModel().getSelectedItem());
         });
 
+        // Bind button's disable property to TableView's selection
+        buttonDelete.disableProperty().bind(Bindings.isEmpty(table.getSelectionModel().getSelectedItems()));
+
         Button buttonNew = new Button("Add a new match");
         buttonNew.setOnAction(event -> {
-            buttonDelete.setDisable(true);
+           // buttonDelete.setDisable(true);
             addMatch();
         });
 
-        Button buttonEdit = new Button("Edit/see details of match");
+        Button buttonEdit = new Button("Edit results of match");
         buttonEdit.setDisable(true);
         buttonEdit.setOnAction(event -> {
 
         });
 
 
-        table.setOnMouseClicked((e) -> {
+     /*   table.setOnMouseClicked((e) -> {
             buttonDelete.setDisable(false);
-        });
+        });*/
 
 
         HBox buttons = new HBox();
         buttons.setSpacing(10);
         buttons.getChildren().addAll(buttonNew,buttonEdit, buttonDelete);
 
+
+        VBox vBoxAll = new VBox();
+        vBoxAll.setPrefSize(580, 600);
+
+        vBoxAll.getChildren().addAll(table, toggle(),buttons);
+        vBoxAll.setPadding(new Insets(10, 10, 10, 10));
+        vBoxAll.setSpacing(10);
+
+        return vBoxAll;
+    }
+
+    public HBox toggle(){
         //----------------------------------------------Toggle buttons--------------------------------
 
         ToggleGroup togglePlayed = new ToggleGroup();
@@ -432,8 +450,6 @@ public class MatchView {
         RadioButton rbPort2 = new RadioButton("Show only \"Team\" matches");
         RadioButton rbPorT3 = new RadioButton("Show only \"Player\" matches");
 
-
-
         rbPlayed1.setToggleGroup(togglePlayed);
         rbPlayed2.setToggleGroup(togglePlayed);
         rbPlayed3.setToggleGroup(togglePlayed);
@@ -444,22 +460,10 @@ public class MatchView {
         rbPorT3.setToggleGroup(togglePorT);
         togglePorT.selectToggle(rbPorT1);
 
-        VBox vBoxPlayed = new VBox();
-        vBoxPlayed.setSpacing(10);
-        vBoxPlayed.getChildren().add(rbPlayed1);
-        vBoxPlayed.getChildren().add(rbPlayed2);
-        vBoxPlayed.getChildren().add(rbPlayed3);
-
-        VBox vBoxPorT = new VBox();
-        vBoxPorT.setSpacing(10);
-        vBoxPorT.getChildren().add(rbPorT1);
-        vBoxPorT.getChildren().add(rbPort2);
-        vBoxPorT.getChildren().add(rbPorT3);
 
         togglePlayed.selectedToggleProperty().addListener(new ChangeListener<>() {
             public void changed(ObservableValue<? extends Toggle> ob, Toggle o, Toggle n) {
                 RadioButton rb = (RadioButton) togglePlayed.getSelectedToggle();
-                buttonDelete.setDisable(true);
                 if (rb==rbPlayed1) {
                     checkPlayed=1;
                     if (checkPorT==1) {
@@ -503,7 +507,6 @@ public class MatchView {
         togglePorT.selectedToggleProperty().addListener(new ChangeListener<>() {
             public void changed(ObservableValue<? extends Toggle> ob, Toggle o, Toggle n) {
                 RadioButton rb2 = (RadioButton) togglePorT.getSelectedToggle();
-                buttonDelete.setDisable(true);
                 if (rb2==rbPorT1) {
                     checkPorT=1;
                     if (checkPlayed==1) {
@@ -543,27 +546,37 @@ public class MatchView {
                 }
             }
         });
+
         //---------------------------------------End Toggle buttons------------------------
-
-
-        VBox vBoxAll = new VBox();
-        vBoxAll.setPrefSize(580, 600);
-        HBox hBoxUnderTable = new HBox();
-        hBoxUnderTable.setSpacing(20);
-        vBoxAll.setSpacing(10);
-        hBoxUnderTable.getChildren().addAll(vBoxPlayed,vBoxPorT);
-        vBoxAll.getChildren().addAll(table, hBoxUnderTable,buttons);
-        vBoxAll.setPadding(new Insets(10, 10, 10, 10));
-
-        vBoxPlayed.setPadding(new Insets(10, 10, 10, 10));
-        vBoxPorT.setPadding(new Insets(10, 10, 10, 10));
 
         String cssLayout = "-fx-border-color: lightgrey;\n" +
                 "-fx-border-radius: 10px;" +
                 "-fx-border-width: 1;";
 
+        VBox vBoxPlayed = new VBox();
+        VBox vBoxPorT = new VBox();
+
+        vBoxPlayed.setSpacing(10);
+        vBoxPorT.setSpacing(10);
+        vBoxPlayed.setPadding(new Insets(10, 10, 10, 10));
+        vBoxPorT.setPadding(new Insets(10, 10, 10, 10));
+
+        vBoxPlayed.getChildren().add(rbPlayed1);
+        vBoxPlayed.getChildren().add(rbPlayed2);
+        vBoxPlayed.getChildren().add(rbPlayed3);
+
+        vBoxPorT.getChildren().add(rbPorT1);
+        vBoxPorT.getChildren().add(rbPort2);
+        vBoxPorT.getChildren().add(rbPorT3);
+
         vBoxPorT.setStyle(cssLayout);
         vBoxPlayed.setStyle(cssLayout);
-        return vBoxAll;
+
+        HBox hBoxUnderTable = new HBox();
+        hBoxUnderTable.setSpacing(20);
+        hBoxUnderTable.getChildren().addAll(vBoxPlayed,vBoxPorT);
+
+        return hBoxUnderTable;
     }
+
 }

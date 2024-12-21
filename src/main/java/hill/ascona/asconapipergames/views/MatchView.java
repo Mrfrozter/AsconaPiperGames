@@ -17,20 +17,15 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-/*
-• Matchen avgörs (poängen sätts) genom att Pied Pipers personal loggar in och
-registrerar resultatet.
-• */
 
 public class MatchView {
     private MatchDAO matchDAO = new MatchDAO();
@@ -41,7 +36,7 @@ public class MatchView {
     private int turneringarId;
     private String date = "";
     private boolean allreadyPlayed = false;
-    private boolean singelNotTeam = true;
+    private boolean singelNotTeam;
     private Game gamePlay;
     private String player1Nickname;
     private String player2Nickname;
@@ -57,13 +52,15 @@ public class MatchView {
     private ObservableList<Match> matches = FXCollections.observableList(new ArrayList<>());
     private int checkPlayed=1;
     private int checkPorT=1;
+    private String hourSelected;
+    private String minSelected;
 
 
 
 
-    public void addMatch(){
+    public void addMatch(boolean updating, Optional<Match> matchToUpdate) {
         AnchorPane paneAdd = new AnchorPane();
-        paneAdd.setPrefSize(540, 250);
+        paneAdd.setPrefSize(540, 290);
         Scene scene2 = new Scene(paneAdd);
         Stage stage2 = new Stage();
         stage2.setScene(scene2);
@@ -72,7 +69,7 @@ public class MatchView {
         List<Person> persons = pDao.getAllPlayersOrUsers("Player");
         TeamDAO teamDao = new TeamDAO();
         List<Team> teams = teamDao.getAllTeams();
-
+        singelNotTeam = true;
 
         //----------------------------------------------------------------------Labels---------------
 
@@ -83,9 +80,13 @@ public class MatchView {
         Label labelPOrTOne = new Label(pOrTString + " one: ");
         Label labelPOrTwo = new Label(pOrTString + " two: ");
         Label labelDate = new Label("Date: ");
-        Label labelUpcoming = new Label("Upcoming: ");
-        Label labelWinner = new Label("Winner: ");
+        Label labelAllreadyPlayed = new Label("Already played: ");
+        Label labelTime = new Label("Time: ");
+        Label labelScore1 = new Label("Enter score:    " + pOrTString + " 1: ");
+        Label labelScore2 = new Label(pOrTString + " 2: ");
 
+        labelScore1.setDisable(!allreadyPlayed);
+        labelScore2.setDisable(!singelNotTeam);
 
         //----------------------------------------------------------------------ComboBoxes---------------
 
@@ -160,16 +161,29 @@ public class MatchView {
             }
         });
 
-        ComboBox<String> comboBoxWinner =new ComboBox<>();
-        comboBoxWinner.setPromptText("Enter winner");
-        comboBoxWinner.setDisable(true);                                                                 // TODO ----------------------
-        comboBoxWinner.getItems().addAll("ADD Players/teams HERE", "Medium"); // TODO ----------------------
-        comboBoxWinner.setOnAction(e ->{
-            winnerIdSend=1;                                                     // TODO ----------------------
+        ComboBox<String> timeHour = new ComboBox();
+        timeHour.setPromptText("Hour");
+        timeHour.getItems().addAll("00","01","02","03","04","05","06","07","08","09",
+                "10","11","12","13","14","15","16","17","18","19","20","21",
+                "22","23","24");
+
+        ComboBox<String> timeMin = new ComboBox();
+        timeMin.setPromptText("min");
+        timeMin.getItems().addAll("00","01","02","03","04","05","06","07","08","09",
+                "10","11","12","13","14","15","16","17","18","19","20","21",
+                "22","23","24","25","26","27","28","29","30","31","32","33",
+                "34","35","36","37","38","39","40","41","42","43","44","45","46","47",
+                "48","49","50","51","52","53","54","55","56","57","58","59");
+
+        timeHour.setOnAction(e ->{
+           hourSelected = timeHour.getValue();
+        });
+        timeMin.setOnAction(e ->{
+           minSelected = timeMin.getValue();
         });
 
 
-        DatePicker datePicker = new DatePicker();                                   // ??? ----------------------
+        DatePicker datePicker = new DatePicker();
         datePicker.setPromptText("Date is required");
         datePicker.setOnAction(new EventHandler() {
             public void handle(Event t) {
@@ -178,28 +192,33 @@ public class MatchView {
             }
         });
 
+        TextField score1TF = new TextField();
+        TextField score2TF = new TextField();
+        score1TF.setDisable(!allreadyPlayed);
+        score2TF.setDisable(!allreadyPlayed);
 
         //----------------------------------------------------------------------Checkbox---------------
         CheckBox checkBox = new CheckBox();
-        checkBox.setSelected(true);
+        checkBox.setSelected(false);
         checkBox.setOnAction(event -> {
             allreadyPlayed=!allreadyPlayed;
-            comboBoxWinner.setDisable(!allreadyPlayed);
-            if (allreadyPlayed) {
-                comboBoxWinner.getItems().addAll(nameOne,nameTwo);                 // TODO -------fyll i addAll---------------
-            }else{
-                comboBoxWinner.getItems().removeAll(nameOne,nameTwo);
-            }
+            score1TF.setDisable(!allreadyPlayed);
+            score2TF.setDisable(!allreadyPlayed);
+            labelScore1.setDisable(!allreadyPlayed);
+            labelScore2.setDisable(!allreadyPlayed);
         });
         //----------------------------------------------------------------------Buttons---------------
 
         Button pOrTButton = new Button("Add a team match");
         pOrTButton.setOnAction(event -> {
                     singelNotTeam=!singelNotTeam;
+                    comboBoxPOrT2.getItems().removeAll(comboBoxPOrT2.getItems());
+                    comboBoxPOrT1.setValue("");
+
                     comboBoxPOrT1.setPromptText("Choose first participant");
                     comboBoxPOrT2.setPromptText("Choose second participant");
                     comboBoxPOrT1.getItems().removeAll(comboBoxPOrT1.getItems()); // TODO ----------------
-                    comboBoxPOrT2.getItems().removeAll(comboBoxPOrT2.getItems());
+
                     if(singelNotTeam){
                         pOrTButton.setText("Add a team match");
                         pOrTString = "Player";
@@ -220,6 +239,7 @@ public class MatchView {
                     labelPOrTOne.setText(pOrTString + " one: ");
                     labelPOrTwo.setText(pOrTString + " two: ");
                     //update participant comboboxes                                // TODO ----------------------
+                    stage2.show();
                 }
         );
 
@@ -231,6 +251,8 @@ public class MatchView {
 
         Button saveTheMatch = new Button("Save match");
         saveTheMatch.setOnAction(event -> {
+            date=date + " " + hourSelected + ":" + minSelected;
+            System.out.println(date);
             Match matchTemp = new Match(date, allreadyPlayed, pOrTString, gamePlay, nameOne, nameTwo);
             if (singelNotTeam) {
                 matchTemp.getPlayers().add(player1);
@@ -256,51 +278,59 @@ public class MatchView {
         labelGame.setLayoutY(55);
         labelPOrTOne.setLayoutX(20);
         labelPOrTOne.setLayoutY(90);
-        labelUpcoming.setLayoutX(20);
-        labelUpcoming.setLayoutY(150);
+        labelDate.setLayoutX(20);
+        labelDate.setLayoutY(125);
 
         comboBoxGame.setLayoutX(85);
         comboBoxGame.setLayoutY(55);
         comboBoxPOrT1.setLayoutX(85);
         comboBoxPOrT1.setLayoutY(90);
-        checkBox.setLayoutX(90);
-        checkBox.setLayoutY(150);
-        comboBoxWinner.setLayoutX(340);
-        comboBoxWinner.setLayoutY(150);
 
+        datePicker.setLayoutX(85);
+        datePicker.setLayoutY(125);
+        timeHour.setLayoutX(340);
+        timeHour.setLayoutY(125);
+        timeMin.setLayoutX(420);
+        timeMin.setLayoutY(125);
 
-        labelDate.setLayoutX(270);
-        labelDate.setLayoutY(55);
+        labelAllreadyPlayed.setLayoutX(340);
+        labelAllreadyPlayed.setLayoutY(55);
         labelPOrTwo.setLayoutX(270);
         labelPOrTwo.setLayoutY(90);
-        labelWinner.setLayoutX(270);
-        labelWinner.setLayoutY(150);
+        labelTime.setLayoutX(270);
+        labelTime.setLayoutY(125);
 
         pOrTButton.setLayoutX(20);
-        pOrTButton.setLayoutY(210);
+        pOrTButton.setLayoutY(250);
 
         cancel.setLayoutX(270);
-        cancel.setLayoutY(210);
+        cancel.setLayoutY(250);
 
-        datePicker.setLayoutX(340);
-        datePicker.setLayoutY(55);
+        labelScore1.setLayoutX(20);
+        labelScore1.setLayoutY(195);
+        labelScore2.setLayoutX(310);
+        labelScore2.setLayoutY(195);
+        score1TF.setLayoutX(145);
+        score1TF.setLayoutY(192);
+        score2TF.setLayoutX(360);
+        score2TF.setLayoutY(192);
         comboBoxPOrT2.setLayoutX(340);
         comboBoxPOrT2.setLayoutY(90);
         saveTheMatch.setLayoutX(340);
-        saveTheMatch.setLayoutY(210);
-
+        saveTheMatch.setLayoutY(250);
+        checkBox.setLayoutX(440);
+        checkBox.setLayoutY(55);
 
         paneAdd.getChildren().addAll(checkBox, labelGame, labelPOrTOne,labelDate,
-                labelWinner,pOrTButton, nowShowing, labelUpcoming, labelPOrTwo,
-                comboBoxGame,comboBoxPOrT1,comboBoxPOrT2,comboBoxWinner,
-                datePicker,cancel, saveTheMatch);
+                labelTime,pOrTButton, nowShowing, labelAllreadyPlayed, labelPOrTwo,
+                comboBoxGame,comboBoxPOrT1,comboBoxPOrT2, labelScore1,labelScore2,
+                datePicker,cancel, saveTheMatch,timeHour,timeMin,score1TF,score2TF);       //comboBoxWinner,
     }
 
     //----Show Matches----
     public VBox start() {
 
         //----TableView-------------------------------------------------------------------------------
-
 
         matches = FXCollections.observableList(matchDAO.getAllMatches());
 
@@ -385,41 +415,31 @@ public class MatchView {
         table.setPlaceholder(
                 new Label("No matches like that in the database. Try adding one!"));
 
-        // matches.addListener(new ListChangeListener<>();
 
         //----------------------------------------------End TableView--------------------------------
 
 
         //----------------------------------------------Buttons--------------------------------
 
-        Button buttonDelete = new Button("Delete match");
-        //buttonDelete.setDisable(true);
+        Button buttonDelete = new Button("Delete selected match");
         buttonDelete.setOnAction(event -> {
-           // buttonDelete.setDisable(true);
             matchDAO.deleteMatch(table.getSelectionModel().getSelectedItem());
             matches.remove(table.getSelectionModel().getSelectedItem());
         });
 
-        // Bind button's disable property to TableView's selection
-        buttonDelete.disableProperty().bind(Bindings.isEmpty(table.getSelectionModel().getSelectedItems()));
-
         Button buttonNew = new Button("Add a new match");
         buttonNew.setOnAction(event -> {
-           // buttonDelete.setDisable(true);
-            addMatch();
+            Match toUpdate = table.getSelectionModel().getSelectedItem();
+            addMatch(false, Optional.ofNullable(toUpdate));
         });
 
-        Button buttonEdit = new Button("Edit results of match");
-        buttonEdit.setDisable(true);
+        Button buttonEdit = new Button("Edit results of selected match");
         buttonEdit.setOnAction(event -> {
-
+            addMatch(true, Optional.empty());
         });
 
-
-     /*   table.setOnMouseClicked((e) -> {
-            buttonDelete.setDisable(false);
-        });*/
-
+        buttonDelete.disableProperty().bind(Bindings.isEmpty(table.getSelectionModel().getSelectedItems()));
+        buttonEdit.disableProperty().bind(Bindings.isEmpty(table.getSelectionModel().getSelectedItems()));
 
         HBox buttons = new HBox();
         buttons.setSpacing(10);
@@ -427,7 +447,7 @@ public class MatchView {
 
 
         VBox vBoxAll = new VBox();
-        vBoxAll.setPrefSize(580, 600);
+        vBoxAll.setPrefSize(580, 565);//bredd, höjd
 
         vBoxAll.getChildren().addAll(table, toggle(),buttons);
         vBoxAll.setPadding(new Insets(10, 10, 10, 10));

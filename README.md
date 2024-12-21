@@ -1,3 +1,3 @@
 <p align="center">
-    <img src="assets/pipergamesdb.svg"/>
+    <img src="assets/apg-logo.svg"/>
 </p>

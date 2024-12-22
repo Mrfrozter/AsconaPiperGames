@@ -41,10 +41,15 @@ public class Person {
     @JoinColumn(name = "team_id")
     private Team team;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "gameId")
+    private Game game;
+
+
     public Person() {
     }
 
-    public Person(String name, String lastname, String nickname, String address, String postNumber, String city, String country, String email, String role, Team team) {
+    public Person(String name, String lastname, String nickname, String address, String postNumber, String city, String country, String email, String role, Team team, Game game) {
         this.name = name;
         this.lastname = lastname;
         this.nickname = nickname;
@@ -55,6 +60,7 @@ public class Person {
         this.email = email;
         this.role = role;
         this.team = team;
+        this.game = game;
     }
 
     public Integer getId() {
@@ -145,14 +151,22 @@ public class Person {
         this.team = team;
     }
 
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
     @Override
     public String toString() {
-        return
-                "id:" + id +
+        return  "id:" + id +
                 " '" + name +
                 " '" + lastname +
                 ", nickname:" + nickname +
                 ", role:" + role +
-                ", team:" + team;
+                ", team:" + team+
+                ", game:" + game;
     }
 }

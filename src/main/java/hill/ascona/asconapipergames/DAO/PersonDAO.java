@@ -30,12 +30,13 @@ public class PersonDAO {
         }
     }
 
-    public List<Person> getPlayersInfoByTeamId(Team team) {
+    public List<Person> getPlayersInfoByTeamId(List<Team> team) {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         List<Person> playersToReturn = new ArrayList<>();
+        for(Team i: team){
         TypedQuery<Person> result = entityManager.createQuery("FROM Person p WHERE p.team = :variable", Person.class);
-        result.setParameter("variable", team);
-        playersToReturn.addAll(result.getResultList());
+        result.setParameter("variable", i);
+        playersToReturn.addAll(result.getResultList());}
         entityManager.close();
         return playersToReturn;
     }

@@ -42,7 +42,7 @@ public class Person {
     private Team team;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "gameId")
+    @JoinColumn(name = "game_id")
     private Game game;
 
 

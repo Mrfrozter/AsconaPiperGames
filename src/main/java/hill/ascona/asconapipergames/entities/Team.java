@@ -2,6 +2,7 @@ package hill.ascona.asconapipergames.entities;
 
 import jakarta.persistence.*;
 import hill.ascona.asconapipergames.entities.Person;
+import hill.ascona.asconapipergames.entities.Game;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,8 +21,12 @@ public class Team {
     @OneToMany(fetch = FetchType.EAGER)
     private List<Person> members = new ArrayList<>();
 
-    @Column(name = "game_id", length = 50, nullable = false)
-    private int game_id;  // ÄNDRAT FRÅN STRING TILL INT
+    /*@Column(name = "game_id", length = 50, nullable = false)
+    private int game_id;  // ÄNDRAT FRÅN STRING TILL INT */
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "game_id")
+    private Game game;
 
 
     //Tom konstruktor
@@ -31,10 +36,10 @@ public class Team {
 
     //Konstruktor med allt förutom ID, eftersom att vi inte ska välja ID själva
 
-    public Team(String team_name, List<Person> members, int game_id) {
+    public Team(String team_name, List<Person> members, Game game) {
         this.team_name = team_name;
         this.members = members;
-        this.game_id = game_id;
+        this.game = game;
     }
 
     //skapad konstruktor automatiskt från errorn i TeamView på rad 75 - test
@@ -59,14 +64,6 @@ public class Team {
         this.team_name = team_name;
     }
 
-    public int getGame_id() {
-        return game_id;
-    }
-
-    public void setGame_id(int game_id) {
-        this.game_id = game_id;
-    }
-
     public List<Person> getMembers() {
         return members;
     }
@@ -75,9 +72,12 @@ public class Team {
         this.members = members;
     }
 
-    @Override
-    public String toString() {
-        return team_name ;
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
     }
 }
 

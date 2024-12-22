@@ -52,6 +52,25 @@ public class MatchDAO {
         return listToReturn;
     }
 
+    public List<Match> getPlayerTeam(String  playerTeam ) {
+        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+        List<Match> listToReturn = new ArrayList<>();
+        TypedQuery<Match> result = entityManager.createQuery("FROM Match m WHERE m.playerTeam = :variabel", Match.class);
+        result.setParameter("variabel", playerTeam);
+        listToReturn.addAll(result.getResultList());
+        return listToReturn;
+    }
+
+    public List<Match> getAllreadyPlayedAndPorT(boolean allreadyPlayed, String porT) {
+        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+        List<Match> listToReturn = new ArrayList<>();
+        TypedQuery<Match> result = entityManager.createQuery("FROM Match m WHERE m.allreadyPlayed = :variabel AND m.playerTeam = :port", Match.class);
+        result.setParameter("variabel", allreadyPlayed);
+        result.setParameter("port", porT);
+        listToReturn.addAll(result.getResultList());
+        return listToReturn;
+    }
+
 
     public List<Match> getAllMatches(){
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();

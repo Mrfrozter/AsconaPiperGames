@@ -15,8 +15,8 @@ public class Match {
     @Column(name = "match_date", length =20, nullable = true)
     private String date;
 
-    @Column(name = "match_played", columnDefinition = "boolean default true", nullable = true)
-    private boolean allreadyPlayed = false;
+    @Column(name = "match_played", columnDefinition = "boolean default false", nullable = true)
+    private boolean allreadyPlayed;
 
     @Column(name = "match_singel_team", nullable = true)
     private String playerTeam;
@@ -25,6 +25,15 @@ public class Match {
     @JoinColumn(name = "game_id")
     private Game game;
 
+    @ManyToOne(fetch = FetchType.EAGER    )
+    @JoinColumn(name = "winner_if_player")
+    private Person winnerIfPlayer;
+
+    @ManyToOne(fetch = FetchType.EAGER    )
+    @JoinColumn(name = "winner_if_team")
+    private Team winnerIfTeam;
+
+
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Person> players = new ArrayList<>();
 
@@ -32,7 +41,7 @@ public class Match {
     private List<Team> teams = new ArrayList<>();
 
     @Column(name = "match_winner", nullable = true)
-    private Integer winnerId;
+    private String winnerName;
 
     @Column(name = "part_one_name", length = 50, nullable = true)
     private String nameOne;
@@ -40,18 +49,29 @@ public class Match {
     @Column(name = "part_two_name", length = 50, nullable = true)
     private String nameTwo;
 
+    @Column(name = "final_score", length = 50, nullable = true)
+    private String finalScore;
+
     public Match() {
     }
 
 
-    public Match(String date, boolean allreadyPlayed, String playerTeam, Game game, String nameOne, String nameTwo) {
-        this.date = date;
-        this.allreadyPlayed = allreadyPlayed;
-        this.playerTeam = playerTeam;
-        this.game = game;
-       // this.winnerId = winnerId; int winnerId,
-        this.nameOne = nameOne;
+    // everything except id
+
+
+    public Match(String finalScore, String nameTwo, String nameOne, String winnerName, List<Team> teams, List<Person> players, Team winnerIfTeam, Person winnerIfPlayer, Game game, String playerTeam, boolean allreadyPlayed, String date) {
+        this.finalScore = finalScore;
         this.nameTwo = nameTwo;
+        this.nameOne = nameOne;
+        this.winnerName = winnerName;
+        this.teams = teams;
+        this.players = players;
+        this.winnerIfTeam = winnerIfTeam;
+        this.winnerIfPlayer = winnerIfPlayer;
+        this.game = game;
+        this.playerTeam = playerTeam;
+        this.allreadyPlayed = allreadyPlayed;
+        this.date = date;
     }
 
     public int getId() {
@@ -94,6 +114,22 @@ public class Match {
         this.game = game;
     }
 
+    public Person getWinnerIfPlayer() {
+        return winnerIfPlayer;
+    }
+
+    public void setWinnerIfPlayer(Person winnerIfPlayer) {
+        this.winnerIfPlayer = winnerIfPlayer;
+    }
+
+    public Team getWinnerIfTeam() {
+        return winnerIfTeam;
+    }
+
+    public void setWinnerIfTeam(Team winnerIfTeam) {
+        this.winnerIfTeam = winnerIfTeam;
+    }
+
     public List<Person> getPlayers() {
         return players;
     }
@@ -110,12 +146,12 @@ public class Match {
         this.teams = teams;
     }
 
-    public Integer getWinnerId() {
-        return winnerId;
+    public String getWinnerName() {
+        return winnerName;
     }
 
-    public void setWinnerId(Integer winnerId) {
-        this.winnerId = winnerId;
+    public void setWinnerName(String winnerName) {
+        this.winnerName = winnerName;
     }
 
     public String getNameOne() {
@@ -132,5 +168,32 @@ public class Match {
 
     public void setNameTwo(String nameTwo) {
         this.nameTwo = nameTwo;
+    }
+
+    public String getFinalScore() {
+        return finalScore;
+    }
+
+    public void setFinalScore(String finalScore) {
+        this.finalScore = finalScore;
+    }
+
+    @Override
+    public String toString() {
+        return "Match{" +
+                "id=" + id +
+                ", date='" + date + '\'' +
+                ", allreadyPlayed=" + allreadyPlayed +
+                ", playerTeam='" + playerTeam + '\'' +
+                ", game=" + game +
+                ", winnerIfPlayer=" + winnerIfPlayer +
+                ", winnerIfTeam=" + winnerIfTeam +
+                ", players=" + players +
+                ", teams=" + teams +
+                ", winnerName='" + winnerName + '\'' +
+                ", nameOne='" + nameOne + '\'' +
+                ", nameTwo='" + nameTwo + '\'' +
+                ", finalScore='" + finalScore + '\'' +
+                '}';
     }
 }

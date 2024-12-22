@@ -270,13 +270,16 @@ public  class PersonView {
 
         Label labelControl= new Label("Not found!");
         labelControl.setLayoutX(60);
-        labelControl.setLayoutY(415);
+        labelControl.setLayoutY(430);
         labelControl.setTextFill(Color.RED);
         labelControl.setVisible(false);
 
         buttonSearch.setOnAction(e->{
             labelControl.setVisible(false);
             tableView.getItems().clear();
+            if(textFieldSearch.getText().isEmpty()){
+                labelControl.setVisible(true);
+            }else {
             String text = textFieldSearch.getText();
             String regex = ",";
             String[] gameTitle = text.split(regex);
@@ -284,16 +287,13 @@ public  class PersonView {
              {
                  System.out.println(i);
                  game = gameDAO.getGameIdByTitle(i);
-                 System.out.println(game);
                  teamList = teamDAO.getTeamIdByGameId(game.getId());
-                 System.out.println(teamList);
                  personList.addAll(personDAO.getPlayersInfoByTeamId(teamList));
             }
             pInfo = FXCollections.observableList(personList);
-            if (pInfo.isEmpty()){
-                labelControl.setVisible(true);
+            if (pInfo.isEmpty() || textFieldSearch.getText().isEmpty()){
             }
-            tableView.setItems(pInfo);
+            tableView.setItems(pInfo);}
         });
 
         buttonShowAll.setOnAction(e->{
@@ -341,6 +341,32 @@ public  class PersonView {
         buttonSearch.setPrefSize(145,23);
         buttonSearch.setLayoutX(310);
         buttonSearch.setLayoutY(52);
+
+        TableView<Person> tableView = new TableView();
+        tableView.setEditable(false);
+        tableView.setPrefSize(650,170);
+        tableView.setLayoutX(25);
+        tableView.setLayoutY(95);
+
+        TableColumn<Person, Integer> column1 = new TableColumn<>("Id");
+        column1.setCellValueFactory(new PropertyValueFactory<>("id"));
+        TableColumn<Person, String> column2 = new TableColumn<>("First Name");
+        column2.setCellValueFactory(new PropertyValueFactory<>("name"));
+        TableColumn<Person, String> column3 = new TableColumn<>("Last Name");
+        column3.setCellValueFactory(new PropertyValueFactory<>("lastname"));
+        TableColumn<Person, String> column4 = new TableColumn<>("Nickname");
+        column4.setCellValueFactory(new PropertyValueFactory<>("nickname"));
+        TableColumn<Person, String> column10 = new TableColumn<>("Role");
+        column10.setCellValueFactory(new PropertyValueFactory<>("role"));
+        TableColumn<Person, Team> column11 = new TableColumn<>("Team");
+        column11.setCellValueFactory(new PropertyValueFactory<>("team"));
+
+        tableView.getColumns().addAll(column1,column2,column3,column4,column10,column11);
+
+        buttonSearch.setOnAction(e->{
+            pInfo = FXCollections.observableList(personDAO.getPersonInfo(textFieldSearch.getText()));
+            tableView.setItems(pInfo);
+        });
 
         ComboBox<Game> comboBoxGame =new ComboBox<>();
         comboBoxGame.setPromptText("Game:");
@@ -390,9 +416,8 @@ public  class PersonView {
         labelInfo.setVisible(false);
 
         Button buttonUpdate=new Button("Update");
+        buttonUpdate.setDisable(true);
         buttonUpdate.setPrefSize(145,23);
-//        buttonUpdate.setLayoutX(70);
-//        buttonUpdate.setLayoutY(450);
         buttonUpdate.setOnAction(e->{
             dataToUpdate.setRole(comboBoxRole.getValue());
             dataToUpdate.setName(textFieldName.getText());
@@ -408,16 +433,30 @@ public  class PersonView {
             personDAO.updatePlayersInfo(dataToUpdate);
             labelInfo.setText("Updated!");
             labelInfo.setVisible(true);
+            buttonUpdate.setDisable(true);
         });
 
-        Button buttonDelete=new Button("Delete");
-        buttonDelete.setPrefSize(145,23);
-//        buttonDelete.setLayoutX(225);
-//        buttonDelete.setLayoutY(450);
-        buttonDelete.setOnAction(e->{
-                personDAO.remove(dataToUpdate);
-                labelInfo.setText("Deleted!");
-                labelInfo.setVisible(true);
+        Button buttonDelete = new Button("Delete");
+        buttonDelete.setDisable(true);
+        buttonDelete.setPrefSize(145, 23);
+        buttonDelete.setOnAction(e -> {
+            personDAO.remove(dataToUpdate);
+            labelInfo.setText("Deleted!");
+            labelInfo.setVisible(true);
+            buttonDelete.setDisable(true);
+            tableView.getItems().clear();
+            comboBoxRole.getItems().clear();
+            textFieldName.setText(null);
+            textFieldLastName.setText(null);
+            textFieldNickName.setText(null);
+            textFieldAddress.setText(null);
+            textFieldPostNo.setText(null);
+            textFieldCity.setText(null);
+            textFieldCountry.setText(null);
+            textFieldEmail.setText(null);
+            comboBoxTeam.getItems().clear();
+            comboBoxGame.getItems().clear();
+            buttonUpdate.setDisable(true);
         });
 
         TilePane tilePane1= new TilePane((Node) comboBoxRole,textFieldName,textFieldLastName,textFieldNickName,textFieldAddress,textFieldPostNo,textFieldCity,textFieldCountry,textFieldEmail,comboBoxTeam,comboBoxGame,labelInfo,buttonUpdate,buttonDelete);
@@ -427,32 +466,6 @@ public  class PersonView {
         tilePane1.setPrefSize(570,200);
         tilePane1.setLayoutX(65);
         tilePane1.setLayoutY(300);
-
-        TableView<Person> tableView = new TableView();
-        tableView.setEditable(false);
-        tableView.setPrefSize(650,170);
-        tableView.setLayoutX(25);
-        tableView.setLayoutY(95);
-
-        TableColumn<Person, Integer> column1 = new TableColumn<>("Id");
-        column1.setCellValueFactory(new PropertyValueFactory<>("id"));
-        TableColumn<Person, String> column2 = new TableColumn<>("First Name");
-        column2.setCellValueFactory(new PropertyValueFactory<>("name"));
-        TableColumn<Person, String> column3 = new TableColumn<>("Last Name");
-        column3.setCellValueFactory(new PropertyValueFactory<>("lastname"));
-        TableColumn<Person, String> column4 = new TableColumn<>("Nickname");
-        column4.setCellValueFactory(new PropertyValueFactory<>("nickname"));
-        TableColumn<Person, String> column10 = new TableColumn<>("Role");
-        column10.setCellValueFactory(new PropertyValueFactory<>("role"));
-        TableColumn<Person, Team> column11 = new TableColumn<>("Team");
-        column11.setCellValueFactory(new PropertyValueFactory<>("team"));
-
-        tableView.getColumns().addAll(column1,column2,column3,column4,column10,column11);
-
-        buttonSearch.setOnAction(e->{
-            pInfo = FXCollections.observableList(personDAO.getPersonInfo(textFieldSearch.getText()));
-            tableView.setItems(pInfo);
-        });
 
         tableView.setRowFactory(e -> {
             TableRow<Person> row = new TableRow<>();
@@ -468,6 +481,8 @@ public  class PersonView {
                 textFieldCountry.setText(dataToUpdate.getCountry());
                 textFieldEmail.setText(dataToUpdate.getEmail());
                 comboBoxTeam.setValue(dataToUpdate.getTeam());
+                buttonUpdate.setDisable(false);
+                buttonDelete.setDisable(false);
             });
             return row;
         });

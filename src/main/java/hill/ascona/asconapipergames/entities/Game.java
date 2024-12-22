@@ -113,9 +113,8 @@ public class Game {
         return Objects.hash(id, title, genre, numberOfTeams, teams);
     }
 
-//     toString for easy debugging
     @Override
     public String toString() {
-        return teams;
+        return title;
     }
 }

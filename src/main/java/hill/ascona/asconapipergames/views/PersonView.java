@@ -308,7 +308,7 @@ public  class PersonView {
              {
                  System.out.println(i);
                  game = gameDAO.getGameIdByTitle(i);
-                 teamList = teamDAO.getTeamIdByGameId(game.getId());
+                 teamList = teamDAO.getTeamIdByGameId(game);
                  personList.addAll(personDAO.getPlayersInfoByTeamId(teamList));
             }
             pInfo = FXCollections.observableList(personList);
@@ -322,7 +322,7 @@ public  class PersonView {
             personList.clear();
             gameList.addAll(gameDAO.getAllGames());
             for(Game i: gameList) {
-                teamList = teamDAO.getTeamIdByGameId(i.getId());
+                teamList = teamDAO.getTeamIdByGameId(i);
                 personList.addAll(personDAO.getPlayersInfoByTeamId(teamList));
             }
             pInfo = FXCollections.observableList(personList);

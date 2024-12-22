@@ -9,12 +9,12 @@ import java.util.logging.Logger;
 
 public class HelloApplication extends Application {
     public void start(Stage primaryStage) throws IOException {
-        Logger.getLogger("org.hibernate").setLevel(Level.OFF);
         ViewManager.start(primaryStage);
         ViewManager.loginView();
     }
 
     public static void main(String[] args) {
+        Logger.getLogger("org.hibernate").setLevel(Level.OFF);
         launch();
     }
 }

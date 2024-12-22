@@ -8,7 +8,7 @@ public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "p_id")
-    private Integer id;
+    private int id;
 
     @Column(name = "p_name", length =25, nullable = false)
     private String name;
@@ -37,16 +37,19 @@ public class Person {
     @Column(name = "p_role", length =15, nullable = false)
     private String role;
 
-//    @Column(name = "p_teamID",length = 3, nullable = false)
-//    private String teamID;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "team_id")
     private Team team;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "gameId")
+    private Game game;
+
+
     public Person() {
     }
 
-    public Person(String name, String lastname, String nickname, String address, String postNumber, String city, String country, String email, String role, Team team) {
+    public Person(String name, String lastname, String nickname, String address, String postNumber, String city, String country, String email, String role, Team team, Game game) {
         this.name = name;
         this.lastname = lastname;
         this.nickname = nickname;
@@ -57,6 +60,7 @@ public class Person {
         this.email = email;
         this.role = role;
         this.team = team;
+        this.game = game;
     }
 
     public Integer getId() {
@@ -139,14 +143,6 @@ public class Person {
         this.role = role;
     }
 
-//    public String getTeamID() {
-//        return teamID;
-//    }
-//
-//    public void setTeamID(String teamID) {
-//        this.teamID = teamID;
-//    }
-
     public Team getTeam() {
         return team;
     }
@@ -154,26 +150,23 @@ public class Person {
     public void setTeam(Team team) {
         this.team = team;
     }
-//
-//    @Override
-//    public String toString() {
-//        return
-//                "id: " + id +
-//                " " + name +
-//                " " + lastname +
-//                ", nickname: " + nickname +
-//                ", role: " + role +
-//                ", teamID: " + teamID;
-//    }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+    }
 
     @Override
     public String toString() {
-        return
-                "id:" + id +
+        return  "id:" + id +
                 " '" + name +
                 " '" + lastname +
                 ", nickname:" + nickname +
                 ", role:" + role +
-                ", team:" + team;
+                ", team:" + team+
+                ", game:" + game;
     }
 }

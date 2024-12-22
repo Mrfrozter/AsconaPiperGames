@@ -3,9 +3,7 @@ package hill.ascona.asconapipergames.views;
 import hill.ascona.asconapipergames.DAO.GameDAO;
 import hill.ascona.asconapipergames.DAO.PersonDAO;
 import hill.ascona.asconapipergames.DAO.TeamDAO;
-import hill.ascona.asconapipergames.entities.Game;
-import hill.ascona.asconapipergames.entities.Person;
-import hill.ascona.asconapipergames.entities.Team;
+import hill.ascona.asconapipergames.entities.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Orientation;
@@ -25,11 +23,15 @@ import java.util.List;
 public  class PersonView {
 
     private PersonDAO personDAO = new PersonDAO();
+    List<Person> personList= new ArrayList<>();
+    private Person dataToUpdate= new Person();
     private GameDAO gameDAO = new GameDAO();
+    List<Game> gameList= new ArrayList<>();
+    private Game game =new Game();
     private TeamDAO teamDAO = new TeamDAO();
+    private Team team = new Team();
+    List<Team> teamList= new ArrayList<>();
     private ObservableList<Person> pInfo= FXCollections.observableArrayList(new ArrayList<>());
-    private ObservableList<Game> gInfo= FXCollections.observableArrayList(new ArrayList<>());
-    private Person datatoUpdate= new Person();
 
     public AnchorPane start() {
 
@@ -103,10 +105,12 @@ public  class PersonView {
         column9.setCellValueFactory(new PropertyValueFactory<>("email"));
         TableColumn<Person, String> column10 = new TableColumn<>("Role");
         column10.setCellValueFactory(new PropertyValueFactory<>("role"));
-        TableColumn<Person, String> column11 = new TableColumn<>("Team-id");
-        column11.setCellValueFactory(new PropertyValueFactory<>("teamID"));
+        TableColumn<Person, Team> column11 = new TableColumn<>("Team");
+        column11.setCellValueFactory(new PropertyValueFactory<>("team"));
+        TableColumn<Person, Game> column12 = new TableColumn<>("Game");
+        column12.setCellValueFactory(new PropertyValueFactory<>("game"));
 
-        tableView.getColumns().addAll(column1,column2,column3,column4,column5,column6,column7,column8,column9,column10,column11);
+        tableView.getColumns().addAll(column1,column2,column3,column4,column5,column6,column7,column8,column9,column10,column11,column12);
 
         showButton.setOnAction(e ->{
             if(comboBoxShowTable.getValue().equals("Player")){
@@ -130,10 +134,33 @@ public  class PersonView {
         labelRegister.setLayoutX(15);
         labelRegister.setLayoutY(310);
 
+        ComboBox<Game> comboBoxGame =new ComboBox<>();
+        comboBoxGame.setPromptText("Game:");
+        comboBoxGame.setPrefSize(165,23);
+        ComboBox<Team> comboBoxTeam =new ComboBox<>();
+        comboBoxTeam.setPromptText("Team:");
+        comboBoxTeam.getItems().addAll(teamDAO.getAllTeams());
+        comboBoxTeam.setPrefSize(165,23);
+        comboBoxTeam.setOnAction(e->{
+            comboBoxGame.getItems().clear();
+            comboBoxGame.setValue(null);
+            team = comboBoxTeam.getValue();
+            game = gameDAO.getGameById(team.getGame_id());
+            System.out.println(game);
+            comboBoxGame.getItems().add(game);
+        });
         ComboBox<String> comboBoxRole =new ComboBox<>();
         comboBoxRole.setPromptText("Role:");
         comboBoxRole.getItems().addAll("Player","User");
         comboBoxRole.setPrefSize(165,23);
+        comboBoxRole.setOnAction(e->{
+            if(comboBoxRole.getValue().equals("User")){
+                comboBoxTeam.setDisable(true);
+                comboBoxGame.setDisable(true);}
+            else if (comboBoxRole.getValue().equals("Player")){
+                comboBoxTeam.setDisable(false);
+            comboBoxGame.setDisable(false);}
+        });
         TextField textFieldName= new TextField();
         textFieldName.setPromptText("First name");
         TextField textFieldLastName= new TextField();
@@ -150,13 +177,6 @@ public  class PersonView {
         textFieldCountry.setPromptText("Country");
         TextField textFieldEmail= new TextField();
         textFieldEmail.setPromptText("e-mail");
-        TextField textFieldTeamId= new TextField();
-        textFieldTeamId.setPromptText("Team-Id");
-        ComboBox<Team> comboBoxTeam =new ComboBox<>();
-        comboBoxTeam.setPromptText("Team:");
-        comboBoxTeam.getItems().addAll(teamDAO.getAllTeams());
-
-
 
         Label labelControl = new Label("Enter the person's first name, last name and nickname");
         labelControl.setLayoutX(10);
@@ -167,12 +187,13 @@ public  class PersonView {
         Button buttonSave=new Button("Save");
         buttonSave.setPrefSize(145,23);
         buttonSave.setOnAction(e->{
+
             if (textFieldName.getText().isEmpty()|| textFieldLastName.getText().isEmpty()||textFieldNickName.getText().isEmpty())
             {
                 labelControl.setVisible(true);
             } else {
                 Person user = new Person(textFieldName.getText(), textFieldLastName.getText(), textFieldNickName.getText(), textFieldAddress.getText()
-                        , textFieldPostNo.getText(), textFieldCity.getText(), textFieldCountry.getText(), textFieldEmail.getText(), comboBoxRole.getValue(), comboBoxTeam.getValue());
+                        , textFieldPostNo.getText(), textFieldCity.getText(), textFieldCountry.getText(), textFieldEmail.getText(), comboBoxRole.getValue(), comboBoxTeam.getValue(),comboBoxGame.getValue());
                 if (personDAO.addPerson(user)) {
                     labelControl.setText("User saved!");
                     labelControl.setVisible(true);
@@ -185,7 +206,7 @@ public  class PersonView {
             }
         });
 
-        TilePane tilePane1= new TilePane((Node) comboBoxRole,textFieldName,textFieldLastName,textFieldNickName,textFieldAddress,textFieldPostNo,textFieldCity,textFieldCountry,textFieldEmail,textFieldTeamId, buttonSave);
+        TilePane tilePane1= new TilePane((Node) comboBoxRole,textFieldName,textFieldLastName,textFieldNickName,textFieldAddress,textFieldPostNo,textFieldCity,textFieldCountry,textFieldEmail,comboBoxTeam,comboBoxGame, buttonSave);
         tilePane1.setHgap(5);
         tilePane1.setVgap(5);
         tilePane1.setTileAlignment(Pos.CENTER);
@@ -207,74 +228,84 @@ public  class PersonView {
         vBox3.setLayoutX(180);
         vBox3.setLayoutY(35);
 
-        Label labelSearch=new Label("Search player by team-name:");
+        Label labelSearch=new Label("Search player by game name:");
         labelSearch.setFont(new Font("Cambria Bold",12));
         labelSearch.setLayoutX(15);
         labelSearch.setLayoutY(25);
 
         TextField textFieldSearch=new TextField();
-        textFieldSearch.setPrefSize(145,23);
-        textFieldSearch.setLayoutX(25);
+        textFieldSearch.setPrefSize(195,23);
+        textFieldSearch.setLayoutX(65);
         textFieldSearch.setLayoutY(55);
-        textFieldSearch.setPromptText("Team-id");
+        textFieldSearch.setPromptText("Game name");
 
         Button buttonSearch= new Button("Search");
         buttonSearch.setPrefSize(145,23);
-        buttonSearch.setLayoutX(185);
+        buttonSearch.setLayoutX(275);
         buttonSearch.setLayoutY(55);
 
         Button buttonShowAll= new Button("Show all games");
         buttonShowAll.setPrefSize(145,23);
-        buttonShowAll.setLayoutX(350);
+        buttonShowAll.setLayoutX(440);
         buttonShowAll.setLayoutY(55);
 
         TableView<Person> tableView = new TableView();
         tableView.setEditable(false);
-        tableView.setPrefSize(650,200);
-        tableView.setLayoutX(25);
+        tableView.setPrefSize(600,300);
+        tableView.setLayoutX(50);
         tableView.setLayoutY(95);
 
-        TableColumn<Person, Integer> column1 = new TableColumn<>("Id");
-        column1.setCellValueFactory(new PropertyValueFactory<>("id"));
         TableColumn<Person, String> column2 = new TableColumn<>("First Name");
         column2.setCellValueFactory(new PropertyValueFactory<>("name"));
         TableColumn<Person, String> column3 = new TableColumn<>("Last Name");
         column3.setCellValueFactory(new PropertyValueFactory<>("lastname"));
         TableColumn<Person, String> column4 = new TableColumn<>("Nickname");
         column4.setCellValueFactory(new PropertyValueFactory<>("nickname"));
-        TableColumn<Person, String> column10 = new TableColumn<>("Role");
-        column10.setCellValueFactory(new PropertyValueFactory<>("role"));
-        TableColumn<Person, String> column11 = new TableColumn<>("Team-id");
-        column11.setCellValueFactory(new PropertyValueFactory<>("teamID"));
+        TableColumn<Person, Team> column11 = new TableColumn<>("Team");
+        column11.setCellValueFactory(new PropertyValueFactory<>("team"));
+        TableColumn<Person, Game> column12 = new TableColumn<>("Game");
+        column12.setCellValueFactory(new PropertyValueFactory<>("game"));
 
-        tableView.getColumns().addAll(column1,column2,column3,column4,column10,column11);
+        tableView.getColumns().addAll(column2,column3,column4,column11,column12);
 
         Label labelControl= new Label("Not found!");
-        labelControl.setLayoutX(40);
-        labelControl.setLayoutY(315);
+        labelControl.setLayoutX(60);
+        labelControl.setLayoutY(430);
         labelControl.setTextFill(Color.RED);
         labelControl.setVisible(false);
 
         buttonSearch.setOnAction(e->{
-            List<Person> personList= new ArrayList<>();
+            labelControl.setVisible(false);
+            tableView.getItems().clear();
+            if(textFieldSearch.getText().isEmpty()){
+                labelControl.setVisible(true);
+            }else {
             String text = textFieldSearch.getText();
-            String regex = "[,\\s\\.]";
-            String[] teams = text.split(regex);
-            for(String i: teams)
+            String regex = ",";
+            String[] gameTitle = text.split(regex);
+            for(String i: gameTitle)
              {
-                System.out.println(i);
-                personList.addAll(personDAO.getPlayersInfoByTeamId(i));
+                 System.out.println(i);
+                 game = gameDAO.getGameIdByTitle(i);
+                 teamList = teamDAO.getTeamIdByGameId(game.getId());
+                 personList.addAll(personDAO.getPlayersInfoByTeamId(teamList));
             }
             pInfo = FXCollections.observableList(personList);
-            if (pInfo.isEmpty()){
-                labelControl.setVisible(true);
+            if (pInfo.isEmpty() || textFieldSearch.getText().isEmpty()){
             }
-            tableView.setItems(pInfo);
+            tableView.setItems(pInfo);}
         });
 
         buttonShowAll.setOnAction(e->{
-//            gInfo= FXCollections.observableList(new GameDAO().getAllGames());
-//            tableView.setItems(gInfo);
+            tableView.getItems().clear();
+            personList.clear();
+            gameList.addAll(gameDAO.getAllGames());
+            for(Game i: gameList) {
+                teamList = teamDAO.getTeamIdByGameId(i.getId());
+                personList.addAll(personDAO.getPlayersInfoByTeamId(teamList));
+            }
+            pInfo = FXCollections.observableList(personList);
+            tableView.setItems(pInfo);
         });
 
         anchorPane2.getChildren().addAll(vBox3,labelSearch,textFieldSearch,buttonSearch,buttonShowAll,tableView,labelControl);
@@ -311,10 +342,56 @@ public  class PersonView {
         buttonSearch.setLayoutX(310);
         buttonSearch.setLayoutY(52);
 
+        TableView<Person> tableView = new TableView();
+        tableView.setEditable(false);
+        tableView.setPrefSize(650,170);
+        tableView.setLayoutX(25);
+        tableView.setLayoutY(95);
+
+        TableColumn<Person, Integer> column1 = new TableColumn<>("Id");
+        column1.setCellValueFactory(new PropertyValueFactory<>("id"));
+        TableColumn<Person, String> column2 = new TableColumn<>("First Name");
+        column2.setCellValueFactory(new PropertyValueFactory<>("name"));
+        TableColumn<Person, String> column3 = new TableColumn<>("Last Name");
+        column3.setCellValueFactory(new PropertyValueFactory<>("lastname"));
+        TableColumn<Person, String> column4 = new TableColumn<>("Nickname");
+        column4.setCellValueFactory(new PropertyValueFactory<>("nickname"));
+        TableColumn<Person, String> column10 = new TableColumn<>("Role");
+        column10.setCellValueFactory(new PropertyValueFactory<>("role"));
+        TableColumn<Person, Team> column11 = new TableColumn<>("Team");
+        column11.setCellValueFactory(new PropertyValueFactory<>("team"));
+
+        tableView.getColumns().addAll(column1,column2,column3,column4,column10,column11);
+
+        buttonSearch.setOnAction(e->{
+            pInfo = FXCollections.observableList(personDAO.getPersonInfo(textFieldSearch.getText()));
+            tableView.setItems(pInfo);
+        });
+
+        ComboBox<Game> comboBoxGame =new ComboBox<>();
+        comboBoxGame.setPromptText("Game:");
+        comboBoxGame.setPrefSize(165,23);
+        ComboBox<Team> comboBoxTeam =new ComboBox<>();
+        comboBoxTeam.setPromptText("Team:");
+        comboBoxTeam.getItems().addAll(teamDAO.getAllTeams());
+        comboBoxTeam.setPrefSize(165,23);
+        comboBoxTeam.setOnAction(e->{
+            comboBoxGame.getItems().clear();
+            comboBoxGame.setValue(null);
+            team = comboBoxTeam.getValue();
+            game = gameDAO.getGameById(team.getGame_id());
+            comboBoxGame.getItems().add(game);
+        });
         ComboBox<String> comboBoxRole =new ComboBox<>();
         comboBoxRole.setPromptText("Role:");
         comboBoxRole.getItems().addAll("Player","User");
         comboBoxRole.setPrefSize(165,23);
+        comboBoxRole.setOnAction(e->{
+            if(comboBoxRole.getValue().equals("User"))
+                comboBoxTeam.setDisable(true);
+            else if (comboBoxRole.getValue().equals("Player"))
+                comboBoxTeam.setDisable(false);
+        });
         TextField textFieldName= new TextField();
         textFieldName.setPromptText("First name");
         TextField textFieldLastName= new TextField();
@@ -331,9 +408,6 @@ public  class PersonView {
         textFieldCountry.setPromptText("Country");
         TextField textFieldEmail= new TextField();
         textFieldEmail.setPromptText("e-mail");
-        ComboBox<Team> comboBoxTeam =new ComboBox<>();
-        comboBoxTeam.setPromptText("Team:");
-        comboBoxTeam.getItems().addAll(teamDAO.getAllTeams());
 
         Label labelInfo= new Label();
         labelInfo.setLayoutX(75);
@@ -342,79 +416,78 @@ public  class PersonView {
         labelInfo.setVisible(false);
 
         Button buttonUpdate=new Button("Update");
+        buttonUpdate.setDisable(true);
         buttonUpdate.setPrefSize(145,23);
         buttonUpdate.setOnAction(e->{
-            datatoUpdate =new Person(textFieldName.getText(), textFieldLastName.getText(),
-                    textFieldNickName.getText(), textFieldAddress.getText()
-                    , textFieldPostNo.getText(), textFieldCity.getText(), textFieldCountry.getText(),
-                    textFieldEmail.getText(), comboBoxRole.getValue(), comboBoxTeam.getValue());
-            personDAO.updatePlayersInfo(datatoUpdate);
+            dataToUpdate.setRole(comboBoxRole.getValue());
+            dataToUpdate.setName(textFieldName.getText());
+            dataToUpdate.setLastname(textFieldLastName.getText());
+            dataToUpdate.setNickname(textFieldNickName.getText());
+            dataToUpdate.setAddress(textFieldAddress.getText());
+            dataToUpdate.setPostNumber(textFieldPostNo.getText());
+            dataToUpdate.setCity(textFieldCity.getText());
+            dataToUpdate.setCountry(textFieldCountry.getText());
+            dataToUpdate.setEmail(textFieldEmail.getText());
+            dataToUpdate.setTeam(comboBoxTeam.getValue());
+            dataToUpdate.setGame(comboBoxGame.getValue());
+            personDAO.updatePlayersInfo(dataToUpdate);
             labelInfo.setText("Updated!");
             labelInfo.setVisible(true);
+            buttonUpdate.setDisable(true);
         });
 
-        Button buttonDelete=new Button("Delete");
-        buttonDelete.setPrefSize(145,23);
-        buttonDelete.setOnAction(e->{
-                personDAO.remove(datatoUpdate);
-                labelInfo.setText("Deleted!");
-                labelInfo.setVisible(true);
+        Button buttonDelete = new Button("Delete");
+        buttonDelete.setDisable(true);
+        buttonDelete.setPrefSize(145, 23);
+        buttonDelete.setOnAction(e -> {
+            personDAO.remove(dataToUpdate);
+            labelInfo.setText("Deleted!");
+            labelInfo.setVisible(true);
+            buttonDelete.setDisable(true);
+            tableView.getItems().clear();
+            comboBoxRole.getItems().clear();
+            textFieldName.setText(null);
+            textFieldLastName.setText(null);
+            textFieldNickName.setText(null);
+            textFieldAddress.setText(null);
+            textFieldPostNo.setText(null);
+            textFieldCity.setText(null);
+            textFieldCountry.setText(null);
+            textFieldEmail.setText(null);
+            comboBoxTeam.getItems().clear();
+            comboBoxGame.getItems().clear();
+            buttonUpdate.setDisable(true);
         });
 
-        TilePane tilePane1= new TilePane((Node) comboBoxRole,textFieldName,textFieldLastName,textFieldNickName,textFieldAddress,textFieldPostNo,textFieldCity,textFieldCountry,textFieldEmail,comboBoxTeam, buttonUpdate,buttonDelete);
+        TilePane tilePane1= new TilePane((Node) comboBoxRole,textFieldName,textFieldLastName,textFieldNickName,textFieldAddress,textFieldPostNo,textFieldCity,textFieldCountry,textFieldEmail,comboBoxTeam,comboBoxGame,labelInfo,buttonUpdate,buttonDelete);
         tilePane1.setHgap(5);
         tilePane1.setVgap(5);
         tilePane1.setTileAlignment(Pos.CENTER);
-        tilePane1.setPrefSize(570,140);
+        tilePane1.setPrefSize(570,200);
         tilePane1.setLayoutX(65);
-        tilePane1.setLayoutY(330);
-
-        TableView<Person> tableView = new TableView();
-        tableView.setEditable(false);
-        tableView.setPrefSize(650,200);
-        tableView.setLayoutX(25);
-        tableView.setLayoutY(95);
-
-        TableColumn<Person, Integer> column1 = new TableColumn<>("Id");
-        column1.setCellValueFactory(new PropertyValueFactory<>("id"));
-        TableColumn<Person, String> column2 = new TableColumn<>("First Name");
-        column2.setCellValueFactory(new PropertyValueFactory<>("name"));
-        TableColumn<Person, String> column3 = new TableColumn<>("Last Name");
-        column3.setCellValueFactory(new PropertyValueFactory<>("lastname"));
-        TableColumn<Person, String> column4 = new TableColumn<>("Nickname");
-        column4.setCellValueFactory(new PropertyValueFactory<>("nickname"));
-        TableColumn<Person, String> column10 = new TableColumn<>("Role");
-        column10.setCellValueFactory(new PropertyValueFactory<>("role"));
-        TableColumn<Person, String> column11 = new TableColumn<>("Team-id");
-        column11.setCellValueFactory(new PropertyValueFactory<>("teamID"));
-
-        tableView.getColumns().addAll(column1,column2,column3,column4,column10,column11);
-
-        buttonSearch.setOnAction(e->{
-            pInfo = FXCollections.observableList(personDAO.getPersonInfo(textFieldSearch.getText()));
-            tableView.setItems(pInfo);
-        });
+        tilePane1.setLayoutY(300);
 
         tableView.setRowFactory(e -> {
             TableRow<Person> row = new TableRow<>();
             row.setOnMouseClicked((m) -> {
-                datatoUpdate=(row.getItem());
-                System.out.println(datatoUpdate.toString());
+                dataToUpdate=(row.getItem());
                 comboBoxRole.setValue("Player");
-                textFieldName.setText(datatoUpdate.getName());
-                textFieldLastName.setText(datatoUpdate.getLastname());
-                textFieldNickName.setText(datatoUpdate.getNickname());
-                textFieldAddress.setText(datatoUpdate.getAddress());
-                textFieldPostNo.setText(datatoUpdate.getPostNumber());
-                textFieldCity.setText(datatoUpdate.getCity());
-                textFieldCountry.setText(datatoUpdate.getCountry());
-                textFieldEmail.setText(datatoUpdate.getEmail());
-                comboBoxTeam.setValue(datatoUpdate.getTeam());
+                textFieldName.setText(dataToUpdate.getName());
+                textFieldLastName.setText(dataToUpdate.getLastname());
+                textFieldNickName.setText(dataToUpdate.getNickname());
+                textFieldAddress.setText(dataToUpdate.getAddress());
+                textFieldPostNo.setText(dataToUpdate.getPostNumber());
+                textFieldCity.setText(dataToUpdate.getCity());
+                textFieldCountry.setText(dataToUpdate.getCountry());
+                textFieldEmail.setText(dataToUpdate.getEmail());
+                comboBoxTeam.setValue(dataToUpdate.getTeam());
+                buttonUpdate.setDisable(false);
+                buttonDelete.setDisable(false);
             });
             return row;
         });
 
-        anchorPane3.getChildren().addAll(vBox4,labelSearch,labelEdit,textFieldSearch,buttonSearch,tableView,tilePane1,labelInfo);
+        anchorPane3.getChildren().addAll(vBox4,labelSearch,labelEdit,textFieldSearch,buttonSearch,tableView,tilePane1);
         return anchorPane3;
     }
 }

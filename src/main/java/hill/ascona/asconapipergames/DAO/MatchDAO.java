@@ -1,7 +1,5 @@
 package hill.ascona.asconapipergames.DAO;
 
-import hill.ascona.asconapipergames.entities.Game;
-import hill.ascona.asconapipergames.entities.Tournament;
 import jakarta.persistence.*;
 import hill.ascona.asconapipergames.entities.Match;
 

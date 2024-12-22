@@ -32,9 +32,6 @@ public class MatchView {
     private String date = "";
     private boolean allreadyPlayed;
     private boolean singelNotTeam;
-    private Game gamePlay;
-    private String team1Name;
-    private String team2Name;
     private Person player1;
     private Person player2;
     private Team team1;
@@ -48,6 +45,7 @@ public class MatchView {
     private String finalScore;
     private int scoreP1;
     private int scoreP2;
+
 
     public void addMatch(int newOrUpdating) {
         AnchorPane paneAdd = new AnchorPane();
@@ -164,7 +162,7 @@ public class MatchView {
             if (singelNotTeam) {
                 player1 = pDao.getByNickname(comboBoxPOrT1.getValue());
             }else {
-                team1 = teamDao.getTeamByName(team1Name);
+                team1 = teamDao.getTeamByName(comboBoxPOrT1.getValue());
             }
         });
 
@@ -173,7 +171,7 @@ public class MatchView {
             if (singelNotTeam) {
                 player2 = pDao.getByNickname(comboBoxPOrT2.getValue());
             }else {
-                team2 = teamDao.getTeamByName(team2Name);
+                team2 = teamDao.getTeamByName(comboBoxPOrT2.getValue());
             }
         });
 
@@ -228,8 +226,8 @@ public class MatchView {
         score1TF.setDisable(!allreadyPlayed);
         score2TF.setDisable(!allreadyPlayed);
         if (updating){
-            score1TF.setPromptText("Enter score");                          // TODO ----------------------
-            score2TF.setPromptText("Enter score");                          // TODO ----------------------
+            score1TF.setPromptText("Enter score");
+            score2TF.setPromptText("Enter score");
         }
 
         score1TF.setTextFormatter(new TextFormatter<Integer>(change -> {
@@ -265,37 +263,40 @@ public class MatchView {
 
         Button pOrTButton = new Button("Add a team match");
         pOrTButton.setOnAction(event -> {
-                    singelNotTeam=!singelNotTeam;
-                    comboBoxPOrT2.getItems().removeAll(comboBoxPOrT2.getItems());
-                    comboBoxPOrT1.setValue("");
-
-                    comboBoxPOrT1.setPromptText("Choose first participant");
-                    comboBoxPOrT2.setPromptText("Choose second participant");
-                    comboBoxPOrT1.getItems().removeAll(comboBoxPOrT1.getItems()); // TODO ----------------
-
-                    if(singelNotTeam){
-                        pOrTButton.setText("Add a team match");
-                        pOrTString = "Player";
-                        nowShowing.setText("ADD A PLAYER MATCH");
-                        for (Team team : teams) {
-                            comboBoxPOrT1.getItems().add(team.getTeam_name());
-                            comboBoxPOrT2.getItems().add(team.getTeam_name());
-                        }
-                    }else{
-                        pOrTButton.setText("Add a player match");
-                        pOrTString = "Team";
-                        nowShowing.setText("ADD A TEAM MATCH");
-                        for (Person person : persons) {
-                            comboBoxPOrT1.getItems().add(person.getNickname());
-                            comboBoxPOrT2.getItems().add(person.getNickname());
-                        }
-                    }
-                    labelPOrTOne.setText(pOrTString + " one: ");
-                    labelPOrTwo.setText(pOrTString + " two: ");
-                    //update participant comboboxes                                // TODO ----------------------
-                    stage2.show();
+            singelNotTeam=!singelNotTeam;
+             if(singelNotTeam){
+                pOrTButton.setText("Add a team match");
+                pOrTString = "Player";
+                nowShowing.setText("ADD A PLAYER MATCH");
+            }else{
+                pOrTButton.setText("Add a player match");
+                pOrTString = "Team";
+                nowShowing.setText("ADD A TEAM MATCH");
+            }
+            labelPOrTOne.setText(pOrTString + " one: ");
+            labelPOrTwo.setText(pOrTString + " two: ");
+            comboBoxPOrT1.getItems().removeAll(comboBoxPOrT1.getItems());
+            comboBoxPOrT2.getItems().removeAll(comboBoxPOrT2.getItems());
+            if (singelNotTeam) {
+                for (Person person : persons) {
+                    comboBoxPOrT1.getItems().add(person.getNickname());
+                    comboBoxPOrT2.getItems().add(person.getNickname());
                 }
-        );
+            }else{
+                int teamsCount= 0;
+                for (Team team : teams) {
+                    if (team.getGame().getId()==matchTemp.getGame().getId()) {
+                        teamsCount++;
+                        comboBoxPOrT1.getItems().add(team.getTeam_name());
+                        comboBoxPOrT2.getItems().add(team.getTeam_name());
+                    }
+                }
+                if (teamsCount==0){
+                    comboBoxPOrT1.setPromptText("No teams for that game");
+                    comboBoxPOrT2.setPromptText("No teams for that game");
+                }
+            }
+        });
 
 
 
@@ -459,7 +460,7 @@ public class MatchView {
                 matchTemp.setWinnerName(player1.getNickname());
                 matchTemp.setWinnerIfPlayer(player1);
             }else{
-                matchTemp.setWinnerName(team1Name);
+                matchTemp.setWinnerName(team1.getTeam_name());
                 matchTemp.setWinnerIfTeam(team1);
             }
         }else {
@@ -467,7 +468,7 @@ public class MatchView {
                 matchTemp.setWinnerName(player2.getNickname());
                 matchTemp.setWinnerIfPlayer(player2);
             }else{
-                matchTemp.setWinnerName(team2Name);
+                matchTemp.setWinnerName(team2.getTeam_name());
                 matchTemp.setWinnerIfTeam(team2);
             }
         }

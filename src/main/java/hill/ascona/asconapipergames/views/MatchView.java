@@ -149,7 +149,7 @@ public class MatchView {
             }else{
                 int teamsCount= 0;
                 for (Team team : teams) {
-                    if (team.getGame_id()==gamePlay.getId()){                       ///////-------------
+                    if (team.getGame().getId()==gamePlay.getId()){
                         teamsCount++;
                         comboBoxPOrT1.getItems().add(team.getTeam_name());
                         comboBoxPOrT2.getItems().add(team.getTeam_name());

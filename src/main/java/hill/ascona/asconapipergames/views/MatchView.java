@@ -28,21 +28,21 @@ import java.util.List;
 public class MatchView {
     private MatchDAO matchDAO = new MatchDAO();
     private String gameChosen = "";
-    private Boolean team = false;
-    private Boolean upcoming = true;
+  //  private Boolean team = false;
+  //  private Boolean upcoming = true;
     private String pOrTString = "Player";
-    private int turneringarId;
+  //  private int turneringarId;
     private String date = "";
     private boolean allreadyPlayed;
-    private boolean singelNotTeam = true;
+    private boolean singelNotTeam;
     private Game gamePlay;
-    private String player1Nickname;
-    private String player2Nickname;
+   // private String player1Nickname;
+   // private String player2Nickname;
     private String team1Name;
     private String team2Name;
-    private int winnerIdSend;
-    private String nameOne;
-    private String nameTwo;
+   // private int winnerIdSend;
+   // private String nameOne;
+  //  private String nameTwo;
     private Person player1;
     private Person player2;
     private Team team1;
@@ -53,6 +53,10 @@ public class MatchView {
     private String hourSelected;
     private String minSelected;
     private Match matchTemp;
+    private String finalScore;
+    private int scoreP1;
+    private int scoreP2;
+    private boolean scoreChanged;
 
     public void addMatch(int newOrUpdating) {
         AnchorPane paneAdd = new AnchorPane();
@@ -68,10 +72,10 @@ public class MatchView {
         singelNotTeam = true;
         boolean updating;
 
+
         //----------------------------------------------------------------------Labels---------------
 
         Label nowShowing = new Label("ADD A PLAYER MATCH");
-        System.out.println(newOrUpdating);
         if(newOrUpdating==-1){
             updating=false;
             allreadyPlayed = false;
@@ -145,7 +149,7 @@ public class MatchView {
             }else{
                 int teamsCount= 0;
                 for (Team team : teams) {
-                    if (team.getGame_id()==gamePlay.getId()){
+                    if (team.getGame_id()==gamePlay.getId()){                       ///////-------------
                         teamsCount++;
                         comboBoxPOrT1.getItems().add(team.getTeam_name());
                         comboBoxPOrT2.getItems().add(team.getTeam_name());
@@ -229,9 +233,28 @@ public class MatchView {
         score1TF.setDisable(!allreadyPlayed);
         score2TF.setDisable(!allreadyPlayed);
         if (updating){
-            score1TF.setPromptText("Score 1");                          // TODO ----------------------
-            score2TF.setPromptText("Score 2");                          // TODO ----------------------
+            score1TF.setPromptText("Enter score");                          // TODO ----------------------
+            score2TF.setPromptText("Enter score");                          // TODO ----------------------
         }
+
+        score1TF.setTextFormatter(new TextFormatter<Integer>(change -> {
+                String newText = change.getControlNewText();
+                if (newText.matches("\\d*")) {
+                    return change;
+                }
+                return null;
+            }));
+
+        score2TF.setTextFormatter(new TextFormatter<Integer>(change -> {
+                String newText = change.getControlNewText();
+                if (newText.matches("\\d*")) {
+                    return change;
+                }
+                return null;
+            }));
+
+
+
 
         //----------------------------------------------------------------------Checkbox---------------
         CheckBox checkBox = new CheckBox();
@@ -279,16 +302,29 @@ public class MatchView {
                 }
         );
 
+
+
         Button cancel = new Button("Cancel");
         cancel.setOnAction( event ->{
             stage2.close();
                 }
         );
 
-
-
         Button saveTheMatch = new Button("Save match");
         saveTheMatch.setOnAction(event -> {
+            if(score1TF.getText()=="")
+                System.out.println("score1TF is null");
+            if(comboBoxPOrT1.getValue()=="")
+                System.out.println("comboBoxPOrT1 is null");
+            try{
+                scoreP1=Integer.parseInt(score1TF.getText());
+                scoreP2=Integer.parseInt(score2TF.getText());
+                setScore();
+            }catch (Exception e){
+                System.out.println(e.getMessage());
+                System.out.println(date);
+            }
+
             date=date + " " + hourSelected + ":" + minSelected;
             matchTemp.setDate(date);
             matchTemp.setAllreadyPlayed(allreadyPlayed);
@@ -303,11 +339,14 @@ public class MatchView {
             matchDAO.saveMatch(matchTemp);
             matches.add(matchTemp);
 
-            stage2.close();                                              ///// nollställ istället?
+            //stage2.close();                                              ///// nollställ istället?
         });
 
         Button updateTheMatch = new Button("Update match");
         updateTheMatch.setOnAction(event -> {
+
+            setScore();
+
             date=date + " " + hourSelected + ":" + minSelected;
             matchTemp.setDate(date);
             matchTemp.setAllreadyPlayed(allreadyPlayed);
@@ -390,8 +429,31 @@ public class MatchView {
         }
     }
 
+    public void setScore() {
+        finalScore = scoreP1 + " - " + scoreP2;
+        matchTemp.setFinalScore(finalScore);
+        if (scoreP1==scoreP2){
+            matchTemp.setWinnerName("Draw");
+        } else if (scoreP1>=scoreP2) {
+            if (singelNotTeam){
+                matchTemp.setWinnerName(player1.getNickname());
+                matchTemp.setWinnerIfPlayer(player1);
+            }else{
+                matchTemp.setWinnerName(team1Name);
+                matchTemp.setWinnerIfTeam(team1);
+            }
+        }else {
+            if (singelNotTeam){
+                matchTemp.setWinnerName(player2.getNickname());
+                matchTemp.setWinnerIfPlayer(player2);
+            }else{
+                matchTemp.setWinnerName(team2Name);
+                matchTemp.setWinnerIfTeam(team2);
+            }
+        }
+    }
 
-    //----Show Matches----
+    //----start shows matches----
     public VBox start() {
 
         //----TableView-------------------------------------------------------------------------------
@@ -399,7 +461,6 @@ public class MatchView {
         matches = FXCollections.observableList(matchDAO.getAllMatches());
 
         TableView<Match> table = new TableView<>();
-        table.setEditable(true);    //???????
         table.setPrefWidth(530);
 
         TableColumn<Match,String> dateCol = new TableColumn<>("Date");
@@ -459,6 +520,12 @@ public class MatchView {
                 new PropertyValueFactory<>("winnerName")
         );
 
+        TableColumn<Match,String> scoreCol = new TableColumn<>("Score");
+        scoreCol.setPrefWidth(80);
+        scoreCol.setCellValueFactory(
+                new PropertyValueFactory<>("finalScore")
+        );
+
 
         table.setItems(matches);
 
@@ -474,9 +541,10 @@ public class MatchView {
         });
 
 
-        table.getColumns().addAll(dateCol, gameCol, pOrTCol, winnerCol, pOrTOneCol, pOrTTwoCol, decidedCol);
-        table.setPlaceholder(
-                new Label("No matches like that in the database. Try adding one!"));
+        table.getColumns().addAll(dateCol, gameCol, pOrTCol,  pOrTOneCol, pOrTTwoCol,
+                decidedCol,  scoreCol,winnerCol);
+
+        table.setPlaceholder(new Label("No matches like that in the database. Try adding one!"));
 
         //----------------------------------------------End TableView--------------------------------
 
@@ -508,7 +576,7 @@ public class MatchView {
 
 
         VBox vBoxAll = new VBox();
-        vBoxAll.setPrefSize(580, 565);//bredd, höjd
+        vBoxAll.setPrefSize(630, 565);//bredd, höjd
 
         vBoxAll.getChildren().addAll(table, toggle(),buttons);
         vBoxAll.setPadding(new Insets(10, 10, 10, 10));

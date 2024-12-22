@@ -49,19 +49,18 @@ public class Match {
     @Column(name = "part_two_name", length = 50, nullable = true)
     private String nameTwo;
 
-    public Match() {
-    }
+    @Column(name = "final_score", length = 50, nullable = true)
+    private String finalScore;
 
-        // To save player match
-    public Match(String date, boolean allreadyPlayed, String playerTeam) {
-        this.date = date;
-        this.allreadyPlayed = allreadyPlayed;
-        this.playerTeam = playerTeam;
+    public Match() {
     }
 
 
     // everything except id
-    public Match(String nameTwo, String nameOne, String winnerName, List<Team> teams, List<Person> players, Team winnerIfTeam, Person winnerIfPlayer, Game game, String playerTeam, boolean allreadyPlayed, String date) {
+
+
+    public Match(String finalScore, String nameTwo, String nameOne, String winnerName, List<Team> teams, List<Person> players, Team winnerIfTeam, Person winnerIfPlayer, Game game, String playerTeam, boolean allreadyPlayed, String date) {
+        this.finalScore = finalScore;
         this.nameTwo = nameTwo;
         this.nameOne = nameOne;
         this.winnerName = winnerName;
@@ -171,6 +170,14 @@ public class Match {
         this.nameTwo = nameTwo;
     }
 
+    public String getFinalScore() {
+        return finalScore;
+    }
+
+    public void setFinalScore(String finalScore) {
+        this.finalScore = finalScore;
+    }
+
     @Override
     public String toString() {
         return "Match{" +
@@ -186,6 +193,7 @@ public class Match {
                 ", winnerName='" + winnerName + '\'' +
                 ", nameOne='" + nameOne + '\'' +
                 ", nameTwo='" + nameTwo + '\'' +
+                ", finalScore='" + finalScore + '\'' +
                 '}';
     }
 }

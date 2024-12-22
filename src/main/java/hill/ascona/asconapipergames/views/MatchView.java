@@ -28,21 +28,13 @@ import java.util.List;
 public class MatchView {
     private MatchDAO matchDAO = new MatchDAO();
     private String gameChosen = "";
-  //  private Boolean team = false;
-  //  private Boolean upcoming = true;
     private String pOrTString = "Player";
-  //  private int turneringarId;
     private String date = "";
     private boolean allreadyPlayed;
     private boolean singelNotTeam;
     private Game gamePlay;
-   // private String player1Nickname;
-   // private String player2Nickname;
     private String team1Name;
     private String team2Name;
-   // private int winnerIdSend;
-   // private String nameOne;
-  //  private String nameTwo;
     private Person player1;
     private Person player2;
     private Team team1;
@@ -56,7 +48,6 @@ public class MatchView {
     private String finalScore;
     private int scoreP1;
     private int scoreP2;
-    private boolean scoreChanged;
 
     public void addMatch(int newOrUpdating) {
         AnchorPane paneAdd = new AnchorPane();
@@ -80,6 +71,10 @@ public class MatchView {
             updating=false;
             allreadyPlayed = false;
             matchTemp = new Match();
+            date="";
+            gameChosen="";
+            hourSelected="";
+            minSelected="";
         }else{
             updating=true;
             matchTemp = matchDAO.getMatchById(newOrUpdating);
@@ -149,7 +144,7 @@ public class MatchView {
             }else{
                 int teamsCount= 0;
                 for (Team team : teams) {
-                    if (team.getGame().getId()==gamePlay.getId()){
+                    if (team.getGame().getId()==matchTemp.getGame().getId()) {
                         teamsCount++;
                         comboBoxPOrT1.getItems().add(team.getTeam_name());
                         comboBoxPOrT2.getItems().add(team.getTeam_name());
@@ -312,41 +307,60 @@ public class MatchView {
 
         Button saveTheMatch = new Button("Save match");
         saveTheMatch.setOnAction(event -> {
-            if(score1TF.getText()=="")
-                System.out.println("score1TF is null");
-            if(comboBoxPOrT1.getValue()=="")
-                System.out.println("comboBoxPOrT1 is null");
-            try{
-                scoreP1=Integer.parseInt(score1TF.getText());
-                scoreP2=Integer.parseInt(score2TF.getText());
-                setScore();
-            }catch (Exception e){
-                System.out.println(e.getMessage());
-                System.out.println(date);
+            boolean saving = true;
+            while (saving){
+                if (date ==""||hourSelected==""||minSelected==""||gameChosen=="") {
+                    Alert noDate = new Alert(Alert.AlertType.ERROR);
+                    noDate.setHeaderText("Not able to save match. Date, time and Game is required!");
+                    noDate.show();
+                    break;
+                }
+                try {
+                    scoreP1 = Integer.parseInt(score1TF.getText());
+                    scoreP2 = Integer.parseInt(score2TF.getText());
+                    setScore();
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+                date = date + " " + hourSelected + ":" + minSelected;
+                matchTemp.setDate(date);
+                matchTemp.setAllreadyPlayed(allreadyPlayed);
+                matchTemp.setPlayerTeam(pOrTString);
+                if (singelNotTeam) {
+                    matchTemp.getPlayers().add(player1);
+                    matchTemp.getPlayers().add(player2);
+                } else {
+                    matchTemp.getTeams().add(team1);
+                    matchTemp.getTeams().add(team2);
+                }
+                matchDAO.saveMatch(matchTemp);
+                matches.add(matchTemp);
+                Alert saved = new Alert(Alert.AlertType.INFORMATION);
+                saved.setTitle("Done!");
+                saved.setHeaderText("Match Saved");
+                saved.show();
+                stage2.close();
+                break;
             }
-
-            date=date + " " + hourSelected + ":" + minSelected;
-            matchTemp.setDate(date);
-            matchTemp.setAllreadyPlayed(allreadyPlayed);
-            matchTemp.setPlayerTeam(pOrTString);
-            if (singelNotTeam) {
-                matchTemp.getPlayers().add(player1);
-                matchTemp.getPlayers().add(player2);
-            }else {
-                matchTemp.getTeams().add(team1);
-                matchTemp.getTeams().add(team2);
-            }
-            matchDAO.saveMatch(matchTemp);
-            matches.add(matchTemp);
-
-            //stage2.close();                                              ///// nollställ istället?
         });
 
         Button updateTheMatch = new Button("Update match");
         updateTheMatch.setOnAction(event -> {
-
-            setScore();
-
+            boolean savingUpdate = true;
+            while (savingUpdate){
+                if (date ==""||hourSelected==""||minSelected==""||gameChosen=="") {
+                    Alert noDate = new Alert(Alert.AlertType.ERROR);
+                    noDate.setHeaderText("Not able to save match. Date, time and Game is required!");
+                    noDate.show();
+                    break;
+                }
+                try {
+                    scoreP1 = Integer.parseInt(score1TF.getText());
+                    scoreP2 = Integer.parseInt(score2TF.getText());
+                    setScore();
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
             date=date + " " + hourSelected + ":" + minSelected;
             matchTemp.setDate(date);
             matchTemp.setAllreadyPlayed(allreadyPlayed);
@@ -361,9 +375,15 @@ public class MatchView {
             matchDAO.updateMatch(matchTemp);
             matches.clear();
             matches.addAll(matchDAO.getAllMatches());
-
+            Alert updateSaved = new Alert(Alert.AlertType.INFORMATION);
+            updateSaved.setTitle("Done!");
+            updateSaved.setHeaderText("Match Updated!");
+            updateSaved.show();
             stage2.close();
-        });
+            break;
+        }
+
+    });
 
         //----------------------------------------------------------------------Layout---------------
         nowShowing.setLayoutX(20);
@@ -464,32 +484,26 @@ public class MatchView {
         table.setPrefWidth(530);
 
         TableColumn<Match,String> dateCol = new TableColumn<>("Date");
-        dateCol.setPrefWidth(105);
         dateCol.setCellValueFactory(
                 new PropertyValueFactory<>("date")
         );
         TableColumn<Match,Game> gameCol = new TableColumn<>("Game");
-        gameCol.setPrefWidth(90);
         gameCol.setCellValueFactory(
                 new PropertyValueFactory<>("game")
         );
         TableColumn<Match,String> pOrTCol = new TableColumn<>("Team/\nSingel\nplayer");
-        pOrTCol.setPrefWidth(50);
         pOrTCol.setCellValueFactory(
                 new PropertyValueFactory<>("playerTeam")
         );
         TableColumn<Match,String> pOrTOneCol = new TableColumn<>("Participant 1");
-        pOrTOneCol.setPrefWidth(80);
         pOrTOneCol.setCellValueFactory(
                 new PropertyValueFactory<>("nameOne")
         );
         TableColumn<Match,String> pOrTTwoCol = new TableColumn<>("Participant 2");
-        pOrTTwoCol.setPrefWidth(80);
         pOrTTwoCol.setCellValueFactory(
                 new PropertyValueFactory<>("nameTwo")
         );
         TableColumn<Match, Boolean> decidedCol = new TableColumn<>("Played?");
-        decidedCol.setPrefWidth(80);
         decidedCol.setCellValueFactory(
                 new PropertyValueFactory<>("allreadyPlayed")
         );
@@ -515,13 +529,11 @@ public class MatchView {
 
 
         TableColumn<Match,String> winnerCol = new TableColumn<>("Winner");
-        winnerCol.setPrefWidth(80);
         winnerCol.setCellValueFactory(
                 new PropertyValueFactory<>("winnerName")
         );
 
         TableColumn<Match,String> scoreCol = new TableColumn<>("Score");
-        scoreCol.setPrefWidth(80);
         scoreCol.setCellValueFactory(
                 new PropertyValueFactory<>("finalScore")
         );

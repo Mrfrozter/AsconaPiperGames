@@ -55,10 +55,7 @@ public class Match {
     public Match() {
     }
 
-
     // everything except id
-
-
     public Match(String finalScore, String nameTwo, String nameOne, String winnerName, List<Team> teams, List<Person> players, Team winnerIfTeam, Person winnerIfPlayer, Game game, String playerTeam, boolean allreadyPlayed, String date) {
         this.finalScore = finalScore;
         this.nameTwo = nameTwo;

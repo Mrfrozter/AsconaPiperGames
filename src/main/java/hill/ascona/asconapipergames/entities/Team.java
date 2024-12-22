@@ -74,5 +74,10 @@ public class Team {
     public void setMembers(List<Person> members) {
         this.members = members;
     }
+
+    @Override
+    public String toString() {
+        return team_name ;
+    }
 }
 

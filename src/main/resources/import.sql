@@ -30,9 +30,9 @@ Insert into persons(p_name, p_lastname, p_nickname, p_address, p_postNumber, p_c
 Insert into persons(p_name, p_lastname, p_nickname, p_address, p_postNumber, p_city, p_country, p_email, p_role, team_id, game_id) VALUES ('Anna','Hendricksson','Queen12','Skåne',3135,'Skåne','Sverige','Hendricksson@mail','Player',2,2);
 Insert into persons(p_name, p_lastname, p_nickname, p_address, p_postNumber, p_city, p_country, p_email, p_role, team_id, game_id) VALUES ('Simon','Norberg','Sim30','Jönköping',675,'Jönköping','Sverige','Norberg@mail','Player',3,3);
 Insert into persons(p_name, p_lastname, p_nickname, p_address, p_postNumber, p_city, p_country, p_email, p_role, team_id, game_id) VALUES ('Emil','White','Emil','Gävle',23425,'Gävle','Sverige','White@mail','Player',4,4);
-Insert into persons(p_name, p_lastname, p_nickname, p_address, p_postNumber, p_city, p_country, p_email, p_role, team_id, game_id) VALUES ('Sam','Petersson','King','linköping',2345,'linköping','Sverige','Petersson0@mail','Player',1);
 Insert into persons(p_name, p_lastname, p_nickname, p_address, p_postNumber, p_city, p_country, p_email, p_role, team_id, game_id) VALUES ('Jakob','Hansson','Prins','linköping',654457,'linköping','Sverige','Hansson@mail','Player',7,2);
 Insert into persons(p_name, p_lastname, p_nickname, p_address, p_postNumber, p_city, p_country, p_email, p_role, team_id, game_id) VALUES ('Johan','Hägglund','Jo36','Stockholm',145623,'Stockholm','Sverige','Hägglund@mail','Player',5,5);
+
 
 
 INSERT INTO matches(game_id,match_singel_team, match_Played,final_score,match_winner, match_date, part_one_name,part_two_name ) VALUES(1,'Player',true, '1-0','Sim30','2024-10-10 15:12','Sim30', 'Queen12');

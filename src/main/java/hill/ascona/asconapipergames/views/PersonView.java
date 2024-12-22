@@ -145,7 +145,7 @@ public  class PersonView {
             comboBoxGame.getItems().clear();
             comboBoxGame.setValue(null);
             team = comboBoxTeam.getValue();
-            game = gameDAO.getGameById(team.getGame_id());
+            game = team.getGame();
             System.out.println(game);
             comboBoxGame.getItems().add(game);
         });
@@ -400,7 +400,7 @@ public  class PersonView {
             comboBoxGame.getItems().clear();
             comboBoxGame.setValue(null);
             team = comboBoxTeam.getValue();
-            game = gameDAO.getGameById(team.getGame_id());
+            game = team.getGame();
             comboBoxGame.getItems().add(game);
         });
         ComboBox<String> comboBoxRole =new ComboBox<>();

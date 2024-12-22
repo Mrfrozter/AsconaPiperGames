@@ -8,13 +8,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 public class MainView {
     public VBox start(){
         VBox box = new VBox();
         TabPane tabPane = new TabPane();
-        box.setMaxSize(700,600);
+        VBox.setVgrow(tabPane, Priority.ALWAYS);
 
         Tab tab1 = new Tab("Users or Players", new PersonView().start());
         Tab tab2 = new Tab("Teams", new Label("Show teams"));

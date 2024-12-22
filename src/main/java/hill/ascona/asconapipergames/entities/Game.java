@@ -113,21 +113,16 @@ public class Game {
         return Objects.hash(id, title, genre, numberOfTeams, teams);
     }
 
-    // toString for easy debugging
-//    @Override
-//    public String toString() {
-//        return
-//                "Game{" +
-//                "id=" + id +
-//                ", title='" + title + '\'' +
-//                ", genre='" + genre + '\'' +
-//                ", numberOfTeams=" + numberOfTeams +
-//                ", teams=" + teams +
-//                '}';
-//    }
-
+//     toString for easy debugging
     @Override
     public String toString() {
-        return title ;
+        return
+                "Game{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", genre='" + genre + '\'' +
+                ", numberOfTeams=" + numberOfTeams +
+                ", teams=" + teams +
+                '}';
     }
 }

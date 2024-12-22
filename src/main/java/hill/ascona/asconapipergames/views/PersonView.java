@@ -263,8 +263,29 @@ public  class PersonView {
         column4.setCellValueFactory(new PropertyValueFactory<>("nickname"));
         TableColumn<Person, Team> column11 = new TableColumn<>("Team");
         column11.setCellValueFactory(new PropertyValueFactory<>("team"));
+        column11.setCellFactory(c -> new TableCell<Person, Team>() {
+                    @Override
+                    public void updateItem(Team team, boolean empty) {
+                        super.updateItem(team, empty);
+                        if (!empty)
+                            setText(team.getTeam_name());
+                        else
+                            setText(null);
+                    }
+        });
         TableColumn<Person, Game> column12 = new TableColumn<>("Game");
         column12.setCellValueFactory(new PropertyValueFactory<>("game"));
+        column12.setCellFactory(c -> new TableCell<Person, Game>() {
+            @Override
+            public void updateItem(Game game, boolean empty) {
+                super.updateItem(game, empty);
+                if (!empty)
+                    setText(game.getTitle());
+                else
+                    setText(null);
+            }
+        });
+
 
         tableView.getColumns().addAll(column2,column3,column4,column11,column12);
 

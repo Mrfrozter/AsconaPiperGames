@@ -75,9 +75,6 @@ public class Team {
         this.members = members;
     }
 
-    @Override
-    public String toString() {
-        return team_name ;
-    }
+
 }
 

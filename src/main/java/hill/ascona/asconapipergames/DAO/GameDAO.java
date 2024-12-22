@@ -141,4 +141,24 @@ public class GameDAO {
             entityManager.close();
         }
     }
+
+    /////////////
+    public Game getGameIdByTitle(String title) {
+        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+        Game gameInfoToReturn = null;
+        TypedQuery<Game> result = entityManager.createQuery("SELECT g FROM Game g WHERE g.title = :variable", Game.class);
+        result.setParameter("variable", title);
+        gameInfoToReturn=result.getSingleResult();
+        return gameInfoToReturn;
+    }
+
+    public Game getGameIdByTeamId(int teamId){
+        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+        Game gameInfoToReturn = null;
+        TypedQuery<Game> result = entityManager.createQuery("SELECT g FROM Game g WHERE g.teams = :variable", Game.class);
+        result.setParameter("variable", teamId);
+        gameInfoToReturn=result.getSingleResult();
+        return gameInfoToReturn;
+
+    }
 }

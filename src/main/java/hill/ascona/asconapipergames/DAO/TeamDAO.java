@@ -118,6 +118,33 @@ public class TeamDAO {
             entityManager.close();
         }
     }
+
+    //Modifierad getByName från GameDAO
+    public Team getTeamByName(String teamName){
+        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+        try{
+            // JPQL-fråga för att hämta spelet baserat på titeln
+            TypedQuery<Team> query = entityManager.createQuery("SELECT t FROM Team t WHERE t.team_name = :teamName", Team.class);
+            query.setParameter("teamName", teamName);
+            return query.getSingleResult(); // Return the team if found
+        } catch (NoResultException e) {
+            // Returnera null om inget spel hittas
+            return null;
+        } finally {
+            entityManager.close(); // Ensure entity manager is closed
+        }
+    }
+
+    //////////////////////
+    public List<Team> getTeamIdByGameId(int game_id) {
+        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+        List<Team> teamInfoToReturn = new ArrayList<>();
+        TypedQuery<Team> result = entityManager.createQuery("SELECT t FROM Team t WHERE t.game_id = :variable", Team.class);
+        result.setParameter("variable", game_id);
+        teamInfoToReturn.addAll(result.getResultList());
+        entityManager.close();
+        return teamInfoToReturn;
+    }
 }
 
 

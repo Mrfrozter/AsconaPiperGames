@@ -104,14 +104,20 @@ public class Game {
     }
 
     // toString for easy debugging
+//    @Override
+//    public String toString() {
+//        return
+//                "Game{" +
+//                "id=" + id +
+//                ", title='" + title + '\'' +
+//                ", genre='" + genre + '\'' +
+//                ", numberOfTeams=" + numberOfTeams +
+//                ", teams=" + teams +
+//                '}';
+//    }
+
     @Override
     public String toString() {
-        return "Game{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", genre='" + genre + '\'' +
-                ", numberOfTeams=" + numberOfTeams +
-                ", teams=" + teams +
-                '}';
+        return title ;
     }
 }

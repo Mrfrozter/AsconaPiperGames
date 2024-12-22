@@ -37,13 +37,19 @@ public class Person {
     @Column(name = "p_role", length =15, nullable = false)
     private String role;
 
-    @Column(name = "p_teamID",length = 3, nullable = false)
-    private String teamID;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "team_id")
+    private Team team;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "gameId")
+    private Game game;
+
 
     public Person() {
     }
 
-    public Person(String name, String lastname, String nickname, String address, String postNumber, String city, String country, String email, String role, String teamID) {
+    public Person(String name, String lastname, String nickname, String address, String postNumber, String city, String country, String email, String role, Team team, Game game) {
         this.name = name;
         this.lastname = lastname;
         this.nickname = nickname;
@@ -53,14 +59,15 @@ public class Person {
         this.country = country;
         this.email = email;
         this.role = role;
-        this.teamID = teamID;
+        this.team = team;
+        this.game = game;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -136,27 +143,30 @@ public class Person {
         this.role = role;
     }
 
-    public String getTeamID() {
-        return teamID;
+    public Team getTeam() {
+        return team;
     }
 
-    public void setTeamID(String teamID) {
-        this.teamID = teamID;
+    public void setTeam(Team team) {
+        this.team = team;
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
     }
 
     @Override
     public String toString() {
-        return
-                "id: " + id +
-                " " + name +
-                " " + lastname +
-                ", nickname: " + nickname +
-                ", address: " + address +
-                ", postNumber: " + postNumber +
-                ", city: " + city +
-                ", country: " + country +
-                ", email: " + email +
-                ", role: " + role +
-                ", teamID: " + teamID;
+        return  "id:" + id +
+                " '" + name +
+                " '" + lastname +
+                ", nickname:" + nickname +
+                ", role:" + role +
+                ", team:" + team+
+                ", game:" + game;
     }
 }

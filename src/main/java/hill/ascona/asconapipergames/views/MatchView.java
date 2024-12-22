@@ -314,22 +314,20 @@ public class MatchView {
 
         Button saveTheMatch = new Button("Save match");
         saveTheMatch.setOnAction(event -> {
-            Alert noDate = new Alert(Alert.AlertType.ERROR);
+
             Alert saved = new Alert(Alert.AlertType.INFORMATION);
-
-            noDate.setTitle("Alert Box");
-            noDate.setHeaderText("testar header");
-            noDate.setContentText("Showing an Alert in JavaFX!");
-
+            saved.setTitle("Done!");
+            saved.setContentText("Match Saved");
+            saved.show();
             boolean saving = true;
             while (saving){
-                if (score1TF.getText() == "") {
-                    System.out.println("score1TF is null");
-                    noDate.show();
-                    break;
-                }
                 if (date =="") {
                     System.out.println("date is null");
+                    Alert noDate = new Alert(Alert.AlertType.ERROR);
+                    noDate.setHeaderText("Not able to save match");
+                    noDate.setContentText("Date and time is required!");
+                    noDate.show();
+                    break;
                 }
                 try {
                     scoreP1 = Integer.parseInt(score1TF.getText());
@@ -339,8 +337,6 @@ public class MatchView {
                     System.out.println(e.getMessage());
                     System.out.println(date);
                 }
-
-
 
                 date = date + " " + hourSelected + ":" + minSelected;
                 matchTemp.setDate(date);

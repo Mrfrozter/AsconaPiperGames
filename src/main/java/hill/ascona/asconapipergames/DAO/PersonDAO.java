@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-//----Elham Farhang----
+//----Elham Farhang--(class PersonDAO)----
 
 public class PersonDAO {
 
@@ -104,6 +104,7 @@ public class PersonDAO {
         }
     }
 
+    //----Anna--(method getByNickname())----
     public Person getByNickname(String nickname) {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         try {

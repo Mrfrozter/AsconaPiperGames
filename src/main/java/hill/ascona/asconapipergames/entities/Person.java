@@ -3,7 +3,7 @@ package hill.ascona.asconapipergames.entities;
 import jakarta.persistence.*;
 
 
-//----Elham Farhang----
+//----Elham Farhang--(class Person)----
 
 @Entity
 @Table(name = "persons")

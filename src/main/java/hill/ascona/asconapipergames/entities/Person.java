@@ -1,9 +1,9 @@
 package hill.ascona.asconapipergames.entities;
 
+import jakarta.persistence.*;
+
 
 //----Elham Farhang----
-
-import jakarta.persistence.*;
 
 @Entity
 @Table(name = "persons")

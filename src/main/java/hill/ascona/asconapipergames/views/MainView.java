@@ -12,7 +12,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 
-//----Elham Farhang----
+//----Elham Farhang--(class MainView)----
 
 public class MainView {
     public VBox start(){

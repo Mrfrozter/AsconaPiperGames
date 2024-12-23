@@ -10,14 +10,14 @@ INSERT INTO game(game_title, game_genre, game_numberOfTeams) VALUES ('Dota 2', '
 INSERT INTO game(game_title, game_genre, game_numberOfTeams) VALUES ('LoL', 'MOBA', 5);
 INSERT INTO game(game_title, game_genre, game_numberOfTeams) VALUES ('Valorant', 'FPS', 5);
 
-INSERT INTO teams(game_id, team_name) VALUES (1, 'Hammarby');
-INSERT INTO teams(game_id, team_name) VALUES (2, 'Malmö');
-INSERT INTO teams(game_id, team_name) VALUES (3, 'Göteborg');
-INSERT INTO teams(game_id, team_name) VALUES (4, 'AIK');
-INSERT INTO teams(game_id, team_name) VALUES (5, 'Djurgården');
-INSERT INTO teams(game_id, team_name) VALUES (1, 'Norrköping');
-INSERT INTO teams(game_id, team_name) VALUES (2, 'Elfsborg');
-INSERT INTO teams(game_id, team_name) VALUES (3, 'GAIS');
+INSERT INTO Teams(game_id, team_name) VALUES (1, 'Hammarby');
+INSERT INTO Teams(game_id, team_name) VALUES (2, 'Malmö');
+INSERT INTO Teams(game_id, team_name) VALUES (3, 'Göteborg');
+INSERT INTO Teams(game_id, team_name) VALUES (4, 'AIK');
+INSERT INTO Teams(game_id, team_name) VALUES (5, 'Djurgården');
+INSERT INTO Teams(game_id, team_name) VALUES (1, 'Norrköping');
+INSERT INTO Teams(game_id, team_name) VALUES (2, 'Elfsborg');
+INSERT INTO Teams(game_id, team_name) VALUES (3, 'GAIS');
 
 
 Insert into persons(p_name, p_lastname, p_nickname, p_address, p_postNumber, p_city, p_country, p_email, p_role, team_id, game_id) VALUES ('Richard','Hendricks','Rich','Silicon Valley',123,'Silicon Valley','Usa','Hendricks@mail','User',null, null);

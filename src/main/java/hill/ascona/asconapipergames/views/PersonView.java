@@ -1,8 +1,5 @@
 package hill.ascona.asconapipergames.views;
 
-
-//----Elham Farhang----
-
 import hill.ascona.asconapipergames.DAO.GameDAO;
 import hill.ascona.asconapipergames.DAO.PersonDAO;
 import hill.ascona.asconapipergames.DAO.TeamDAO;
@@ -22,6 +19,9 @@ import javafx.scene.text.Font;
 
 import java.util.ArrayList;
 import java.util.List;
+
+
+//----Elham Farhang----
 
 public  class PersonView {
 

@@ -142,7 +142,7 @@ public class GameDAO {
         }
     }
 
-    /////////////
+    //----Elham Farhang--(method getGameIdByTitle())--
     public Game getGameIdByTitle(String title) {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         Game gameInfoToReturn = null;
@@ -152,6 +152,7 @@ public class GameDAO {
         return gameInfoToReturn;
     }
 
+    //----Elham Farhang--(method getGameIdByTeamId())----
     public Game getGameIdByTeamId(int teamId){
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         Game gameInfoToReturn = null;

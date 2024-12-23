@@ -13,14 +13,11 @@ import javafx.scene.text.Font;
 
 import java.util.List;
 
+//----Elham Farhang--(class Login)----
 public class Login {
     public VBox start(){
-//        VBox box = new VBox();
         AnchorPane loginAnchorPane=new AnchorPane();
         loginAnchorPane.setPrefSize(700,600);
-
-//        Scene loginScene=new Scene(loginAnchorPane);
-//        primaryStage.setScene(loginScene);
 
         Label label = new Label("Welcome to Piper Game page!");
         label.setPrefSize(450,450);
@@ -28,7 +25,6 @@ public class Login {
         label.setTextFill(Color.GRAY);
         label.setLayoutX(190);
         label.setLayoutY(10);
-
 
         ComboBox<String> loginComboBox =new ComboBox<>();
         loginComboBox.setPromptText("Choose your name:");
@@ -41,7 +37,7 @@ public class Login {
             ViewManager.setLoggedInUser(loginComboBox.getValue());
             ViewManager.mainView();
         });
-//            primaryStage.setScene(showMainScene());});
+
         loginButton.setPrefSize(115,28);
         loginButton.setLayoutX(275);
         loginButton.setLayoutY(310);
@@ -56,8 +52,6 @@ public class Login {
         });
 
         loginAnchorPane.getChildren().addAll(label,loginComboBox,loginButton);
-
-//        primaryStage.setTitle("Piper Game");
         return new VBox(loginAnchorPane);
     }
 }

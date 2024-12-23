@@ -136,7 +136,7 @@ public class TeamDAO {
         }
     }
 
-    //////////////////////
+    //----Elham Farhang--(method getTeamIdByGameId())----
     public List<Team> getTeamIdByGameId(Game game_id) {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         List<Team> teamInfoToReturn = new ArrayList<>();

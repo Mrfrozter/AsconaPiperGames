@@ -16,10 +16,11 @@ import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-
 import java.util.ArrayList;
 import java.util.List;
 
+
+//----Elham Farhang--(class PersonView)----
 public  class PersonView {
 
     private PersonDAO personDAO = new PersonDAO();

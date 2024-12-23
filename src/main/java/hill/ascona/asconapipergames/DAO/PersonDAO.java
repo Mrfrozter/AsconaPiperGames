@@ -6,6 +6,7 @@ import hill.ascona.asconapipergames.entities.Person;
 import java.util.ArrayList;
 import java.util.List;
 
+//----Elham Farhang--(class PersonDAO)----
 public class PersonDAO {
 
     private static final EntityManagerFactory ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("myconfig");
@@ -101,6 +102,7 @@ public class PersonDAO {
         }
     }
 
+    //----Anna--(method getByNickname())----
     public Person getByNickname(String nickname) {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         try {

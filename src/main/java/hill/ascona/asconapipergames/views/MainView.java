@@ -1,16 +1,13 @@
 package hill.ascona.asconapipergames.views;
 
-import hill.ascona.asconapipergames.managers.ViewManager;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
+
+//----Elham Farhang--(class MainView)---
 public class MainView {
     public VBox start(){
         VBox box = new VBox();

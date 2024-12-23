@@ -17,12 +17,9 @@ import java.util.List;
 
 public class Login {
     public VBox start(){
-//        VBox box = new VBox();
+        
         AnchorPane loginAnchorPane=new AnchorPane();
         loginAnchorPane.setPrefSize(700,600);
-
-//        Scene loginScene=new Scene(loginAnchorPane);
-//        primaryStage.setScene(loginScene);
 
         Label label = new Label("Welcome to Piper Game page!");
         label.setPrefSize(450,450);
@@ -58,8 +55,6 @@ public class Login {
         });
 
         loginAnchorPane.getChildren().addAll(label,loginComboBox,loginButton);
-
-//        primaryStage.setTitle("Piper Game");
         return new VBox(loginAnchorPane);
     }
 }

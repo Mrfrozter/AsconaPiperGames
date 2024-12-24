@@ -19,7 +19,7 @@ INSERT INTO teams(game_id, team_name) VALUES (1, 'Norrköping');
 INSERT INTO teams(game_id, team_name) VALUES (2, 'Elfsborg');
 INSERT INTO teams(game_id, team_name) VALUES (3, 'GAIS');
 
-
+--//----Elham Farhang--(table persons)----
 Insert into persons(p_name, p_lastname, p_nickname, p_address, p_postNumber, p_city, p_country, p_email, p_role, team_id, game_id) VALUES ('Richard','Hendricks','Rich','Silicon Valley',123,'Silicon Valley','Usa','Hendricks@mail','User',null, null);
 Insert into persons(p_name, p_lastname, p_nickname, p_address, p_postNumber, p_city, p_country, p_email, p_role, team_id, game_id) VALUES ('Bertram','Gilfoyle','BG','Silicon Valley',567,'Silicon Valley','Usa','Gilfoyle@mail','User',null,null);
 Insert into persons(p_name, p_lastname, p_nickname, p_address, p_postNumber, p_city, p_country, p_email, p_role, team_id, game_id) VALUES ('Dinesh','Chugtai','Din23','Silicon Valley',348,'Silicon Valley','Usa','Chugtai@mail','User',null,null);

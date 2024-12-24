@@ -28,7 +28,7 @@ public class TeamView {
         tabPane.setPrefSize(700,600);
 
         Tab tab1 = new Tab("Add/Remove Team", logView());
-        Tab tab2 = new Tab("Add/Remove Members", membersView());
+        Tab tab2 = new Tab("View Members/Players", membersView());
 
         tabPane.getTabs().add(tab1);
         tabPane.getTabs().add(tab2);
@@ -65,14 +65,17 @@ public class TeamView {
         TableColumn<Person, Integer> playerIdColumn = new TableColumn<>("Player ID");
         playerIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
 
-        TableColumn<Person, String> playerNameColumn = new TableColumn<>("Player Name");
+        TableColumn<Person, String> playerNameColumn = new TableColumn<>("First Name");
         playerNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+
+        TableColumn<Person, String> playerLastNameColumn = new TableColumn<>("Last name");
+        playerLastNameColumn.setCellValueFactory(new PropertyValueFactory<>("lastname"));
 
         TableColumn<Person, String> playerNicknameColumn = new TableColumn<>("Nickname");
         playerNicknameColumn.setCellValueFactory(new PropertyValueFactory<>("nickname"));
 
 
-        playersTable.getColumns().addAll(playerIdColumn, playerNameColumn, playerNicknameColumn);
+        playersTable.getColumns().addAll(playerIdColumn, playerNameColumn, playerLastNameColumn, playerNicknameColumn);
 
 
         playersTable.setPrefSize(375, 225);
@@ -81,7 +84,7 @@ public class TeamView {
 
         ObservableList<Person> members = FXCollections.observableArrayList();
 
-        // Set items for players table
+        //Sätter items för playersTable
         playersTable.setItems(members);
 
         listView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -91,8 +94,66 @@ public class TeamView {
             }
         });
 
+
+        //REMOVE OCH ADD KNAPPAR SAMT COMBOBOX MED SPELARE UTAN LAG
+        //Remove
+        Button removeButton = new Button("Remove member from team");
+        removeButton.setLayoutX(260);
+        removeButton.setLayoutY(350);
+
+        removeButton.setOnAction(e -> {
+            Person selectedPlayer = playersTable.getSelectionModel().getSelectedItem();
+
+                    selectedPlayer.setTeam(null);
+                    personDAO.updatePlayersInfo(selectedPlayer); // Persist the change to the database
+
+                    // Remove the player from the members list in the UI
+                    members.remove(selectedPlayer);
+
+        });
+
+
+        //Add, här finns en ComboBox spelare. Om man väljer en spelare som har ett lag byter spelaren lag
+        Button addButton = new Button("Transfer player to team");
+        addButton.setLayoutX(460);
+        addButton.setLayoutY(350);
+
+        ComboBox<Person> playersComboBox = new ComboBox<>();
+        playersComboBox.setPromptText("Select a player");
+        playersComboBox.setLayoutX(470);
+        playersComboBox.setLayoutY(390);
+
+        // Fetch all players from the database
+        ObservableList<Person> allPlayers = FXCollections.observableArrayList(personDAO.getAllPlayersOrUsers("player"));
+        playersComboBox.setItems(allPlayers);
+
+        addButton.setOnAction(e -> {
+            Person selectedPlayer = playersComboBox.getSelectionModel().getSelectedItem();
+            Team selectedTeam = listView.getSelectionModel().getSelectedItem(); // Get selected team from the ListView
+
+            if (selectedPlayer != null && selectedTeam != null) {
+                // Check if the player already has a team
+                if (selectedPlayer.getTeam() != null) {
+                    // Player already has a team, so we just update their team
+                    selectedPlayer.setTeam(selectedTeam);
+                    personDAO.updatePlayersInfo(selectedPlayer); // Persist the change to the database
+                } else {
+                    // Player doesn't have a team, so assign the new team
+                    selectedPlayer.setTeam(selectedTeam);
+                    personDAO.updatePlayersInfo(selectedPlayer); // Persist the change to the database
+                }
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("Please select both a player and a team.");
+                alert.show();
+            }
+        });
+
         anchorPane.getChildren().add(listView);
         anchorPane.getChildren().add(playersTable);
+        anchorPane.getChildren().add(addButton);
+        anchorPane.getChildren().add(removeButton);
+        anchorPane.getChildren().add(playersComboBox);
 
         return anchorPane;
     }
@@ -166,16 +227,41 @@ public class TeamView {
         addButton.setLayoutX(15);
         addButton.setLayoutY(340);
 
-        //"Gammal" testmetod
-        /*addButton.setOnAction(e -> {
-            Team addedTeam = new Team(teamNameField.getText(), gameComboBox.getValue());
-            teamDAO.saveTeam(addedTeam);
-            teams.add(addedTeam);
-            teams.clear();
-            teams.addAll(teamDAO.getAllTeams());
-        }); */
-
         addButton.setOnAction(e -> {
+            String teamName = teamNameField.getText();
+            Game chosenGame = gameComboBox.getValue();
+
+            if (teamName == null || teamName.trim().isEmpty()) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("Team name must not be empty.");
+                alert.show();
+                return;
+            }
+
+            if (chosenGame == null) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("Please select a game.");
+                alert.show();
+                return;
+            }
+
+            try {
+                // Create a new team and save it
+                Team newTeam = new Team(teamName, null, chosenGame);
+                teamDAO.saveTeam(newTeam);
+                teams.add(newTeam);
+
+                // Clear fields after successful save
+                teamNameField.clear();
+                gameComboBox.getSelectionModel().clearSelection();
+            } catch (Exception ex) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("An error occurred while creating the team: " + ex.getMessage());
+                alert.show();
+            }
+        });
+
+        /*addButton.setOnAction(e -> {
             String teamName = teamNameField.getText();
             Game chosenGame = gameComboBox.getValue();
 
@@ -197,7 +283,7 @@ public class TeamView {
                 alert.setContentText("Alla fält måste vara inskrivna.");
                 alert.show();
             }
-        });
+        }); */
 
         anchorPane.getChildren().add(table);
         anchorPane.getChildren().add(refreshButton);
@@ -207,115 +293,6 @@ public class TeamView {
 
         return anchorPane;
     }
-
-    /*public AnchorPane start() {
-        AnchorPane anchorPane = new AnchorPane();
-        anchorPane.setPrefSize(700, 700);
-
-        // Create TableView
-        tableView = createTableView();
-
-        // Create input controls
-        VBox inputBox = createInputBox();
-
-        // Load initial data
-        loadTeams();
-        loadGames();
-
-        // Add components to anchor pane
-        anchorPane.getChildren().addAll(tableView, inputBox);
-
-        return anchorPane;
-    } */
-
-    /*private TableView<Team> createTableView() {
-        TableView<Team> table = new TableView<>();
-        table.setPrefSize(690, 225);
-        table.setLayoutX(5);
-        table.setLayoutY(10);
-
-        TableColumn<Team, Integer> teamIdColumn = new TableColumn<>("Team ID");
-        teamIdColumn.setCellValueFactory(new PropertyValueFactory<>("team_id"));
-
-        TableColumn<Team, String> teamNameColumn = new TableColumn<>("Team Name");
-        teamNameColumn.setCellValueFactory(new PropertyValueFactory<>("team_name"));
-
-        TableColumn<Team, String> gameNameColumn = new TableColumn<>("Game");
-        gameNameColumn.setCellValueFactory(cellData ->
-                new SimpleStringProperty(cellData.getValue().getGame().getTitle())
-        );
-
-        table.getColumns().addAll(teamIdColumn, teamNameColumn, gameNameColumn);
-        table.setItems(teams);
-
-        return table;
-    }
-
-
-
-    private VBox createInputBox() {
-        VBox inputBox = new VBox(10);
-        inputBox.setPadding(new Insets(10));
-        inputBox.setLayoutX(5);
-        inputBox.setLayoutY(240);
-
-        TextField teamNameField = new TextField();
-        teamNameField.setPromptText("Enter team name");
-
-        ComboBox<Game> gameComboBox = new ComboBox<>(games);
-        gameComboBox.setPromptText("Select a game");
-
-        Button addButton = new Button("Add New Team");
-        addButton.setOnAction(event -> handleAddTeam(teamNameField, gameComboBox));
-
-        inputBox.getChildren().addAll(teamNameField, gameComboBox, addButton);
-        return inputBox;
-    }
-
-    private void handleAddTeam(TextField teamNameField, ComboBox<Game> gameComboBox) {
-        String teamName = teamNameField.getText();
-        Game selectedGame = gameComboBox.getValue();
-
-        if (teamName != null && !teamName.trim().isEmpty() && selectedGame != null) {
-            try {
-                // Create new team with proper constructor
-                Team newTeam = new Team(teamName, selectedGame);
-                newTeam.setTeam_name(teamName);
-                newTeam.setGame(selectedGame);
-
-                // Save to database
-                boolean saved = teamDAO.saveTeam(newTeam);
-
-                if (saved) {
-                    // Reload all teams to ensure we have the latest data
-                    loadTeams();
-
-                    // Clear input fields
-                    teamNameField.clear();
-                    gameComboBox.setValue(null);
-
-                    // Show success message
-                    showAlert(Alert.AlertType.INFORMATION, "Success",
-                            "Team added successfully", "The new team has been added to the database.");
-                } else {
-                    showAlert(Alert.AlertType.ERROR, "Error",
-                            "Failed to add team", "There was an error saving the team to the database.");
-                }
-            } catch (Exception e) {
-                showAlert(Alert.AlertType.ERROR, "Error",
-                        "Error adding team", "An error occurred: " + e.getMessage());
-            }
-        } else {
-            showAlert(Alert.AlertType.ERROR, "Invalid Input",
-                    "Please provide valid input", "Make sure both team name and game are selected.");
-        }
-    } */
-
-    /*private void loadTeams() {
-        teams.clear();
-        teams.addAll(teamDAO.getAllTeams());
-        tableView.refresh();
-    } */
 
     private void loadGames() {
         games.clear();
@@ -327,13 +304,4 @@ public class TeamView {
         teams.addAll(teamDAO.getAllTeams());
     }
 
-
-
-    private void showAlert(Alert.AlertType type, String title, String header, String content) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(header);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
 }

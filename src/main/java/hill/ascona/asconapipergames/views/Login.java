@@ -40,7 +40,7 @@ public class Login {
             ViewManager.setLoggedInUser(loginComboBox.getValue());
             ViewManager.mainView();
         });
-//            primaryStage.setScene(showMainScene());});
+
         loginButton.setPrefSize(115,28);
         loginButton.setLayoutX(275);
         loginButton.setLayoutY(310);

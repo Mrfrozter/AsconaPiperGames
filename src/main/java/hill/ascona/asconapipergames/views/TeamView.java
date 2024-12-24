@@ -9,27 +9,206 @@ import hill.ascona.asconapipergames.entities.Team;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
+
+import java.util.ArrayList;
 
 public class TeamView {
-    private final ObservableList<Team> teams = FXCollections.observableArrayList();
-    private final ObservableList<Game> games = FXCollections.observableArrayList();
-    private final TeamDAO teamDAO;
-    private final GameDAO gameDAO;
-    private final PersonDAO personDAO;
-    private TableView<Team> tableView;
+    private ObservableList<Team> teams = FXCollections.observableList(new ArrayList<>());
+    private ObservableList<Game> games = FXCollections.observableList(new ArrayList<>());
 
-    public TeamView() {
-        this.teamDAO = new TeamDAO();
-        this.gameDAO = new GameDAO();
-        this.personDAO = new PersonDAO();
-    }
+    TeamDAO teamDAO = new TeamDAO();
+    PersonDAO personDAO = new PersonDAO();
+    GameDAO gameDAO = new GameDAO();
 
     public AnchorPane start() {
+        TabPane tabPane = new TabPane();
+        tabPane.setPrefSize(700,600);
+
+        Tab tab1 = new Tab("Add/Remove Team", logView());
+        Tab tab2 = new Tab("Add/Remove Members", membersView());
+
+        tabPane.getTabs().add(tab1);
+        tabPane.getTabs().add(tab2);
+
+        loadGames();
+
+        return new AnchorPane(tabPane);
+    }
+
+    private AnchorPane membersView(){
+
+        AnchorPane anchorPane = new AnchorPane();
+
+        loadTeams();
+
+        ListView<Team> listView = new ListView(teams);
+
+        // Set the cell factory to display the team name in the ListView
+        listView.setCellFactory(lv -> new ListCell<>() {
+            @Override
+            protected void updateItem(Team team, boolean empty) {
+                super.updateItem(team, empty);
+                setText(empty || team == null ? null : team.getTeam_name());
+            }
+        });
+
+        listView.setPrefSize(135,300);
+        listView.setLayoutX(5);
+        listView.setLayoutY(100);
+
+        TableView<Person> playersTable = new TableView<>();
+
+
+        TableColumn<Person, Integer> playerIdColumn = new TableColumn<>("Player ID");
+        playerIdColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+
+        TableColumn<Person, String> playerNameColumn = new TableColumn<>("Player Name");
+        playerNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+
+        TableColumn<Person, String> playerNicknameColumn = new TableColumn<>("Nickname");
+        playerNicknameColumn.setCellValueFactory(new PropertyValueFactory<>("nickname"));
+
+
+        playersTable.getColumns().addAll(playerIdColumn, playerNameColumn, playerNicknameColumn);
+
+
+        playersTable.setPrefSize(375, 225);
+        playersTable.setLayoutX(250);
+        playersTable.setLayoutY(100);
+
+        ObservableList<Person> members = FXCollections.observableArrayList();
+
+        // Set items for players table
+        playersTable.setItems(members);
+
+        listView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                members.clear();
+                members.addAll(personDAO.getMembersByTeam(newValue));
+            }
+        });
+
+        anchorPane.getChildren().add(listView);
+        anchorPane.getChildren().add(playersTable);
+
+        return anchorPane;
+    }
+
+    private AnchorPane logView(){
+        AnchorPane anchorPane = new AnchorPane();
+
+        TableView<Team> table = new TableView<>();
+
+        table.setPrefSize(690, 225);
+        table.setLayoutX(5);
+        table.setLayoutY(10);
+
+        TableColumn<Team, Integer> teamIdColumn = new TableColumn<>("Team ID");
+        teamIdColumn.setCellValueFactory(new PropertyValueFactory<>("team_id"));
+
+        TableColumn<Team, String> teamNameColumn = new TableColumn<>("Team Name");
+        teamNameColumn.setCellValueFactory(new PropertyValueFactory<>("team_name"));
+
+        TableColumn<Team, String> gameNameColumn = new TableColumn<>("Game");
+        gameNameColumn.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getGame().getTitle())
+        );
+
+        table.getColumns().addAll(teamIdColumn, teamNameColumn, gameNameColumn);
+
+        table.setItems(teams);
+
+        //Knapp för att refresha listan
+        Button refreshButton = new Button("Refresh");
+        refreshButton.setLayoutX(15);
+        refreshButton.setLayoutY(470);
+        refreshButton.setOnAction(e -> {
+            teams.clear();
+            teams.addAll(teamDAO.getAllTeams());
+        });
+
+
+        // Click for deletion - Modifierad från Lauri
+        table.setRowFactory(tv -> {
+            TableRow<Team> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (!row.isEmpty() && event.getClickCount() == 2) {
+                    Team selectedTeam = row.getItem();
+                    Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION,
+                            "Do you want to delete the team: " + selectedTeam.getTeam_name() + "?",
+                            ButtonType.YES, ButtonType.NO);
+                    confirmation.showAndWait();
+
+                    if (confirmation.getResult() == ButtonType.YES) {
+                        teamDAO.deleteTeam(selectedTeam); // Delete from database
+                        teams.remove(selectedTeam); // Remove from list
+                    }
+                }
+            });
+            return row;
+        });
+
+
+        TextField teamNameField = new TextField();
+        teamNameField.setPromptText("Enter team name");
+        teamNameField.setLayoutX(15);
+        teamNameField.setLayoutY(260);
+
+        ComboBox<Game> gameComboBox = new ComboBox<>(games);
+        gameComboBox.setPromptText("Select a game");
+        gameComboBox.setLayoutX(15);
+        gameComboBox.setLayoutY(300);
+
+        Button addButton = new Button("Add New Team");
+        addButton.setLayoutX(15);
+        addButton.setLayoutY(340);
+
+        //"Gammal" testmetod
+        /*addButton.setOnAction(e -> {
+            Team addedTeam = new Team(teamNameField.getText(), gameComboBox.getValue());
+            teamDAO.saveTeam(addedTeam);
+            teams.add(addedTeam);
+            teams.clear();
+            teams.addAll(teamDAO.getAllTeams());
+        }); */
+
+        addButton.setOnAction(e -> {
+            String teamName = teamNameField.getText();
+            Game chosenGame = gameComboBox.getValue();
+
+            if (!teamName.isEmpty() && !chosenGame.getTeams().isEmpty()){
+                try {
+                    //int numberOfTeams = Integer.parseInt(teamsInput);
+                    Team newTeam = new Team(teamName, null, chosenGame);
+                    teamDAO.saveTeam(newTeam);
+                    teams.add(newTeam);
+                    teamNameField.clear();
+                    //genreField.clear();
+                } catch (NumberFormatException ex) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setContentText("Antal team måste ha valid integer.");
+                    alert.show();
+                }
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("Alla fält måste vara inskrivna.");
+                alert.show();
+            }
+        });
+
+        anchorPane.getChildren().add(table);
+        anchorPane.getChildren().add(refreshButton);
+        anchorPane.getChildren().add(teamNameField);
+        anchorPane.getChildren().add(gameComboBox);
+        anchorPane.getChildren().add(addButton);
+
+        return anchorPane;
+    }
+
+    /*public AnchorPane start() {
         AnchorPane anchorPane = new AnchorPane();
         anchorPane.setPrefSize(700, 700);
 
@@ -47,9 +226,9 @@ public class TeamView {
         anchorPane.getChildren().addAll(tableView, inputBox);
 
         return anchorPane;
-    }
+    } */
 
-    private TableView<Team> createTableView() {
+    /*private TableView<Team> createTableView() {
         TableView<Team> table = new TableView<>();
         table.setPrefSize(690, 225);
         table.setLayoutX(5);
@@ -130,18 +309,25 @@ public class TeamView {
             showAlert(Alert.AlertType.ERROR, "Invalid Input",
                     "Please provide valid input", "Make sure both team name and game are selected.");
         }
-    }
+    } */
 
-    private void loadTeams() {
+    /*private void loadTeams() {
         teams.clear();
         teams.addAll(teamDAO.getAllTeams());
         tableView.refresh();
-    }
+    } */
 
     private void loadGames() {
         games.clear();
         games.addAll(gameDAO.getAllGames());
     }
+
+    private void loadTeams() {
+        teams.clear();
+        teams.addAll(teamDAO.getAllTeams());
+    }
+
+
 
     private void showAlert(Alert.AlertType type, String title, String header, String content) {
         Alert alert = new Alert(type);

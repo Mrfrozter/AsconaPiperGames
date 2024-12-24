@@ -117,4 +117,23 @@ public class PersonDAO {
             entityManager.close();
         }
     }
+
+    //TESTMETOD AV THEO. ANVÄNDS FÖR ATT FÅ LAGMEDLEMMAR NÄR LAG ÄR HIGHLIGHTAT I ANDRA FLIKEN I TEAMS
+    public List<Person> getMembersByTeam(Team team) {
+        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
+        try {
+            TypedQuery<Person> query = entityManager.createQuery(
+                    "FROM Person p WHERE p.team = :team", Person.class
+            );
+            query.setParameter("team", team);
+            return query.getResultList();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return new ArrayList<>();
+        } finally {
+            entityManager.close();
+        }
+    }
+
+
 }

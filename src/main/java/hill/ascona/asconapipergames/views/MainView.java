@@ -21,7 +21,7 @@ public class MainView {
         VBox.setVgrow(tabPane, Priority.ALWAYS);
 
         Tab tab1 = new Tab("Users or Players", new PersonView().start());
-        Tab tab2 = new Tab("Teams", new Label("Show teams"));
+        Tab tab2 = new Tab("Teams", new TeamView().start());
         Tab tab3 = new Tab("Games", new GameView().start());
         Tab tab4 = new Tab("Matches", new MatchView().start());
         Tab tab5 = new Tab("Tournament", new TournamentView().start());

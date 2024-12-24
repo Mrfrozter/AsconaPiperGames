@@ -2,6 +2,7 @@ package hill.ascona.asconapipergames.views;
 
 import hill.ascona.asconapipergames.DAO.GameDAO;
 import hill.ascona.asconapipergames.DAO.MatchDAO;
+import hill.ascona.asconapipergames.DAO.TeamDAO;
 import hill.ascona.asconapipergames.DAO.TournamentDAO;
 import hill.ascona.asconapipergames.entities.Game;
 import hill.ascona.asconapipergames.entities.Match;
@@ -24,6 +25,9 @@ import java.util.List;
 public class TournamentView {
     private ObservableList<Tournament> tournaments = FXCollections.observableList(new ArrayList<>());
     TournamentDAO tDao = new TournamentDAO();
+    GameDAO gDao = new GameDAO();
+    MatchDAO mDao = new MatchDAO();
+    private List<Game> games = gDao.getAllGames();
     VBox baseContent;
     boolean darkMode = false;
     int eRow = -1;
@@ -32,74 +36,24 @@ public class TournamentView {
         baseContent = new VBox();
         baseContent.setSpacing(5);
         baseContent.getStylesheets().add("tmnt.css");
-//        baseContent.setPrefSize(700,1600);
         if (!darkMode)
             baseContent.getStylesheets().add("tmnt-light.css");
         Label btn = new Label("New tournament");
         btn.getStyleClass().add("btn");
         btn.setId("addBtn");
-//        tDao.saveTM(new Tournament(new GameDAO().getByName("Halo 3"), "2009-02-15"));
         tournaments = FXCollections.observableList(tDao.getAllTournaments());
         HBox hBox = new HBox();
-
-//        HBox sBtn = switchBtn();
-//        sBtn.setAlignment(Pos.CENTER_RIGHT);
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         hBox.getChildren().addAll(btn, spacer, switchBtn());
         baseContent.getChildren().addAll(hBox, tabView());
-//        baseContent.getChildren().addAll(btn, logView());
 
         btn.setOnMouseClicked((e) -> {
-            VBox nT = newTour(null);
-            baseContent.getChildren().add(1, nT);
+            if (tDao.saveTM(new Tournament()))
+                refresh();
         });
         baseContent.setId("basePane");
         return baseContent;
-    }
-
-    public VBox newTour(Tournament tmnt) {
-        VBox content = new VBox();
-        Label title = new Label("Tournaments");
-        DatePicker dp = new DatePicker();
-        ChoiceBox choiceBox = new ChoiceBox();
-        ChoiceBox matchBox = new ChoiceBox();
-        TextField txtBox = new TextField();
-        txtBox.setPromptText("Fill title");
-        Label add = new Label("Add tournament");
-
-        GameDAO dao = new GameDAO();
-        List<Game> games = dao.getAllGames();
-        for (Game game : games) {
-            choiceBox.getItems().add(game.getTitle());
-        }
-        choiceBox.setValue(games.get(0).getTitle());
-        for (Match match : new MatchDAO().getAllMatches()) {
-            matchBox.getItems().add(String.format("(%s) %s vs %s", match.getId(), match.getNameOne(), match.getNameTwo()));
-        }
-        if (tmnt != null) {
-            if (!tmnt.getMatches().isEmpty())
-                matchBox.setValue(String.format("(%s) %s vs %s", tmnt.getMatches().get(0).getId(), tmnt.getMatches().get(0).getNameOne(), tmnt.getMatches().get(0).getNameTwo()));
-            choiceBox.setValue(tmnt.getGame().getTitle());
-            txtBox.setText(tmnt.getTitle() != null && !tmnt.getTitle().isEmpty() ? tmnt.getTitle() : "");
-        }
-        add.setOnMouseClicked((e) -> {
-            if (!txtBox.getText().isEmpty()) {
-                Game game = dao.getByName(choiceBox.getValue().toString());
-                String date = dp.getValue().toString();
-                String m = matchBox.getValue().toString();
-                Match match = new MatchDAO().getMatchById(Integer.parseInt(m.substring(1, m.indexOf(')'))));
-                tDao.saveTM(new Tournament(game, date, txtBox.getText(), match));
-                tournaments.clear();
-                tournaments.addAll(tDao.getAllTournaments());
-                baseContent.getChildren().remove(1);
-            } else
-                System.out.println("ERROR");
-        });
-
-        content.getChildren().addAll(title, dp, choiceBox, matchBox, txtBox, add);
-
-        return content;
     }
 
     private TableView tabView() {
@@ -107,18 +61,15 @@ public class TournamentView {
 
         TableColumn<Tournament, Integer> idCol = new TableColumn<>("id");
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
-
+        idCol.setPrefWidth(20);
         table.getColumns().addAll(idCol, titleCol(), dateCol(), gameCol(), matchCol());
-
-
         table.setItems(tournaments);
         table.setRowFactory(r -> {
             TableRow<Tournament> row = new TableRow<>();
             row.setOnMouseClicked((m) -> {
                 if (!row.isEmpty()) {
                     eRow = -1;
-                    tournaments.clear();
-                    tournaments.addAll(tDao.getAllTournaments());
+                    refresh();
                 }
             });
             row.setOnMouseEntered((m) -> {
@@ -140,29 +91,39 @@ public class TournamentView {
     private TableColumn<Tournament, String> titleCol() {
         TableColumn<Tournament, String> column = new TableColumn<>("title");
         column.setCellValueFactory(new PropertyValueFactory<>("title"));
+        int length = 10;
+        for (Tournament tmnt : tournaments) {
+            int l = tmnt.getTitle().length();
+            if (l > length)
+                length = l;
+        }
+        column.setPrefWidth(length * 10);
         column.setCellFactory(c -> new TableCell<Tournament, String>() {
             @Override
             public void updateItem(String title, boolean empty) {
                 super.updateItem(title, empty);
                 if (!empty) {
-                    if (getTableRow() != null && getTableRow().getIndex() == eRow) {
-                        Tournament tmnt = tournaments.get(eRow);
-                        String txt = tmnt.getTitle();
-                        TextField field = new TextField(txt);
-                        Button btn = new Button("+");
-                        HBox box = new HBox();
-                        box.getChildren().addAll(field, btn);
-                        btn.setOnAction(e -> {
-                            tmnt.setTitle(field.getText());
-                            tDao.updateTmnt(tmnt);
-                            tournaments.clear();
-                            tournaments.addAll(tDao.getAllTournaments());
-                            eRow = -1;
-                        });
-                        setGraphic(box);
+                    if (getTableRow() != null) {
+                        int idx = getTableRow().getIndex();
+                        Tournament tmnt = tournaments.get(idx);
+                        if (idx == eRow || tmnt.getTitle() == null) {
+                            String txt = tmnt.getTitle();
+                            TextField field = new TextField(txt);
+                            Button btn = new Button("+");
+                            HBox box = new HBox();
+                            box.getChildren().addAll(field, btn);
+                            btn.setOnAction(e -> {
+                                tmnt.setTitle(field.getText());
+                                tDao.updateTmnt(tmnt);
+                                refresh();
+
+                                eRow = -1;
+                            });
+                            setGraphic(box);
+                        } else
+                            setText(title);
                     } else
-                        setText(title);
-//                    setText(title);
+                        setText(null);
                 } else {
                     setGraphic(null);
                     setText(null);
@@ -175,35 +136,33 @@ public class TournamentView {
     private TableColumn<Tournament, String> dateCol() {
         TableColumn<Tournament, String> column = new TableColumn<>("date");
         column.setCellValueFactory(new PropertyValueFactory<>("date"));
-        return column;
-    }
-
-    private TableColumn<Tournament, Game> gameCol() {
-        TableColumn<Tournament, Game> column = new TableColumn<>("game");
-        column.setCellValueFactory(new PropertyValueFactory<>("game"));
-        column.setCellFactory(c -> new TableCell<Tournament, Game>() {
-            @Override
-            public void updateItem(Game game, boolean empty) {
-                super.updateItem(game, empty);
-                if (!empty) {
-//                    if (getTableRow() != null) {
-                    if (getTableRow() != null && getTableRow().getIndex() == eRow) {
-                        String title = tournaments.get(eRow).getGame().getTitle();
-                        TextField field = new TextField(title);
-                        Button btn = new Button("+");
+        int length = 10;
+        for (Tournament tmnt : tournaments) {
+            int l = tmnt.getDate().length();
+            if (l > length)
+                length = l;
+        }
+//        System.out.println("Length = " +length);
+        column.setPrefWidth(length * 10);
+        column.setCellFactory(c -> new TableCell<Tournament, String>() {
+            public void updateItem(String date, boolean empty) {
+                super.updateItem(date, empty);
+                if (!empty && getTableRow() != null) {
+                    int idx = getTableRow().getIndex();
+                    Tournament tmnt = tournaments.get(idx);
+                    if (idx == eRow || tmnt.getDate() == null) {
                         HBox box = new HBox();
-                        box.getChildren().addAll(field, btn);
+                        DatePicker datePicker = new DatePicker();
+                        ChoiceBox hourPicker = numBox(24);
+                        ChoiceBox minutePicker = numBox(60);
+                        Button btn = new Button("+");
+                        box.getChildren().addAll(datePicker, hourPicker, minutePicker, btn);
                         btn.setOnAction(e -> {
-                            tDao.updateTmnt(getTableRow().getItem());
-                            tournaments.clear();
-                            tournaments.addAll(tDao.getAllTournaments());
-                            eRow = -1;
+                            tmnt.setDate(String.format("%s %s:%s", datePicker.getValue(), hourPicker.getValue(), minutePicker.getValue()));
                         });
                         setGraphic(box);
                     } else
-                        setText(game.getTitle());
-//                    } else
-//                        setText(null);
+                        setText(date);
                 } else {
                     setGraphic(null);
                     setText(null);
@@ -213,14 +172,56 @@ public class TournamentView {
         return column;
     }
 
-    private TableColumn<Tournament, List<Match>> matchCol(){
+    private TableColumn<Tournament, Game> gameCol() {
+        TableColumn<Tournament, Game> column = new TableColumn<>("game");
+        column.setCellValueFactory(new PropertyValueFactory<>("game"));
+        int length = 10;
+        for (Game g : games) {
+            int l = g.getTitle().length();
+            if (l > length)
+                length = l;
+        }
+        column.setPrefWidth(length * 10);
+        column.setCellFactory(c -> new TableCell<Tournament, Game>() {
+            public void updateItem(Game game, boolean empty) {
+                super.updateItem(game, empty);
+                if (!empty && getTableRow() != null) {
+                    int idx = getTableRow().getIndex();
+                    if (idx == eRow || tournaments.get(idx).getGame() == null) {
+                        Tournament tmnt = tournaments.get(idx);
+
+                        Button btn = new Button("+");
+                        HBox box = new HBox();
+                        ChoiceBox gBox = gameBox();
+                        gBox.setValue(tmnt.getGame() != null ? tmnt.getGame().getTitle() : gBox.getItems().get(0));
+                        box.getChildren().addAll(gBox, btn);
+                        btn.setOnAction(e -> {
+                            tmnt.setGame(gDao.getGameIdByTitle(gBox.getValue().toString()));
+                            tDao.updateTmnt(tmnt);
+                            refresh();
+
+                            eRow = -1;
+                        });
+                        setGraphic(box);
+                    } else
+                        setText(game.getTitle());
+                } else {
+                    setGraphic(null);
+                    setText(null);
+                }
+            }
+        });
+        return column;
+    }
+
+    private TableColumn<Tournament, List<Match>> matchCol() {
         TableColumn<Tournament, List<Match>> column = new TableColumn<>("matches");
         column.setCellValueFactory(new PropertyValueFactory<>("matches"));
         column.setCellFactory(c -> new TableCell<Tournament, List<Match>>() {
             @Override
             public void updateItem(List<Match> matches, boolean empty) {
                 super.updateItem(matches, empty);
-                if(!empty){
+                if (!empty) {
                     setGraphic(expander());
                 } else
                     setGraphic(null);
@@ -251,8 +252,8 @@ public class TournamentView {
         MenuItem update = new MenuItem("Update");
         update.setOnAction((e) -> {
             eRow = rowIdx;
-            tournaments.clear();
-            tournaments.addAll(tDao.getAllTournaments());
+            refresh();
+
         });
 
         MenuItem delete = new MenuItem("Delete");
@@ -262,14 +263,42 @@ public class TournamentView {
                 System.out.println("Deleted " + (tmnt.getTitle() != null ? tmnt.getTitle() : tmnt.getDate()));
             else
                 System.out.println("Failed to delete " + tmnt);
-            tournaments.clear();
-            tournaments.addAll(tDao.getAllTournaments());
+            refresh();
+
         });
 
         MenuItem details = new MenuItem("View brackets");
 
         context.getItems().addAll(details, update, delete);
         return context;
+    }
+
+    private ChoiceBox gameBox() {
+        ChoiceBox box = new ChoiceBox();
+        for (Game game : games) {
+            box.getItems().add(game.getTitle());
+        }
+        box.setValue(games.get(0).getTitle());
+        return box;
+    }
+    
+    private ChoiceBox matchBox(){
+        ChoiceBox box = new ChoiceBox();
+        
+        return box;
+    }
+
+    private ChoiceBox numBox(int num) {
+        ChoiceBox box = new ChoiceBox();
+        for (int i = 0; i <= num; i++) {
+            box.getItems().add(i + "");
+        }
+        return box;
+    }
+
+    private void refresh() {
+        tournaments.clear();
+        tournaments.addAll(tDao.getAllTournaments());
     }
 
     private HBox switchBtn() {

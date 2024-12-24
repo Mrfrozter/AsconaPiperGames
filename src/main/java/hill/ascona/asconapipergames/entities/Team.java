@@ -42,7 +42,7 @@ public class Team {
         this.game = game;
     }
 
-    //skapad konstruktor automatiskt från errorn i TeamView på rad 75 - test
+    //skapad konstruktor automatiskt från errorn i TeamView på rad 75 - test / tillfällig
     public Team(String teamName, Game selectedGame) {
     }
 

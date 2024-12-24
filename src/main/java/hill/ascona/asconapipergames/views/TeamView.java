@@ -104,9 +104,8 @@ public class TeamView {
             Person selectedPlayer = playersTable.getSelectionModel().getSelectedItem();
 
                     selectedPlayer.setTeam(null);
-                    personDAO.updatePlayersInfo(selectedPlayer); // Persist the change to the database
+                    personDAO.updatePlayersInfo(selectedPlayer);
 
-                    // Remove the player from the members list in the UI
                     members.remove(selectedPlayer);
 
         });
@@ -121,7 +120,7 @@ public class TeamView {
         playersComboBox.setLayoutX(460);
         playersComboBox.setLayoutY(390);
 
-        // Fetch all players from the database
+        // Tar alla spelare från databasen
         ObservableList<Person> allPlayers = FXCollections.observableArrayList(personDAO.getAllPlayersOrUsers("player"));
         playersComboBox.setItems(allPlayers);
 
@@ -134,7 +133,7 @@ public class TeamView {
                 if (selectedPlayer.getTeam() != null) {
                     // Om spelaren har ett lag uppdaterar vi laget
                     selectedPlayer.setTeam(selectedTeam);
-                    personDAO.updatePlayersInfo(selectedPlayer); // Persist the change to the database
+                    personDAO.updatePlayersInfo(selectedPlayer);
                 } else {
                     // Om spelaren inte har ett lag så får han ett nytt
                     selectedPlayer.setTeam(selectedTeam);
@@ -189,8 +188,8 @@ public class TeamView {
                     confirmation.showAndWait();
 
                     if (confirmation.getResult() == ButtonType.YES) {
-                        teamDAO.deleteTeam(selectedTeam); // Delete from database
-                        teams.remove(selectedTeam); // Remove from list
+                        teamDAO.deleteTeam(selectedTeam);
+                        teams.remove(selectedTeam);
                     }
                 }
             });

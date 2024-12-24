@@ -46,7 +46,7 @@ public class TeamView {
 
         ListView<Team> listView = new ListView(teams);
 
-        // Set the cell factory to display the team name in the ListView
+        // "Sätter cell factory" för att displaya namnet på teamet i ListView (Förkortar)
         listView.setCellFactory(lv -> new ListCell<>() {
             @Override
             protected void updateItem(Team team, boolean empty) {
@@ -94,7 +94,6 @@ public class TeamView {
             }
         });
 
-
         //REMOVE OCH ADD KNAPPAR SAMT COMBOBOX MED SPELARE UTAN LAG
         //Remove
         Button removeButton = new Button("Remove member from team");
@@ -112,7 +111,6 @@ public class TeamView {
 
         });
 
-
         //Add, här finns en ComboBox spelare. Om man väljer en spelare som har ett lag byter spelaren lag
         Button addButton = new Button("Transfer player to team");
         addButton.setLayoutX(460);
@@ -120,7 +118,7 @@ public class TeamView {
 
         ComboBox<Person> playersComboBox = new ComboBox<>();
         playersComboBox.setPromptText("Select a player");
-        playersComboBox.setLayoutX(470);
+        playersComboBox.setLayoutX(460);
         playersComboBox.setLayoutY(390);
 
         // Fetch all players from the database
@@ -132,20 +130,16 @@ public class TeamView {
             Team selectedTeam = listView.getSelectionModel().getSelectedItem(); // Get selected team from the ListView
 
             if (selectedPlayer != null && selectedTeam != null) {
-                // Check if the player already has a team
+                // Kollar om spelaren redan tillhör ett lag
                 if (selectedPlayer.getTeam() != null) {
-                    // Player already has a team, so we just update their team
+                    // Om spelaren har ett lag uppdaterar vi laget
                     selectedPlayer.setTeam(selectedTeam);
                     personDAO.updatePlayersInfo(selectedPlayer); // Persist the change to the database
                 } else {
-                    // Player doesn't have a team, so assign the new team
+                    // Om spelaren inte har ett lag så får han ett nytt
                     selectedPlayer.setTeam(selectedTeam);
-                    personDAO.updatePlayersInfo(selectedPlayer); // Persist the change to the database
+                    personDAO.updatePlayersInfo(selectedPlayer);
                 }
-            } else {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setContentText("Please select both a player and a team.");
-                alert.show();
             }
         });
 
@@ -181,15 +175,6 @@ public class TeamView {
         table.getColumns().addAll(teamIdColumn, teamNameColumn, gameNameColumn);
 
         table.setItems(teams);
-
-        //Knapp för att refresha listan
-        Button refreshButton = new Button("Refresh");
-        refreshButton.setLayoutX(15);
-        refreshButton.setLayoutY(470);
-        refreshButton.setOnAction(e -> {
-            teams.clear();
-            teams.addAll(teamDAO.getAllTeams());
-        });
 
 
         // Click for deletion - Modifierad från Lauri
@@ -246,12 +231,10 @@ public class TeamView {
             }
 
             try {
-                // Create a new team and save it
                 Team newTeam = new Team(teamName, null, chosenGame);
                 teamDAO.saveTeam(newTeam);
                 teams.add(newTeam);
 
-                // Clear fields after successful save
                 teamNameField.clear();
                 gameComboBox.getSelectionModel().clearSelection();
             } catch (Exception ex) {
@@ -261,32 +244,7 @@ public class TeamView {
             }
         });
 
-        /*addButton.setOnAction(e -> {
-            String teamName = teamNameField.getText();
-            Game chosenGame = gameComboBox.getValue();
-
-            if (!teamName.isEmpty() && !chosenGame.getTeams().isEmpty()){
-                try {
-                    //int numberOfTeams = Integer.parseInt(teamsInput);
-                    Team newTeam = new Team(teamName, null, chosenGame);
-                    teamDAO.saveTeam(newTeam);
-                    teams.add(newTeam);
-                    teamNameField.clear();
-                    //genreField.clear();
-                } catch (NumberFormatException ex) {
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    alert.setContentText("Antal team måste ha valid integer.");
-                    alert.show();
-                }
-            } else {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setContentText("Alla fält måste vara inskrivna.");
-                alert.show();
-            }
-        }); */
-
         anchorPane.getChildren().add(table);
-        anchorPane.getChildren().add(refreshButton);
         anchorPane.getChildren().add(teamNameField);
         anchorPane.getChildren().add(gameComboBox);
         anchorPane.getChildren().add(addButton);

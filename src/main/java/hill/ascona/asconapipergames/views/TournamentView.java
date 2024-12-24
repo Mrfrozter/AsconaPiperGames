@@ -26,7 +26,7 @@ public class TournamentView {
     TournamentDAO tDao = new TournamentDAO();
     VBox baseContent;
     boolean darkMode = false;
-    Tournament edit;
+    int eRow = -1;
 
     public VBox start() {
         baseContent = new VBox();
@@ -107,121 +107,24 @@ public class TournamentView {
 
         TableColumn<Tournament, Integer> idCol = new TableColumn<>("id");
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
-//        idCol.setCellFactory(c -> new TableCell<Tournament, Integer>(){
-//            @Override
-//            public void updateItem(int id, boolean empty){
-//                super.updateItem(id, empty);
-//                if(!empty){
-//
-//                } else
-//                    setText(null);
-//            }
-//        });
-        TableColumn<Tournament, String> titleCol = new TableColumn<>("title");
-        titleCol.setCellValueFactory(new PropertyValueFactory<>("title"));
-        titleCol.setCellFactory(c -> new TableCell<Tournament, String>() {
-            @Override
-            public void updateItem(String title, boolean empty) {
-                super.updateItem(title, empty);
-                if (!empty) {
-                    if (edit != null && edit.getTitle().equals(title)) {
-                        setGraphic(new TextField(edit.getTitle() != null ? edit.getTitle() : ""));
-                    } else
-                        setText(title);
-                } else
-                    setText(null);
-            }
-        });
 
-        TableColumn<Tournament, Game> gameCol = new TableColumn<>("game");
-        gameCol.setCellValueFactory(new PropertyValueFactory<>("game"));
-        TableColumn<Tournament, String> dateCol = new TableColumn<>("date");
-        dateCol.setCellValueFactory(new PropertyValueFactory<>("date"));
-
-//        TableColumn<Tournament, List<Match>> matchCol = new TableColumn<>("matches");
-//        matchCol.setCellValueFactory(new PropertyValueFactory<>("matches"));
-//        matchCol.setCellFactory(c -> new TableCell<Tournament, List<Match>>() {
-//            @Override
-//            public void updateItem(List<Match> matches, boolean empty) {
-//                super.updateItem(matches, empty);
-//                if (!empty) {
-//                    ChoiceBox box = new ChoiceBox();
-//                    for (Match m : matches) {
-//                        System.out.println(m.getDate());
-//                        System.out.println(m.getTeams().size());
-//                        if(!m.getTeams().isEmpty()) {
-//                            box.getItems().add(m.getTeams().get(0).getTeam_name() + " vs " + m.getTeams().get(1).getTeam_name());
-//                        }
-//                    }
-////                    if (!box.getItems().isEmpty())
-////                        box.setValue(box.getItems().get(0));
-//                    System.out.println(box.getItems());
-//                    box.setValue("hallo");
-//                    setGraphic(box);
-//                } else
-//                    setText(null);
-//            }
-//        });
-        table.getColumns().addAll(idCol, titleCol, dateCol, gameCol);
-//        table.getColumns().add(matchCol);
+        table.getColumns().addAll(idCol, titleCol(), dateCol(), gameCol(), matchCol());
 
 
         table.setItems(tournaments);
-        gameCol.setCellFactory(c -> new TableCell<Tournament, Game>() {
-            @Override
-            public void updateItem(Game game, boolean empty) {
-                super.updateItem(game, empty);
-                if (!empty) {
-                    if (edit != null) {
-                        ChoiceBox choiceBox = new ChoiceBox();
-                        List<Game> games = new GameDAO().getAllGames();
-                        for (Game g : games) {
-                            choiceBox.getItems().add(game.getTitle());
-                        }
-                        choiceBox.setValue(games.get(0).getTitle());
-                        setGraphic(choiceBox);
-                    } else
-                        setText(game.getTitle());
-                } else
-                    setText(null);
-            }
-        });
         table.setRowFactory(r -> {
             TableRow<Tournament> row = new TableRow<>();
             row.setOnMouseClicked((m) -> {
-                if (!row.isEmpty() && m.getClickCount() == 2) {
-                    edit = row.getItem();
+                if (!row.isEmpty()) {
+                    eRow = -1;
                     tournaments.clear();
                     tournaments.addAll(tDao.getAllTournaments());
-                } else if (!row.isEmpty()) {
-                    ContextMenu context = new ContextMenu();
-                    MenuItem update = new MenuItem("Update");
-                    update.setOnAction((e) -> {
-                        newTour(row.getItem());
-                    });
-
-                    MenuItem delete = new MenuItem("Delete");
-                    Tournament tmnt = row.getItem();
-                    delete.setOnAction((e) -> {
-                        if (tDao.deleteTmnt(tmnt))
-                            System.out.println("Deleted " + (tmnt.getTitle() != null ? tmnt.getTitle() : tmnt.getDate()));
-                        else
-                            System.out.println("Failed to delete " + tmnt);
-                        tournaments.clear();
-                        tournaments.addAll(tDao.getAllTournaments());
-                    });
-                    context.getItems().addAll(update, delete);
-                    row.setContextMenu(context);
-//                    Tournament tmnt = row.getItem();
-//                    if(tDao.deleteTmnt(tmnt))
-//                        System.out.println("Deleted " + (tmnt.getTitle() != null ? tmnt.getTitle() : tmnt.getDate()));
-//                    else
-//                        System.out.println("Failed to delete " + tmnt);
-////                    Tournament tmnt = row.getItem();
-////                    tmnt.setTitle("test");
-////                    tDao.updateTmnt(tmnt);
                 }
-//                    tournaments.remove(row.getItem());
+            });
+            row.setOnMouseEntered((m) -> {
+                if (!row.isEmpty()) {
+                    row.setContextMenu(contextMenu(row));
+                }
             });
             return row;
         });
@@ -232,6 +135,141 @@ public class TournamentView {
             }
         });
         return table;
+    }
+
+    private TableColumn<Tournament, String> titleCol() {
+        TableColumn<Tournament, String> column = new TableColumn<>("title");
+        column.setCellValueFactory(new PropertyValueFactory<>("title"));
+        column.setCellFactory(c -> new TableCell<Tournament, String>() {
+            @Override
+            public void updateItem(String title, boolean empty) {
+                super.updateItem(title, empty);
+                if (!empty) {
+                    if (getTableRow() != null && getTableRow().getIndex() == eRow) {
+                        Tournament tmnt = tournaments.get(eRow);
+                        String txt = tmnt.getTitle();
+                        TextField field = new TextField(txt);
+                        Button btn = new Button("+");
+                        HBox box = new HBox();
+                        box.getChildren().addAll(field, btn);
+                        btn.setOnAction(e -> {
+                            tmnt.setTitle(field.getText());
+                            tDao.updateTmnt(tmnt);
+                            tournaments.clear();
+                            tournaments.addAll(tDao.getAllTournaments());
+                            eRow = -1;
+                        });
+                        setGraphic(box);
+                    } else
+                        setText(title);
+//                    setText(title);
+                } else {
+                    setGraphic(null);
+                    setText(null);
+                }
+            }
+        });
+        return column;
+    }
+
+    private TableColumn<Tournament, String> dateCol() {
+        TableColumn<Tournament, String> column = new TableColumn<>("date");
+        column.setCellValueFactory(new PropertyValueFactory<>("date"));
+        return column;
+    }
+
+    private TableColumn<Tournament, Game> gameCol() {
+        TableColumn<Tournament, Game> column = new TableColumn<>("game");
+        column.setCellValueFactory(new PropertyValueFactory<>("game"));
+        column.setCellFactory(c -> new TableCell<Tournament, Game>() {
+            @Override
+            public void updateItem(Game game, boolean empty) {
+                super.updateItem(game, empty);
+                if (!empty) {
+//                    if (getTableRow() != null) {
+                    if (getTableRow() != null && getTableRow().getIndex() == eRow) {
+                        String title = tournaments.get(eRow).getGame().getTitle();
+                        TextField field = new TextField(title);
+                        Button btn = new Button("+");
+                        HBox box = new HBox();
+                        box.getChildren().addAll(field, btn);
+                        btn.setOnAction(e -> {
+                            tDao.updateTmnt(getTableRow().getItem());
+                            tournaments.clear();
+                            tournaments.addAll(tDao.getAllTournaments());
+                            eRow = -1;
+                        });
+                        setGraphic(box);
+                    } else
+                        setText(game.getTitle());
+//                    } else
+//                        setText(null);
+                } else {
+                    setGraphic(null);
+                    setText(null);
+                }
+            }
+        });
+        return column;
+    }
+
+    private TableColumn<Tournament, List<Match>> matchCol(){
+        TableColumn<Tournament, List<Match>> column = new TableColumn<>("matches");
+        column.setCellValueFactory(new PropertyValueFactory<>("matches"));
+        column.setCellFactory(c -> new TableCell<Tournament, List<Match>>() {
+            @Override
+            public void updateItem(List<Match> matches, boolean empty) {
+                super.updateItem(matches, empty);
+                if(!empty){
+                    setGraphic(expander());
+                } else
+                    setGraphic(null);
+            }
+        });
+        return column;
+    }
+
+    private VBox expander() {
+        VBox box = new VBox();
+        Button btn = new Button("V");
+        final boolean[] isExpanded = {false};
+        box.getChildren().addAll(btn);
+        box.setPrefHeight(20);
+        btn.setOnAction(e -> {
+            if (!isExpanded[0])
+                box.setPrefHeight(200);
+            else
+                box.setPrefHeight(20);
+            isExpanded[0] = !isExpanded[0];
+        });
+        return box;
+    }
+
+    private ContextMenu contextMenu(TableRow<Tournament> row) {
+        int rowIdx = row.getIndex();
+        ContextMenu context = new ContextMenu();
+        MenuItem update = new MenuItem("Update");
+        update.setOnAction((e) -> {
+            eRow = rowIdx;
+            tournaments.clear();
+            tournaments.addAll(tDao.getAllTournaments());
+        });
+
+        MenuItem delete = new MenuItem("Delete");
+        Tournament tmnt = row.getItem();
+        delete.setOnAction((e) -> {
+            if (tDao.deleteTmnt(tmnt))
+                System.out.println("Deleted " + (tmnt.getTitle() != null ? tmnt.getTitle() : tmnt.getDate()));
+            else
+                System.out.println("Failed to delete " + tmnt);
+            tournaments.clear();
+            tournaments.addAll(tDao.getAllTournaments());
+        });
+
+        MenuItem details = new MenuItem("View brackets");
+
+        context.getItems().addAll(details, update, delete);
+        return context;
     }
 
     private HBox switchBtn() {

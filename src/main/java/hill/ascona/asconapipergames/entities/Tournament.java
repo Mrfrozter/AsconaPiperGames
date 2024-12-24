@@ -80,6 +80,8 @@ public class Tournament {
     }
 
     public String getTitle() {
+        if(title == null)
+            title = "";
         return title;
     }
 

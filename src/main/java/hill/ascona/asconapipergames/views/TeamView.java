@@ -31,9 +31,11 @@ public class TeamView {
 
         Tab tab1 = new Tab("Add/Remove Team", teamsView());
         Tab tab2 = new Tab("View Members/Players", membersView());
+        Tab tab3 = new Tab("Edit/Update teams", editTeamsView());
 
         tabPane.getTabs().add(tab1);
         tabPane.getTabs().add(tab2);
+        tabPane.getTabs().add(tab3);
 
         loadPlayers();
 
@@ -46,6 +48,91 @@ public class TeamView {
         loadGames();
 
         return new AnchorPane(tabPane);
+    }
+
+    private AnchorPane editTeamsView(){
+        AnchorPane anchorPane = new AnchorPane();
+
+        loadTeams();
+
+        TableView<Team> table = new TableView<>();
+
+        table.setPrefSize(690, 225);
+        table.setLayoutX(5);
+        table.setLayoutY(10);
+
+        TableColumn<Team, Integer> teamIdColumn = new TableColumn<>("Team ID");
+        teamIdColumn.setCellValueFactory(new PropertyValueFactory<>("teamId"));
+
+        TableColumn<Team, String> teamNameColumn = new TableColumn<>("Team Name");
+        teamNameColumn.setCellValueFactory(new PropertyValueFactory<>("teamName"));
+
+        TableColumn<Team, String> gameNameColumn = new TableColumn<>("Game");
+        gameNameColumn.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getGame().getTitle())
+        );
+
+        table.getColumns().addAll(teamIdColumn, teamNameColumn, gameNameColumn);
+
+        table.setItems(teams);
+
+
+        TextField teamNameField = new TextField();
+        teamNameField.setPromptText("Enter new team name");
+        teamNameField.setLayoutX(15);
+        teamNameField.setLayoutY(260);
+
+        ComboBox<Game> gameComboBox = new ComboBox<>(games);
+        gameComboBox.setPromptText("Select new game");
+        gameComboBox.setLayoutX(15);
+        gameComboBox.setLayoutY(300);
+
+        Button addButton = new Button("Update team");
+        addButton.setLayoutX(15);
+        addButton.setLayoutY(340);
+        gameComboBox.setOnShowing(event -> loadGames());
+
+        addButton.setOnAction(e -> {
+
+            Team selectedTeam = table.getSelectionModel().getSelectedItem();
+            if(selectedTeam == null) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("Please select a team");
+                alert.show();
+                return;
+            }
+
+            String newTeamName = teamNameField.getText().trim();
+            Game selectedGame = gameComboBox.getValue();
+
+            if (!newTeamName.isEmpty()) {
+                selectedTeam.setTeamName(newTeamName);
+            }
+
+            if (selectedGame!= null){
+                selectedTeam.setGame(selectedGame);
+            }
+
+            try {
+                teamDAO.updateTeam(selectedTeam);
+                loadTeams();
+            } catch(Exception ex) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("An error has occured while updating the team");
+                alert.show();
+            }
+
+        });
+
+        anchorPane.getChildren().add(table);
+        anchorPane.getChildren().add(teamNameField);
+        anchorPane.getChildren().add(gameComboBox);
+        anchorPane.getChildren().add(addButton);
+
+
+
+
+        return anchorPane;
     }
 
     private AnchorPane membersView(){

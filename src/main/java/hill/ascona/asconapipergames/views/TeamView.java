@@ -18,6 +18,8 @@ import java.util.ArrayList;
 public class TeamView {
     private ObservableList<Team> teams = FXCollections.observableList(new ArrayList<>());
     private ObservableList<Game> games = FXCollections.observableList(new ArrayList<>());
+    //tillagd:
+    private ObservableList<Person> players = FXCollections.observableList(new ArrayList<>());
 
     private TeamDAO teamDAO = new TeamDAO();
     private PersonDAO personDAO = new PersonDAO();
@@ -32,6 +34,14 @@ public class TeamView {
 
         tabPane.getTabs().add(tab1);
         tabPane.getTabs().add(tab2);
+
+        loadPlayers();
+
+        tab2.setOnSelectionChanged(event -> {
+            if (tab2.isSelected()) {
+                loadPlayers();
+            }
+        });
 
         loadGames();
 
@@ -116,6 +126,7 @@ public class TeamView {
         addButton.setLayoutY(350);
 
         ComboBox<Person> playersComboBox = new ComboBox<>();
+        playersComboBox.setOnShowing(event -> loadPlayers());
         playersComboBox.setPromptText("Select a player");
         playersComboBox.setLayoutX(460);
         playersComboBox.setLayoutY(390);
@@ -293,6 +304,11 @@ public class TeamView {
     private void loadTeams() {
         teams.clear();
         teams.addAll(teamDAO.getAllTeams());
+    }
+
+    private void loadPlayers() {
+        players.clear();
+        players.addAll(personDAO.getAllPlayersOrUsers("player"));
     }
 
 }

@@ -1,6 +1,7 @@
 package hill.ascona.asconapipergames.DAO;
 
 import hill.ascona.asconapipergames.entities.Team;
+import hill.ascona.asconapipergames.managers.DAOManager;
 import jakarta.persistence.*;
 import hill.ascona.asconapipergames.entities.Person;
 import java.util.ArrayList;

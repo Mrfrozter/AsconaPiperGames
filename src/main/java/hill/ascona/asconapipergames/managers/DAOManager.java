@@ -8,7 +8,7 @@ import jakarta.persistence.Persistence;
 public class DAOManager {
         public static final EntityManagerFactory EMF = Persistence.createEntityManagerFactory("myconfig");
 
-        // ny från gpt
+        // ny
         public static EntityManager getEntityManager() {
             return EMF.createEntityManager();
         }

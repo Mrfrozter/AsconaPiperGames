@@ -6,6 +6,7 @@ import hill.ascona.asconapipergames.DAO.TeamDAO;
 import hill.ascona.asconapipergames.entities.Game;
 import hill.ascona.asconapipergames.entities.Person;
 import hill.ascona.asconapipergames.entities.Team;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -270,8 +271,9 @@ public class TeamView {
 
         table.setItems(teams);
 
+        //OG FRÅN LAURI
 
-        // Click for deletion - Modifierad från Lauri (GAMLA)
+        // Click for deletion - Modifierad från Lauri
         table.setRowFactory(tv -> {
             TableRow<Team> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
@@ -290,6 +292,34 @@ public class TeamView {
             });
             return row;
         });
+
+
+        // Click for deletion - Modifierad från Lauri (GAMLA)
+        //Fanns bug att det inte togs bort från listan, därmed modifierad loadTeams och runLater
+        /*table.setRowFactory(tv -> {
+            TableRow<Team> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (!row.isEmpty() && event.getClickCount() == 2) {
+                    Team selectedTeam = row.getItem();
+                    Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION,
+                            "Do you want to delete the team: " + selectedTeam.getTeamName() + "?",
+                            ButtonType.YES, ButtonType.NO);
+                    confirmation.showAndWait();
+
+                    if (confirmation.getResult() == ButtonType.YES) {
+                        try {
+                            teamDAO.deleteTeam(selectedTeam);
+                            Platform.runLater(() -> loadTeams()); // Use Platform.runLater
+                        } catch (Exception e) {
+                            Alert error = new Alert(Alert.AlertType.ERROR);
+                            error.setContentText("Could not delete team: " + e.getMessage());
+                            error.show();
+                        }
+                    }
+                }
+            });
+            return row;
+        }); */
 
         //NYA MODIFERAD FRÅN LAURI
         /*table.setRowFactory(tv -> {

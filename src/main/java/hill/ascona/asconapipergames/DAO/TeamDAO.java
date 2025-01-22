@@ -16,6 +16,10 @@ public class TeamDAO {
     private EntityManager em;
     private EntityTransaction transaction; */
 
+    //Tagen från TournamentDAO
+    private EntityManager em;
+    private EntityTransaction transaction;
+
     // Create
     public boolean saveTeam(Team team){
 
@@ -76,47 +80,42 @@ public class TeamDAO {
         }
     }
 
-    // Delete team (den nya)
+    //Nyaste deleteteam
     public void deleteTeam(Team team) {
-        EntityManager entityManager = DAOManager.getEntityManager();
-        EntityTransaction transaction = null;
-        try {
-            transaction = entityManager.getTransaction();
-            transaction.begin();
+        try (EntityManager entityManager = DAOManager.getEntityManager()) {
+            EntityTransaction transaction = entityManager.getTransaction();
+            try {
+                transaction.begin();
 
-            // Hämta en managed version av teamet med alla dess kopplingar
-            Team managedTeam = entityManager.find(Team.class, team.getTeamId());
-            if (managedTeam != null) {
-                // Hämta alla personer kopplade till detta team
-                TypedQuery<Person> query = entityManager.createQuery(
-                        "SELECT p FROM Person p WHERE p.team = :team", Person.class);
-                query.setParameter("team", managedTeam);
-                List<Person> members = query.getResultList();
+                // Hämta managed version av teamet
+                Team managedTeam = entityManager.find(Team.class, team.getTeamId());
+                if (managedTeam != null) {
+                    // Ta bort person-kopplingar
+                    entityManager.createQuery("UPDATE Person p SET p.team = NULL WHERE p.team = :team")
+                            .setParameter("team", managedTeam)
+                            .executeUpdate();
 
-                // Ta bort team-kopplingen för varje person
-                for (Person member : members) {
-                    member.setTeam(null);
-                    entityManager.merge(member);
+                    // Ta bort game-koppling
+                    managedTeam.setGame(null);
+                    entityManager.merge(managedTeam);
+
+                    // Ta bort teamet
+                    entityManager.remove(managedTeam);
+
                 }
-
-                //tillagd egen sådära
-                team.setGame(null);
-
-                // Nu kan vi säkert ta bort teamet
-                entityManager.remove(managedTeam);
                 transaction.commit();
+
+            } catch (Exception e) {
+                if (transaction.isActive()) {
+                    transaction.rollback();
+                }
+                throw e;
             }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            if (entityManager != null && transaction != null && transaction.isActive()) {
-                transaction.rollback();
-            }
-        } finally {
-            entityManager.close();
         }
     }
 
-    public void remove(Team team) {
+
+    /*public void remove(Team team) {
         EntityManager entityManager = DAOManager.getEntityManager();
         EntityTransaction transaction = null;
         try {
@@ -135,7 +134,7 @@ public class TeamDAO {
         } finally {
             entityManager.close();
         }
-    }
+    } */
 
     // Gammal deleteTeam
     /*public void deleteTeam(Team team){
@@ -212,6 +211,12 @@ public class TeamDAO {
         entityManager.close();
         return teamInfoToReturn;
     }
+
+    private void initializeEM(){
+        em = DAOManager.EMF.createEntityManager();
+        transaction = null;
+    }
+
 }
 
 

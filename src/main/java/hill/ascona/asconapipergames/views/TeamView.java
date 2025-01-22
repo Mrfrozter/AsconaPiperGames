@@ -161,10 +161,10 @@ public class TeamView {
         table.setLayoutY(10);
 
         TableColumn<Team, Integer> teamIdColumn = new TableColumn<>("Team ID");
-        teamIdColumn.setCellValueFactory(new PropertyValueFactory<>("team_id"));
+        teamIdColumn.setCellValueFactory(new PropertyValueFactory<>("teamId"));
 
         TableColumn<Team, String> teamNameColumn = new TableColumn<>("Team Name");
-        teamNameColumn.setCellValueFactory(new PropertyValueFactory<>("team_name"));
+        teamNameColumn.setCellValueFactory(new PropertyValueFactory<>("teamName"));
 
         TableColumn<Team, String> gameNameColumn = new TableColumn<>("Game");
         gameNameColumn.setCellValueFactory(cellData ->
@@ -176,7 +176,7 @@ public class TeamView {
         table.setItems(teams);
 
 
-        // Click for deletion - Modifierad från Lauri
+        // Click for deletion - Modifierad från Lauri (GAMLA)
         table.setRowFactory(tv -> {
             TableRow<Team> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
@@ -196,6 +196,39 @@ public class TeamView {
             return row;
         });
 
+        //NYA MODIFERAD FRÅN LAURI
+        /*table.setRowFactory(tv -> {
+            TableRow<Team> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (!row.isEmpty() && event.getClickCount() == 2) {
+                    Team selectedTeam = row.getItem();
+                    Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION,
+                            "Do you want to delete the team: " + selectedTeam.getTeamName() + "?",
+                            ButtonType.YES, ButtonType.NO);
+                    confirmation.showAndWait();
+
+                    if (confirmation.getResult() == ButtonType.YES) {
+                        // Spara gamla listan
+                        ObservableList<Team> oldTeams = FXCollections.observableArrayList(teams);
+
+                        try {
+                            teamDAO.deleteTeam(selectedTeam);
+                            // Ladda om teams från databasen för att bekräfta att raderingen lyckades
+                            loadTeams();
+                        } catch (Exception e) {
+                            // Om något går fel, återställ listan och visa felmeddelande
+                            teams.clear();
+                            teams.addAll(oldTeams);
+                            Alert error = new Alert(Alert.AlertType.ERROR);
+                            error.setContentText("Could not delete team. Make sure all player connections are removed first.");
+                            error.show();
+                        }
+                    }
+                }
+            });
+            return row;
+        }); */
+
 
         TextField teamNameField = new TextField();
         teamNameField.setPromptText("Enter team name");
@@ -210,6 +243,7 @@ public class TeamView {
         Button addButton = new Button("Add New Team");
         addButton.setLayoutX(15);
         addButton.setLayoutY(340);
+        gameComboBox.setOnShowing(event -> loadGames());
 
         addButton.setOnAction(e -> {
             String teamName = teamNameField.getText();

@@ -125,15 +125,12 @@ public class TeamView {
         addButton.setLayoutX(460);
         addButton.setLayoutY(350);
 
-        ComboBox<Person> playersComboBox = new ComboBox<>();
-        playersComboBox.setOnShowing(event -> loadPlayers());
+
+        ComboBox<Person> playersComboBox = new ComboBox<>(players);
         playersComboBox.setPromptText("Select a player");
         playersComboBox.setLayoutX(460);
         playersComboBox.setLayoutY(390);
-
-        // Tar alla spelare från databasen
-        ObservableList<Person> allPlayers = FXCollections.observableArrayList(personDAO.getAllPlayersOrUsers("player"));
-        playersComboBox.setItems(allPlayers);
+        playersComboBox.setOnShowing(event -> loadPlayers());
 
         addButton.setOnAction(e -> {
             Person selectedPlayer = playersComboBox.getSelectionModel().getSelectedItem();

@@ -19,15 +19,15 @@ public class TeamView {
     private ObservableList<Team> teams = FXCollections.observableList(new ArrayList<>());
     private ObservableList<Game> games = FXCollections.observableList(new ArrayList<>());
 
-    TeamDAO teamDAO = new TeamDAO();
-    PersonDAO personDAO = new PersonDAO();
-    GameDAO gameDAO = new GameDAO();
+    private TeamDAO teamDAO = new TeamDAO();
+    private PersonDAO personDAO = new PersonDAO();
+    private GameDAO gameDAO = new GameDAO();
 
     public AnchorPane start() {
         TabPane tabPane = new TabPane();
         tabPane.setPrefSize(700,600);
 
-        Tab tab1 = new Tab("Add/Remove Team", logView());
+        Tab tab1 = new Tab("Add/Remove Team", teamsView());
         Tab tab2 = new Tab("View Members/Players", membersView());
 
         tabPane.getTabs().add(tab1);
@@ -51,7 +51,7 @@ public class TeamView {
             @Override
             protected void updateItem(Team team, boolean empty) {
                 super.updateItem(team, empty);
-                setText(empty || team == null ? null : team.getTeam_name());
+                setText(empty || team == null ? null : team.getTeamName());
             }
         });
 
@@ -94,7 +94,7 @@ public class TeamView {
             }
         });
 
-        //REMOVE OCH ADD KNAPPAR SAMT COMBOBOX MED SPELARE UTAN LAG
+        //REMOVE OCH ADD KNAPPAR SAMT COMBOBOX MED SPELARE
         //Remove
         Button removeButton = new Button("Remove member from team");
         removeButton.setLayoutX(260);
@@ -151,7 +151,7 @@ public class TeamView {
         return anchorPane;
     }
 
-    private AnchorPane logView(){
+    private AnchorPane teamsView(){
         AnchorPane anchorPane = new AnchorPane();
 
         TableView<Team> table = new TableView<>();
@@ -183,7 +183,7 @@ public class TeamView {
                 if (!row.isEmpty() && event.getClickCount() == 2) {
                     Team selectedTeam = row.getItem();
                     Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION,
-                            "Do you want to delete the team: " + selectedTeam.getTeam_name() + "?",
+                            "Do you want to delete the team: " + selectedTeam.getTeamName() + "?",
                             ButtonType.YES, ButtonType.NO);
                     confirmation.showAndWait();
 

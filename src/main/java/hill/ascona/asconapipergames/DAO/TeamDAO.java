@@ -125,7 +125,7 @@ public class TeamDAO {
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         try{
             // JPQL-fråga för att hämta spelet baserat på titeln
-            TypedQuery<Team> query = entityManager.createQuery("SELECT t FROM Team t WHERE t.team_name = :teamName", Team.class);
+            TypedQuery<Team> query = entityManager.createQuery("SELECT t FROM Team t WHERE t.teamName = :teamName", Team.class);
             query.setParameter("teamName", teamName);
             return query.getSingleResult(); // Return the team if found
         } catch (NoResultException e) {

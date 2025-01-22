@@ -1,8 +1,6 @@
 package hill.ascona.asconapipergames.entities;
 
 import jakarta.persistence.*;
-import hill.ascona.asconapipergames.entities.Person;
-import hill.ascona.asconapipergames.entities.Game;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,10 +11,10 @@ public class Team {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "team_id")
-    private int team_id;
+    private int teamId;
 
     @Column(name = "team_name")
-    private String team_name;
+    private String teamName;
 
     @OneToMany(fetch = FetchType.EAGER)
     private List<Person> members = new ArrayList<>();
@@ -36,8 +34,8 @@ public class Team {
 
     //Konstruktor med allt förutom ID, eftersom att vi inte ska välja ID själva
 
-    public Team(String team_name, List<Person> members, Game game) {
-        this.team_name = team_name;
+    public Team(String teamName, List<Person> members, Game game) {
+        this.teamName = teamName;
         this.members = members;
         this.game = game;
     }
@@ -48,20 +46,20 @@ public class Team {
 
     //Getters och setters
 
-    public int getTeam_id() {
-        return team_id;
+    public int getTeamId() {
+        return teamId;
     }
 
-    public void setTeam_id(int team_id) {
-        this.team_id = team_id;
+    public void setTeamId(int team_id) {
+        this.teamId = team_id;
     }
 
-    public String getTeam_name() {
-        return team_name;
+    public String getTeamName() {
+        return teamName;
     }
 
-    public void setTeam_name(String team_name) {
-        this.team_name = team_name;
+    public void setTeamName(String team_name) {
+        this.teamName = team_name;
     }
 
     public List<Person> getMembers() {
@@ -82,7 +80,7 @@ public class Team {
     
     @Override
     public String toString() {
-        return team_name ;
+        return teamName;
     }
 }
 

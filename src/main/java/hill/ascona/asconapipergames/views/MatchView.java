@@ -144,8 +144,8 @@ public class MatchView {
                 for (Team team : teams) {
                     if (team.getGame().getId()==matchTemp.getGame().getId()) {
                         teamsCount++;
-                        comboBoxPOrT1.getItems().add(team.getTeam_name());
-                        comboBoxPOrT2.getItems().add(team.getTeam_name());
+                        comboBoxPOrT1.getItems().add(team.getTeamName());
+                        comboBoxPOrT2.getItems().add(team.getTeamName());
                     }
                 }
                 if (teamsCount==0){
@@ -287,8 +287,8 @@ public class MatchView {
                 for (Team team : teams) {
                     if (team.getGame().getId()==matchTemp.getGame().getId()) {
                         teamsCount++;
-                        comboBoxPOrT1.getItems().add(team.getTeam_name());
-                        comboBoxPOrT2.getItems().add(team.getTeam_name());
+                        comboBoxPOrT1.getItems().add(team.getTeamName());
+                        comboBoxPOrT2.getItems().add(team.getTeamName());
                     }
                 }
                 if (teamsCount==0){
@@ -460,7 +460,7 @@ public class MatchView {
                 matchTemp.setWinnerName(player1.getNickname());
                 matchTemp.setWinnerIfPlayer(player1);
             }else{
-                matchTemp.setWinnerName(team1.getTeam_name());
+                matchTemp.setWinnerName(team1.getTeamName());
                 matchTemp.setWinnerIfTeam(team1);
             }
         }else {
@@ -468,7 +468,7 @@ public class MatchView {
                 matchTemp.setWinnerName(player2.getNickname());
                 matchTemp.setWinnerIfPlayer(player2);
             }else{
-                matchTemp.setWinnerName(team2.getTeam_name());
+                matchTemp.setWinnerName(team2.getTeamName());
                 matchTemp.setWinnerIfTeam(team2);
             }
         }

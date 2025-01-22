@@ -271,7 +271,7 @@ public  class PersonView {
                     public void updateItem(Team team, boolean empty) {
                         super.updateItem(team, empty);
                         if (!empty)
-                            setText(team.getTeam_name());
+                            setText(team.getTeamName());
                         else
                             setText(null);
                     }

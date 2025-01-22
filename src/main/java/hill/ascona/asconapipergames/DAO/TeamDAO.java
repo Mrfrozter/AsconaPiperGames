@@ -16,6 +16,8 @@ public class TeamDAO {
     private EntityManager em;
     private EntityTransaction transaction; */
 
+    private static final EntityManagerFactory ENTITY_MANAGER_FACTORY = Persistence.createEntityManagerFactory("myconfig");
+
     //Tagen från TournamentDAO
     private EntityManager em;
     private EntityTransaction transaction;
@@ -79,64 +81,44 @@ public class TeamDAO {
             entityManager.close();
         }
     }
-
-    //Nyaste deleteteam
-    public void deleteTeam(Team team) {
-        try (EntityManager entityManager = DAOManager.getEntityManager()) {
-            EntityTransaction transaction = entityManager.getTransaction();
-            try {
-                transaction.begin();
-
-                // Hämta managed version av teamet
-                Team managedTeam = entityManager.find(Team.class, team.getTeamId());
-                if (managedTeam != null) {
-                    // Ta bort person-kopplingar
-                    entityManager.createQuery("UPDATE Person p SET p.team = NULL WHERE p.team = :team")
-                            .setParameter("team", managedTeam)
-                            .executeUpdate();
-
-                    // Ta bort game-koppling
-                    managedTeam.setGame(null);
-                    entityManager.merge(managedTeam);
-
-                    // Ta bort teamet
-                    entityManager.remove(managedTeam);
-
-                }
-                transaction.commit();
-
-            } catch (Exception e) {
-                if (transaction.isActive()) {
-                    transaction.rollback();
-                }
-                throw e;
-            }
-        }
-    }
-
-
-    /*public void remove(Team team) {
+    //Ny deleteteam
+    public void deleteTeam(Team team){
         EntityManager entityManager = DAOManager.getEntityManager();
         EntityTransaction transaction = null;
         try {
+
             transaction = entityManager.getTransaction();
             transaction.begin();
-            if (!entityManager.contains(team)) {
+
+            if(!entityManager.contains(team)){
                 team = entityManager.merge(team);
-                entityManager.remove(team);
-                transaction.commit();
             }
-        } catch (Exception e) {
+
+            //Ta bort kopplingar till spelare
+            entityManager.createQuery("UPDATE Person p SET p.team = NULL WHERE p.team = :team")
+                    .setParameter("team", team)
+                    .executeUpdate();
+
+            // Ta bort koppling till spelet
+            team.setGame(null);
+            entityManager.merge(team);
+
+            // Ta bort teamet
+            entityManager.remove(team);
+
+            transaction.commit();
+        } catch (Exception e){
             System.out.println(e.getMessage());
-            if (entityManager != null && transaction != null && transaction.isActive()) {
+            if(entityManager != null && transaction != null && transaction.isActive()){
                 transaction.rollback();
             }
-        } finally {
+        }
+        finally {
             entityManager.close();
         }
-    } */
+    }
 
-    // Gammal deleteTeam
+    //Gammal deleteteam
     /*public void deleteTeam(Team team){
         EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
         EntityTransaction transaction = null;
@@ -161,7 +143,7 @@ public class TeamDAO {
         finally {
             entityManager.close();
         }
-    } */
+    }*/
 
     public boolean deleteTeamById(int id){
         EntityManager entityManager = DAOManager.getEntityManager();
@@ -192,12 +174,12 @@ public class TeamDAO {
             // JPQL-fråga för att hämta spelet baserat på titeln
             TypedQuery<Team> query = entityManager.createQuery("SELECT t FROM Team t WHERE t.teamName = :teamName", Team.class);
             query.setParameter("teamName", teamName);
-            return query.getSingleResult(); // Return the team if found
+            return query.getSingleResult(); // Returnera teamet om det hittas
         } catch (NoResultException e) {
             // Returnera null om inget spel hittas
             return null;
         } finally {
-            entityManager.close(); // Ensure entity manager is closed
+            entityManager.close();
         }
     }
 

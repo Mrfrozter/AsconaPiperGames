@@ -213,7 +213,6 @@ public class TeamView {
         addButton.setLayoutX(460);
         addButton.setLayoutY(350);
 
-
         ComboBox<Person> playersComboBox = new ComboBox<>(players);
         playersComboBox.setPromptText("Select a player");
         playersComboBox.setLayoutX(460);
@@ -271,8 +270,6 @@ public class TeamView {
 
         table.setItems(teams);
 
-        //OG FRÅN LAURI
-
         // Click for deletion - Modifierad från Lauri
         table.setRowFactory(tv -> {
             TableRow<Team> row = new TableRow<>();
@@ -292,68 +289,6 @@ public class TeamView {
             });
             return row;
         });
-
-
-        // Click for deletion - Modifierad från Lauri (GAMLA)
-        //Fanns bug att det inte togs bort från listan, därmed modifierad loadTeams och runLater
-        /*table.setRowFactory(tv -> {
-            TableRow<Team> row = new TableRow<>();
-            row.setOnMouseClicked(event -> {
-                if (!row.isEmpty() && event.getClickCount() == 2) {
-                    Team selectedTeam = row.getItem();
-                    Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION,
-                            "Do you want to delete the team: " + selectedTeam.getTeamName() + "?",
-                            ButtonType.YES, ButtonType.NO);
-                    confirmation.showAndWait();
-
-                    if (confirmation.getResult() == ButtonType.YES) {
-                        try {
-                            teamDAO.deleteTeam(selectedTeam);
-                            Platform.runLater(() -> loadTeams()); // Use Platform.runLater
-                        } catch (Exception e) {
-                            Alert error = new Alert(Alert.AlertType.ERROR);
-                            error.setContentText("Could not delete team: " + e.getMessage());
-                            error.show();
-                        }
-                    }
-                }
-            });
-            return row;
-        }); */
-
-        //NYA MODIFERAD FRÅN LAURI
-        /*table.setRowFactory(tv -> {
-            TableRow<Team> row = new TableRow<>();
-            row.setOnMouseClicked(event -> {
-                if (!row.isEmpty() && event.getClickCount() == 2) {
-                    Team selectedTeam = row.getItem();
-                    Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION,
-                            "Do you want to delete the team: " + selectedTeam.getTeamName() + "?",
-                            ButtonType.YES, ButtonType.NO);
-                    confirmation.showAndWait();
-
-                    if (confirmation.getResult() == ButtonType.YES) {
-                        // Spara gamla listan
-                        ObservableList<Team> oldTeams = FXCollections.observableArrayList(teams);
-
-                        try {
-                            teamDAO.deleteTeam(selectedTeam);
-                            // Ladda om teams från databasen för att bekräfta att raderingen lyckades
-                            loadTeams();
-                        } catch (Exception e) {
-                            // Om något går fel, återställ listan och visa felmeddelande
-                            teams.clear();
-                            teams.addAll(oldTeams);
-                            Alert error = new Alert(Alert.AlertType.ERROR);
-                            error.setContentText("Could not delete team. Make sure all player connections are removed first.");
-                            error.show();
-                        }
-                    }
-                }
-            });
-            return row;
-        }); */
-
 
         TextField teamNameField = new TextField();
         teamNameField.setPromptText("Enter team name");

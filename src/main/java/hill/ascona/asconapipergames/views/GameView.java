@@ -61,25 +61,30 @@ public class GameView {
 
         tableView.setItems(games);
 
-        // Click for deletion
-        tableView.setRowFactory(tv -> {
-            TableRow<Game> row = new TableRow<>();
-            row.setOnMouseClicked(event -> {
-                if (!row.isEmpty() && event.getClickCount() == 2) {
-                    Game selectedGame = row.getItem();
-                    Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION,
-                            "Do you want to delete the game: " + selectedGame.getTitle() + "?",
-                            ButtonType.YES, ButtonType.NO);
-                    confirmation.showAndWait();
+        // Anropa metoden för att sätta upp redigeringsfunktionen
+        setUpEditButton(tableView);
 
-                    if (confirmation.getResult() == ButtonType.YES) {
-                        gDao.deleteGame(selectedGame); // Delete from database
-                        games.remove(selectedGame); // Remove from list
-                    }
+        // Högerklick för radering
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem deleteItem = new MenuItem("Delete Game");
+        deleteItem.setOnAction(e -> {
+            Game selectedGame = tableView.getSelectionModel().getSelectedItem();
+            if (selectedGame != null) {
+                Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION,
+                        "Do you want to delete the game: " + selectedGame.getTitle() + "?",
+                        ButtonType.YES, ButtonType.NO);
+                confirmation.showAndWait();
+
+                if (confirmation.getResult() == ButtonType.YES) {
+                    gDao.deleteGame(selectedGame); // Ta bort spelet från databasen
+                    games.remove(selectedGame); // Ta bort spelet från listan
                 }
-            });
-            return row;
+            }
         });
+        contextMenu.getItems().add(deleteItem);
+
+        // Högerklick på en rad
+        tableView.setContextMenu(contextMenu);
 
         Button refreshButton = new Button("Refresh");
         refreshButton.setLayoutX(15);
@@ -157,6 +162,66 @@ public class GameView {
         anchorPane.getChildren().add(addButton);
         return anchorPane;
     }
+
+    // Metod för att sätta upp redigeringsknappen
+    private void setUpEditButton(TableView<Game> tableView) {
+        // När användaren dubbelklickar på en rad i tableview, redigerar vi spelet
+        tableView.setRowFactory(tv -> {
+            TableRow<Game> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (!row.isEmpty() && event.getClickCount() == 2 && event.getButton() == javafx.scene.input.MouseButton.PRIMARY) {  // Kontrollera vänsterklick (PRIMARY)
+                    Game selectedGame = row.getItem();
+                    // Här skapar vi textfält som användaren kan redigera
+                    showEditDialog(selectedGame);  // Anropa metoden för att visa redigeringsdialog
+                }
+            });
+            return row;
+        });
+    }
+
+    // Metod för att visa en dialogruta för att redigera spelet
+    private void showEditDialog(Game game) {
+        Dialog<Game> dialog = new Dialog<>();
+        dialog.setTitle("Edit Game");
+        dialog.setHeaderText("Edit the game details");
+
+        // Skapa textfält för titel, genre och antal lag
+        TextField titleField = new TextField(game.getTitle());
+        TextField genreField = new TextField(game.getGenre());
+        TextField teamsField = new TextField(String.valueOf(game.getNumberOfTeams()));
+
+        // Skapa knappar för dialogen
+        ButtonType saveButton = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(saveButton, ButtonType.CANCEL);
+
+        // Lägga till fälten till dialogens layout
+        VBox vbox = new VBox();
+        vbox.getChildren().addAll(
+                new Label("Title:"), titleField,
+                new Label("Genre:"), genreField,
+                new Label("Number of Teams:"), teamsField
+        );
+        dialog.getDialogPane().setContent(vbox);
+
+        // När användaren trycker på "Save" knappen
+        dialog.setResultConverter(button -> {
+            if (button == saveButton) {
+                // Uppdatera spelet
+                game.setTitle(titleField.getText());
+                game.setGenre(genreField.getText());
+                try {
+                    game.setNumberOfTeams(Integer.parseInt(teamsField.getText()));
+                } catch (NumberFormatException e) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setContentText("Please enter a valid number of teams.");
+                    alert.show();
+                }
+                gDao.updateGame(game);  // Uppdatera spelet i databasen
+                games.set(games.indexOf(game), game);  // Uppdatera spelet i listan
+            }
+            return null;
+        });
+
+        dialog.showAndWait();  // Visa dialogen
+    }
 }
-
-

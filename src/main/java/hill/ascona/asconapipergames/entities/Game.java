@@ -13,31 +13,52 @@ public class Game {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "game_title", length = 100, nullable = false)
+    @Column(name = "game_title", length = 100)
     private String title;
 
-    @Column(name = "game_genre", length = 50, nullable = false)
+    @Column(name = "game_genre", length = 50)
     private String genre;
 
-    @Column(name = "game_numberOfTeams", nullable = false)
-    private int numberOfTeams;
+    @Column(name = "game_numberOfTeams")
+    private Integer numberOfTeams;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(
+            fetch = FetchType.EAGER,
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
+            orphanRemoval = true
+    )
     @JoinColumn(name = "game_id")
     private List<Team> teams = new ArrayList<>();
 
-    // Constructors
-    public Game() {
-        // Default constructor required by JPA
-    }
+    @OneToMany(
+            mappedBy = "game",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Match> matches = new ArrayList<>();
 
-    public Game(String title, String genre, int numberOfTeams) {
+    @OneToMany(
+            mappedBy = "game",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Tournament> tournaments = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "game",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Person> persons = new ArrayList<>();
+
+    public Game() {}
+
+    public Game(String title, String genre, Integer numberOfTeams) {
         this.title = title;
         this.genre = genre;
-        setNumberOfTeams(numberOfTeams); // Using setter to validate
+        this.numberOfTeams = numberOfTeams;
     }
 
-    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -51,9 +72,6 @@ public class Game {
     }
 
     public void setTitle(String title) {
-        if (title == null || title.trim().isEmpty()) {
-            throw new IllegalArgumentException("Title cannot be null or empty.");
-        }
         this.title = title;
     }
 
@@ -62,20 +80,14 @@ public class Game {
     }
 
     public void setGenre(String genre) {
-        if (genre == null || genre.trim().isEmpty()) {
-            throw new IllegalArgumentException("Genre cannot be null or empty.");
-        }
         this.genre = genre;
     }
 
-    public int getNumberOfTeams() {
+    public Integer getNumberOfTeams() {
         return numberOfTeams;
     }
 
-    public void setNumberOfTeams(int numberOfTeams) {
-        if (numberOfTeams <= 0) {
-            throw new IllegalArgumentException("Number of teams must be greater than 0.");
-        }
+    public void setNumberOfTeams(Integer numberOfTeams) {
         this.numberOfTeams = numberOfTeams;
     }
 
@@ -89,35 +101,110 @@ public class Game {
 
     public void addTeam(Team team) {
         this.teams.add(team);
+        team.setGame(this);
     }
 
     public void removeTeam(Team team) {
+        team.setGame(null);
         this.teams.remove(team);
     }
 
-    // Override equals and hashCode for proper entity comparison
+    public void removeAllTeams() {
+        for (Team team : new ArrayList<>(teams)) {
+            team.setGame(null);
+            teams.remove(team);
+        }
+    }
 
+    public List<Match> getMatches() {
+        return matches;
+    }
+
+    public void setMatches(List<Match> matches) {
+        this.matches = matches;
+    }
+
+    public void addMatch(Match match) {
+        this.matches.add(match);
+        match.setGame(this);
+    }
+
+    public void removeMatch(Match match) {
+        match.setGame(null);
+        this.matches.remove(match);
+    }
+
+    public void removeAllMatches() {
+        for (Match match : new ArrayList<>(matches)) {
+            match.setGame(null);
+            matches.remove(match);
+        }
+    }
+
+    public List<Tournament> getTournaments() {
+        return tournaments;
+    }
+
+    public void setTournaments(List<Tournament> tournaments) {
+        this.tournaments = tournaments;
+    }
+
+    public void addTournament(Tournament tournament) {
+        this.tournaments.add(tournament);
+        tournament.setGame(this);
+    }
+
+    public void removeTournament(Tournament tournament) {
+        tournament.setGame(null);
+        this.tournaments.remove(tournament);
+    }
+
+    public void removeAllTournaments() {
+        for (Tournament tournament : new ArrayList<>(tournaments)) {
+            tournament.setGame(null);
+            tournaments.remove(tournament);
+        }
+    }
+
+    public List<Person> getPersons() {
+        return persons;
+    }
+
+    public void setPersons(List<Person> persons) {
+        this.persons = persons;
+    }
+
+    public void addPerson(Person person) {
+        this.persons.add(person);
+        person.setGame(this);
+    }
+
+    public void removePerson(Person person) {
+        person.setGame(null);
+        this.persons.remove(person);
+    }
+
+    public void removeAllPersons() {
+        for (Person person : new ArrayList<>(persons)) {
+            person.setGame(null);
+            persons.remove(person);
+        }
+    }
+
+    public void prepareForDeletion() {
+        removeAllMatches();
+        removeAllTournaments();
+        removeAllTeams();
+        removeAllPersons();
+    }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, genre, numberOfTeams, teams);
+        return Objects.hash(id, title, genre, numberOfTeams, teams, matches, tournaments, persons);
     }
-
-    // toString for easy debugging
-//    @Override
-//    public String toString() {
-//        return
-//                "Game{" +
-//                "id=" + id +
-//                ", title='" + title + '\'' +
-//                ", genre='" + genre + '\'' +
-//                ", numberOfTeams=" + numberOfTeams +
-//                ", teams=" + teams +
-//                '}';
-//    }
 
     @Override
     public String toString() {
-        return title ;
+        return title;
     }
 }

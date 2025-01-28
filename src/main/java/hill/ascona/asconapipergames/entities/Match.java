@@ -5,14 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name ="matches")
+@Table(name = "matches")
 public class Match {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "match_id")
     private int id;
 
-    @Column(name = "match_date", length =20, nullable = true)
+    @Column(name = "match_date", length = 20, nullable = true)
     private String date;
 
     @Column(name = "match_played", columnDefinition = "boolean default true", nullable = true)
@@ -21,8 +21,8 @@ public class Match {
     @Column(name = "match_singel_team", nullable = true)
     private String playerTeam;
 
-    @ManyToOne(fetch = FetchType.EAGER    )
-    @JoinColumn(name = "game_id")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "game_id", nullable = true)
     private Game game;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -43,13 +43,11 @@ public class Match {
     public Match() {
     }
 
-
     public Match(String date, boolean allreadyPlayed, String playerTeam, Game game, String nameOne, String nameTwo) {
         this.date = date;
         this.allreadyPlayed = allreadyPlayed;
         this.playerTeam = playerTeam;
         this.game = game;
-       // this.winnerId = winnerId; int winnerId,
         this.nameOne = nameOne;
         this.nameTwo = nameTwo;
     }
@@ -132,5 +130,9 @@ public class Match {
 
     public void setNameTwo(String nameTwo) {
         this.nameTwo = nameTwo;
+    }
+
+    public void clearGameReference() {
+        this.game = null; // Bryter kopplingen till spelet
     }
 }

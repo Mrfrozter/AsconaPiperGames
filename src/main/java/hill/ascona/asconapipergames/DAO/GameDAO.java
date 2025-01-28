@@ -1,6 +1,10 @@
 package hill.ascona.asconapipergames.DAO;
 
 import hill.ascona.asconapipergames.entities.Game;
+import hill.ascona.asconapipergames.entities.Match;
+import hill.ascona.asconapipergames.entities.Person;
+import hill.ascona.asconapipergames.entities.Team;
+import hill.ascona.asconapipergames.entities.Tournament;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -94,26 +98,7 @@ public class GameDAO {
 
     // Ta bort (Delete) ett spel
     public boolean deleteGame(Game gameToDelete) {
-        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
-        EntityTransaction transaction = null;
-        try {
-            transaction = entityManager.getTransaction();
-            transaction.begin();
-            if (!entityManager.contains(gameToDelete)) {
-                gameToDelete = entityManager.merge(gameToDelete);
-            }
-            entityManager.remove(gameToDelete);
-            transaction.commit();
-            return true;
-        } catch (Exception e) {
-            System.err.println("Error deleting game: " + e.getMessage());
-            if (transaction != null && transaction.isActive()) {
-                transaction.rollback();
-            }
-            return false;
-        } finally {
-            entityManager.close();
-        }
+        return deleteGameById(gameToDelete.getId());
     }
 
     // Ta bort (Delete) ett spel baserat på ID
@@ -123,11 +108,17 @@ public class GameDAO {
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
+
+            // Hämta spelet som ska raderas
             Game gameToDelete = entityManager.find(Game.class, id);
             if (gameToDelete == null) {
                 System.err.println("Game with ID " + id + " not found.");
                 return false;
             }
+
+            // Radera kopplingar som andra har till spelet (Team, Person, Match, Tournament)
+            detachRelations(gameToDelete, entityManager);
+
             entityManager.remove(gameToDelete);
             transaction.commit();
             return true;
@@ -142,23 +133,58 @@ public class GameDAO {
         }
     }
 
-    /////////////
-    public Game getGameIdByTitle(String title) {
-        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
-        Game gameInfoToReturn = null;
-        TypedQuery<Game> result = entityManager.createQuery("SELECT g FROM Game g WHERE g.title = :variable", Game.class);
-        result.setParameter("variable", title);
-        gameInfoToReturn=result.getSingleResult();
-        return gameInfoToReturn;
-    }
+    // Hjälpmetod för att ta bort kopplingar innan radering
+    private void detachRelations(Game gameToDelete, EntityManager entityManager) {
+        // Ta bort referenser i Java-objekt
+        for (Team t : gameToDelete.getTeams()) {
+            t.setGame(null);
+        }
 
-    public Game getGameIdByTeamId(int teamId){
-        EntityManager entityManager = ENTITY_MANAGER_FACTORY.createEntityManager();
-        Game gameInfoToReturn = null;
-        TypedQuery<Game> result = entityManager.createQuery("SELECT g FROM Game g WHERE g.teams = :variable", Game.class);
-        result.setParameter("variable", teamId);
-        gameInfoToReturn=result.getSingleResult();
-        return gameInfoToReturn;
+        for (Person p : gameToDelete.getPersons()) {
+            p.setGame(null);
+        }
 
+        for (Match m : gameToDelete.getMatches()) {
+            m.setGame(null);
+        }
+
+        for (Tournament t : gameToDelete.getTournaments()) {
+            t.setGame(null);
+        }
+
+        // Ta bort matcher kopplade till spelet
+        Query deleteMatchesQuery = entityManager.createQuery(
+                "DELETE FROM Match m WHERE m.game.id = :gameId"
+        );
+        deleteMatchesQuery.setParameter("gameId", gameToDelete.getId());
+        deleteMatchesQuery.executeUpdate();
+
+        // Ta bort turneringar kopplade till spelet
+        Query deleteTournamentsQuery = entityManager.createQuery(
+                "DELETE FROM Tournament t WHERE t.game.id = :gameId"
+        );
+        deleteTournamentsQuery.setParameter("gameId", gameToDelete.getId());
+        deleteTournamentsQuery.executeUpdate();
+
+        // Sätt personernas team-referens till NULL
+        Query updatePersonTeamQuery = entityManager.createQuery(
+                "UPDATE Person p SET p.team = NULL WHERE p.team IN (SELECT t FROM Team t WHERE t.game.id = :gameId)"
+        );
+        updatePersonTeamQuery.setParameter("gameId", gameToDelete.getId());
+        updatePersonTeamQuery.executeUpdate();
+
+        // Ta bort personer kopplade till spelet
+        Query deletePersonsQuery = entityManager.createQuery(
+                "DELETE FROM Person p WHERE p.game.id = :gameId"
+        );
+        deletePersonsQuery.setParameter("gameId", gameToDelete.getId());
+        deletePersonsQuery.executeUpdate();
+
+        // Ta bort team kopplade till spelet
+        Query deleteTeamsQuery = entityManager.createQuery(
+                "DELETE FROM Team t WHERE t.game.id = :gameId"
+        );
+        deleteTeamsQuery.setParameter("gameId", gameToDelete.getId());
+        deleteTeamsQuery.executeUpdate();
     }
 }

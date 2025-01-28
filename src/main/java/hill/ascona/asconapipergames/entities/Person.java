@@ -10,44 +10,42 @@ public class Person {
     @Column(name = "p_id")
     private int id;
 
-    @Column(name = "p_name", length =25, nullable = false)
+    @Column(name = "p_name", length = 25, nullable = false)
     private String name;
 
-    @Column(name = "p_lastname", length =25, nullable = false)
+    @Column(name = "p_lastname", length = 25, nullable = false)
     private String lastname;
 
-    @Column(name = "p_nickname", length =25, nullable = false)
+    @Column(name = "p_nickname", length = 25, nullable = false)
     private String nickname;
 
-    @Column(name = "p_address", length =30)
+    @Column(name = "p_address", length = 30)
     private String address;
 
     @Column(name = "p_postNumber", length = 10)
     private String postNumber;
 
-    @Column(name = "p_city", length =15, nullable = false)
+    @Column(name = "p_city", length = 15, nullable = false)
     private String city;
 
-    @Column(name = "p_country", length =15, nullable = false)
+    @Column(name = "p_country", length = 15, nullable = false)
     private String country;
 
-    @Column(name = "p_email", length =50, nullable = false)
+    @Column(name = "p_email", length = 50, nullable = false)
     private String email;
 
-    @Column(name = "p_role", length =15, nullable = false)
+    @Column(name = "p_role", length = 15, nullable = false)
     private String role;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "team_id")
     private Team team;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "gameId")
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "gameId", nullable = true)
     private Game game;
 
-
-    public Person() {
-    }
+    public Person() {}
 
     public Person(String name, String lastname, String nickname, String address, String postNumber, String city, String country, String email, String role, Team team, Game game) {
         this.name = name;
@@ -161,12 +159,13 @@ public class Person {
 
     @Override
     public String toString() {
-        return  "id:" + id +
+        return "id:" + id +
                 " '" + name +
                 " '" + lastname +
                 ", nickname:" + nickname +
                 ", role:" + role +
-                ", team:" + team+
+                ", team:" + team +
                 ", game:" + game;
     }
 }
+

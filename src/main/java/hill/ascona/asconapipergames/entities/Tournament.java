@@ -1,7 +1,6 @@
 package hill.ascona.asconapipergames.entities;
 
 import jakarta.persistence.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,14 +19,17 @@ public class Tournament {
     private String date;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "game_id")
+    @JoinColumn(name = "game_id", nullable = true)
     private Game game;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(
+            fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private List<Match> matches = new ArrayList<>();
 
     public Tournament() {
-
     }
 
     public Tournament(Game game, String date) {
@@ -67,7 +69,60 @@ public class Tournament {
         this.title = title;
     }
 
-    public List<Match> getMatches(){
+    public List<Match> getMatches() {
         return matches;
+    }
+
+    public void setMatches(List<Match> matches) {
+        this.matches = matches;
+    }
+
+    public void addMatch(Match match) {
+        this.matches.add(match);
+        match.setGame(this.game); // Sätter spelets referens i matchen
+    }
+
+    public void removeMatch(Match match) {
+        match.setGame(null); // Tar bort referensen till spelet
+        this.matches.remove(match);
+    }
+
+    public void removeAllMatches() {
+        for (Match match : new ArrayList<>(matches)) {
+            match.setGame(null); // Bryt kopplingen till spelet
+            matches.remove(match);
+        }
+    }
+
+    public void clearGameReference() {
+        this.game = null; // Bryter kopplingen till spelet
+    }
+
+    public void prepareForDeletion() {
+        removeAllMatches();
+        clearGameReference();
+    }
+
+    @Override
+    public String toString() {
+        return "Tournament{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", date='" + date + '\'' +
+                ", game=" + (game != null ? game.getTitle() : "null") +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Tournament that = (Tournament) o;
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(id);
     }
 }

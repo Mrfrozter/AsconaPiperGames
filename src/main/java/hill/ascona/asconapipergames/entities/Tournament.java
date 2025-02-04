@@ -1,7 +1,6 @@
 package hill.ascona.asconapipergames.entities;
 
 import hill.ascona.asconapipergames.DAO.MatchDAO;
-import hill.ascona.asconapipergames.DAO.TeamDAO;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -25,9 +24,11 @@ public class Tournament {
     @JoinColumn(name = "game_id")
     private Game game;
 
-//    @JoinColumn(name = "match_id")
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "tournament", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Match> matches = new ArrayList<>();
+
+    @Column(name = "tmnt_exp", nullable = false, columnDefinition = "boolean default false")
+    private boolean expanded = false;
 
     public Tournament() {
     }
@@ -36,23 +37,6 @@ public class Tournament {
         this.game = game;
         this.date = date;
         this.title = title;
-        MatchDAO matchDAO = new MatchDAO();
-        Match m1 = new Match();
-//        Match m2 = new Match();
-        List<Team> lt1 = new ArrayList<>();
-//        m1 = matchDAO.getMatchById(1);
-        match.getTeams().add(new TeamDAO().getTeamByName(match.getNameOne()));
-        match.getTeams().add(new TeamDAO().getTeamByName(match.getNameTwo()));
-//        match.setTeams(lt1);
-//        match.getTeams().add(lt1);
-        matches.add(match);
-        System.out.println("teams: "+match.getTeams().size());
-//        m2 = matchDAO.getMatchById(2);
-
-//        matches.add(new MatchDAO().getAllMatches().get(0));
-//        matches.add(new MatchDAO().getAllMatches().get(1));
-//        System.out.println(matches.get(0).getPlayers().size());
-//        System.out.println(matches.get(1).getPlayers().size());
     }
 
     public int getId() {
@@ -91,5 +75,13 @@ public class Tournament {
 
     public List<Match> getMatches(){
         return matches;
+    }
+
+    public boolean isExpanded() {
+        return expanded;
+    }
+
+    public void setExpanded(boolean expanded) {
+        this.expanded = expanded;
     }
 }

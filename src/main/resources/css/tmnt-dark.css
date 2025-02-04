@@ -1,9 +1,22 @@
 #basePane{
 	-fx-background-color:#383A40;
 }
+.title{
+  -fx-text-fill:white;
+}
 .txt{
-	-fx-font-size:12;
 	-fx-text-fill:white;
+}
+.text-field{
+  -fx-text-fill:white;
+  -fx-border-color:white;
+  -fx-background-color:#202020;
+}
+.box{
+	-fx-border-color:white;
+}
+.line{
+  -fx-border-color:white;
 }
 #listBox{
 	-fx-background-color:#272727;

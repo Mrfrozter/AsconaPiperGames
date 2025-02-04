@@ -52,6 +52,10 @@ public class Match {
     @Column(name = "final_score", length = 50, nullable = true)
     private String finalScore;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "tmnt_id")
+    private Tournament tournament;
+
     public Match() {
     }
 
@@ -69,6 +73,14 @@ public class Match {
         this.playerTeam = playerTeam;
         this.allreadyPlayed = allreadyPlayed;
         this.date = date;
+    }
+
+    public Tournament getTournament() {
+        return tournament;
+    }
+
+    public void setTournament(Tournament tournament) {
+        this.tournament = tournament;
     }
 
     public int getId() {

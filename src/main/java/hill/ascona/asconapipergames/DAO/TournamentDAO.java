@@ -1,13 +1,15 @@
 package hill.ascona.asconapipergames.DAO;
 
+import hill.ascona.asconapipergames.entities.Game;
 import hill.ascona.asconapipergames.entities.Tournament;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class TournamentDAO {
-    private static EntityManagerFactory emf = Persistence.createEntityManagerFactory("myconfig");
+    private static final EntityManagerFactory EMF = Persistence.createEntityManagerFactory("myconfig");
     private EntityManager em;
     private EntityTransaction transaction;
 
@@ -21,6 +23,7 @@ public class TournamentDAO {
             transaction.commit();
             return true;
         } catch (Exception e) {
+            System.out.println("WTF\n" + e.getMessage());
             rollback();
             return false;
         } finally {
@@ -36,9 +39,34 @@ public class TournamentDAO {
         return tmnt;
     }
 
+    public List<Tournament> filterByString(String filter, String search) {
+        em = EMF.createEntityManager();
+        try {
+            TypedQuery<Tournament> tmnts = em.createQuery(String.format("SELECT t FROM Tournament t WHERE t.%s LIKE :search", filter), Tournament.class);
+            tmnts.setParameter("search", "%"+search+"%");
+            return tmnts.getResultList();
+        } catch (NoResultException e) {
+            return null;
+        } finally {
+            em.close();
+        }
+    }
+
+    public List<Tournament> filterByGame(Game game) {
+        em = EMF.createEntityManager();
+        try {
+            TypedQuery<Tournament> tmnts = em.createQuery("SELECT t FROM Tournament t WHERE t.game = :search", Tournament.class);
+            tmnts.setParameter("search", game);
+            return tmnts.getResultList();
+        } catch (NoResultException e) {
+            return null;
+        } finally {
+            em.close();
+        }
+    }
+
     public List<Tournament> getAllTournaments() {
-//        initializeEM();
-        em = emf.createEntityManager();
+        em = EMF.createEntityManager();
         List<Tournament> tmts = new ArrayList<>();
         TypedQuery<Tournament> query = em.createQuery("FROM Tournament", Tournament.class);
         tmts.addAll(query.getResultList());
@@ -86,7 +114,7 @@ public class TournamentDAO {
     }
 
     private void initializeEM() {
-        em = emf.createEntityManager();
+        em = EMF.createEntityManager();
         transaction = null;
     }
 

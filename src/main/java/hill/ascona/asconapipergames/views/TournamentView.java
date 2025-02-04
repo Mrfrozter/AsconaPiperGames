@@ -1,8 +1,6 @@
 package hill.ascona.asconapipergames.views;
 
 import hill.ascona.asconapipergames.DAO.GameDAO;
-import hill.ascona.asconapipergames.DAO.MatchDAO;
-import hill.ascona.asconapipergames.DAO.TeamDAO;
 import hill.ascona.asconapipergames.DAO.TournamentDAO;
 import hill.ascona.asconapipergames.entities.Game;
 import hill.ascona.asconapipergames.entities.Match;
@@ -14,30 +12,27 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class TournamentView {
     private ObservableList<Tournament> tournaments = FXCollections.observableList(new ArrayList<>());
     TournamentDAO tDao = new TournamentDAO();
     GameDAO gDao = new GameDAO();
-    MatchDAO mDao = new MatchDAO();
     private List<Game> games = gDao.getAllGames();
     VBox baseContent;
-    boolean darkMode = false;
+    boolean darkMode = true;
     int eRow = -1;
+    int expandedId = -1;
 
     public VBox start() {
         baseContent = new VBox();
         baseContent.setSpacing(5);
         baseContent.getStylesheets().add("tmnt.css");
-        if (!darkMode)
-            baseContent.getStylesheets().add("tmnt-light.css");
+        baseContent.getStylesheets().add(darkMode ? "tmnt-dark.css" : "tmnt-light.css");
         Label btn = new Label("New tournament");
         btn.getStyleClass().add("btn");
         btn.setId("addBtn");
@@ -45,19 +40,58 @@ public class TournamentView {
         HBox hBox = new HBox();
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
-        hBox.getChildren().addAll(btn, spacer, switchBtn());
+
+
+        hBox.getChildren().addAll(btn, searchBox(), spacer, switchBtn());
+        hBox.setSpacing(5);
         baseContent.getChildren().addAll(hBox, tabView());
 
         btn.setOnMouseClicked((e) -> {
-            if (tDao.saveTM(new Tournament()))
-                refresh();
+            Tournament tmnt = new Tournament();
+            tDao.saveTM(tmnt);
+            eRow = tournaments.size();
+            refresh(tDao.getAllTournaments());
         });
         baseContent.setId("basePane");
         return baseContent;
     }
 
+    private HBox searchBox() {
+        HBox box = new HBox();
+        box.setSpacing(2);
+        TextField searchField = new TextField();
+        ChoiceBox gBox = gameBox();
+        gBox.getItems().add(0, "All games");
+        gBox.setValue(gBox.getItems().get(0));
+        AtomicInteger dblCheck = new AtomicInteger();
+        gBox.setOnHidden(e -> {
+            if (dblCheck.getAndIncrement() % 2 == 0) {
+                if (!gBox.getValue().equals("All games")) {
+                    refresh(tDao.filterByGame(gDao.getGameIdByTitle(gBox.getValue().toString())));
+                } else
+                    refresh(tDao.getAllTournaments());
+            }
+        });
+        ChoiceBox searchBy = new ChoiceBox();
+        searchBy.getItems().addAll("Title", "Date");
+        searchBy.setValue(searchBy.getItems().get(0));
+        searchField.setPromptText("[Enter to search]");
+        searchField.setMinHeight(30);
+        searchField.setOnKeyReleased(e -> {
+            refresh(tDao.filterByString(searchBy.getValue().toString().toLowerCase(), searchField.getText()));
+            if (searchField.getText().isEmpty())
+                refresh(tDao.getAllTournaments());
+        });
+        box.getChildren().addAll(gBox, searchBy, searchField);
+        return box;
+    }
+
     private TableView tabView() {
         TableView table = new TableView();
+
+        //  Ugly hack
+        table.setPrefHeight(1200);
+        baseContent.setPrefHeight(600);
 
         TableColumn<Tournament, Integer> idCol = new TableColumn<>("id");
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -66,12 +100,6 @@ public class TournamentView {
         table.setItems(tournaments);
         table.setRowFactory(r -> {
             TableRow<Tournament> row = new TableRow<>();
-            row.setOnMouseClicked((m) -> {
-                if (!row.isEmpty()) {
-                    eRow = -1;
-                    refresh();
-                }
-            });
             row.setOnMouseEntered((m) -> {
                 if (!row.isEmpty()) {
                     row.setContextMenu(contextMenu(row));
@@ -99,7 +127,7 @@ public class TournamentView {
         }
         column.setPrefWidth(length * 10);
         column.setCellFactory(c -> new TableCell<Tournament, String>() {
-            @Override
+            //            @Override
             public void updateItem(String title, boolean empty) {
                 super.updateItem(title, empty);
                 if (!empty) {
@@ -115,7 +143,7 @@ public class TournamentView {
                             btn.setOnAction(e -> {
                                 tmnt.setTitle(field.getText());
                                 tDao.updateTmnt(tmnt);
-                                refresh();
+                                refresh(tDao.getAllTournaments());
 
                                 eRow = -1;
                             });
@@ -153,12 +181,10 @@ public class TournamentView {
                     if (idx == eRow || tmnt.getDate() == null) {
                         HBox box = new HBox();
                         DatePicker datePicker = new DatePicker();
-                        ChoiceBox hourPicker = numBox(24);
-                        ChoiceBox minutePicker = numBox(60);
                         Button btn = new Button("+");
-                        box.getChildren().addAll(datePicker, hourPicker, minutePicker, btn);
+                        box.getChildren().addAll(datePicker, btn);
                         btn.setOnAction(e -> {
-                            tmnt.setDate(String.format("%s %s:%s", datePicker.getValue(), hourPicker.getValue(), minutePicker.getValue()));
+                            tmnt.setDate(datePicker.getValue().toString());
                         });
                         setGraphic(box);
                     } else
@@ -198,7 +224,7 @@ public class TournamentView {
                         btn.setOnAction(e -> {
                             tmnt.setGame(gDao.getGameIdByTitle(gBox.getValue().toString()));
                             tDao.updateTmnt(tmnt);
-                            refresh();
+                            refresh(tDao.getAllTournaments());
 
                             eRow = -1;
                         });
@@ -217,12 +243,13 @@ public class TournamentView {
     private TableColumn<Tournament, List<Match>> matchCol() {
         TableColumn<Tournament, List<Match>> column = new TableColumn<>("matches");
         column.setCellValueFactory(new PropertyValueFactory<>("matches"));
+        column.setPrefWidth(482);
         column.setCellFactory(c -> new TableCell<Tournament, List<Match>>() {
             @Override
             public void updateItem(List<Match> matches, boolean empty) {
                 super.updateItem(matches, empty);
-                if (!empty) {
-                    setGraphic(expander());
+                if (!empty && getTableRow() != null) {
+                    setGraphic(expander(getTableRow().getItem(), getTableRow().getIndex()));
                 } else
                     setGraphic(null);
             }
@@ -230,17 +257,28 @@ public class TournamentView {
         return column;
     }
 
-    private VBox expander() {
+    private VBox expander(Tournament tmnt, int row) {
         VBox box = new VBox();
         Button btn = new Button("V");
+        BracketView bracketView = new BracketView(tmnt, tDao);
         final boolean[] isExpanded = {false};
         box.getChildren().addAll(btn);
-        box.setPrefHeight(20);
+        box.setPrefSize(360, 20);
+        if (row == expandedId) {
+            box.getChildren().add(bracketView.show(tournaments));
+            box.setPrefSize(360, 170);
+            isExpanded[0] = true;
+        }
         btn.setOnAction(e -> {
-            if (!isExpanded[0])
-                box.setPrefHeight(200);
-            else
+            if (!isExpanded[0]) {
+                expandedId = row;
+                box.getChildren().add(bracketView.show(tournaments));
+                box.setPrefSize(360, 170);
+            } else {
+                expandedId = -1;
+                box.getChildren().remove(1);
                 box.setPrefHeight(20);
+            }
             isExpanded[0] = !isExpanded[0];
         });
         return box;
@@ -252,18 +290,15 @@ public class TournamentView {
         MenuItem update = new MenuItem("Update");
         update.setOnAction((e) -> {
             eRow = rowIdx;
-            refresh();
+            refresh(tDao.getAllTournaments());
 
         });
 
         MenuItem delete = new MenuItem("Delete");
         Tournament tmnt = row.getItem();
         delete.setOnAction((e) -> {
-            if (tDao.deleteTmnt(tmnt))
-                System.out.println("Deleted " + (tmnt.getTitle() != null ? tmnt.getTitle() : tmnt.getDate()));
-            else
-                System.out.println("Failed to delete " + tmnt);
-            refresh();
+            tDao.deleteTmnt(tmnt);
+            refresh(tDao.getAllTournaments());
 
         });
 
@@ -281,24 +316,10 @@ public class TournamentView {
         box.setValue(games.get(0).getTitle());
         return box;
     }
-    
-    private ChoiceBox matchBox(){
-        ChoiceBox box = new ChoiceBox();
-        
-        return box;
-    }
 
-    private ChoiceBox numBox(int num) {
-        ChoiceBox box = new ChoiceBox();
-        for (int i = 0; i <= num; i++) {
-            box.getItems().add(i + "");
-        }
-        return box;
-    }
-
-    private void refresh() {
+    private void refresh(List<Tournament> tmnts) {
         tournaments.clear();
-        tournaments.addAll(tDao.getAllTournaments());
+        tournaments.addAll(tmnts);
     }
 
     private HBox switchBtn() {
@@ -307,22 +328,18 @@ public class TournamentView {
         Image dark = new Image("moon-solid.png");
         Image light = new Image("sun-solid.png");
         Label label = new Label();
+        
         label.getStyleClass().add("txt");
-//        baseContent.getStylesheets().add("tmnt-light.css");
-        view.setImage(dark);
-        label.setText("Switch to dark");
+        view.setImage(darkMode ? light : dark);
+        label.setText("Switch to " + (darkMode ? "light" : "dark"));
+        
         box.setOnMouseClicked((e) -> {
             darkMode = !darkMode;
+            String theme = darkMode ? "dark" : "light";
             baseContent.getStylesheets().remove(1);
-            if (darkMode) {
-                baseContent.getStylesheets().add("tmnt-dark.css");
-                view.setImage(light);
-                label.setText("Switch to light");
-            } else {
-                baseContent.getStylesheets().add("tmnt-light.css");
-                view.setImage(dark);
-                label.setText("Switch to dark");
-            }
+            baseContent.getStylesheets().add("tmnt-" + theme + ".css");
+            view.setImage(darkMode ? light : dark);
+            label.setText("Switch to " + (darkMode ? "light" : "dark"));
         });
         box.getStyleClass().add("btn");
         box.setSpacing(5);
